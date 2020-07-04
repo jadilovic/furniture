@@ -22,9 +22,9 @@
         <br/>
 
         <input type="text" id="user_name" name="user_name" placeholder="User Name"
-               class="form-control"/> <br/>
+               class="form-control" required autofocus/> <br/>
         <input type="password" th:placeholder="Password"
-               id="password" name="password" class="form-control"/> <br/>
+               id="password" name="password" class="form-control" required autofocus/> <br/>
 
         <div align="center" th:if="${param.error}">
             <p style="font-size: 20; color: #FF1C19;">User Name or Password invalid, please verify</p>
