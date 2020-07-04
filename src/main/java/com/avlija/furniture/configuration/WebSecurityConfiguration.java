@@ -1,4 +1,4 @@
-package com.avlija.furniture;
+package com.avlija.furniture.configuration;
 
 import com.avlija.furniture.service.MyUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;

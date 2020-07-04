@@ -1,4 +1,4 @@
-package com.avlija.furniture;
+package com.avlija.furniture.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
