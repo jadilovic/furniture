@@ -1,0 +1,28 @@
+<html xmlns="http://www.w3.org/1999/xhtml" 
+	  xmlns:th="http://www.thymeleaf.org"
+  		xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+</head>
+<body>
+
+<div th:fragment="footer">
+    <div class="container">
+        <footer>
+        <!-- this is footer -->
+        <p></p>
+          <div class="p-2 mb-2 bg-dark text-light">
+            <span sec:authorize="isAuthenticated()">
+                | Logged user: <span sec:authentication="name"></span> |
+                Roles: <span sec:authentication="principal.authorities"></span> |
+                <a th:href="@{/logout}" class="btn btn-warning active" role="button" aria-pressed="true">Sign Out</a>
+                <a th:href="@{/admin/admin}" class="btn btn-primary active" role="button" aria-pressed="true">Admin</a>
+            </span>
+          </div>
+            <div class="p-2 mb-2 bg-light text-dark">
+                 &copy; 2020 Avlija Code by j.adilovic@gmail.com
+            </div>
+      </footer>
+    </div>
+</div>
+</body>
+</html>

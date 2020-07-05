@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+ xmlns:th="http://www.thymeleaf.org">
+<head>
+ <title>Kreiranje Novog Elementa</title>
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+ <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+ <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+ <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+ <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.0.0/css/font-awesome.min.css">
+</head>
+<body>
+
+<div th:include="fragments/header :: header"/></div>
+
+ <div class="container">
+     <form class="form-horizontal" role="form" method="POST" th:action="@{/admin/createelement}" th:object="${element}">
+      <div class="row">
+             <div class="col-md-3"></div>
+             <div class="col-md-6">
+              <div class="alert alert-success" role="alert" th:if="${msg}" th:utext="${msg}">
+     </div>
+             </div>
+         </div>
+         <div class="p-3 row">
+             <div class="col-md-3"></div>
+                 <h5>Kreiranje Novog Elementa</h5>
+         </div>
+         <div class="row">
+             <div class="col-md-3 field-label-responsive">
+                 <label for="name">Naziv Elementa</label>
+             </div>
+             <div class="col-md-6">
+                 <div class="form-group">
+                     <div class="input-group mb-2 mr-sm-2 mb-sm-0">
+                         <div class="input-group-addon" style="width: 2.6rem"><i class="fa fa-suitcase"></i></div>
+                         <input type="text" th:field="*{name}" class="form-control" id="name"
+                                placeholder="Naziv auto modela" required autofocus>
+                     </div>
+                 </div>
+             </div>
+             <div class="col-md-3">
+                 <div class="form-control-feedback">
+                    <span class="text-danger align-middle" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">
+                       </span>
+                 </div>
+             </div>
+         </div>
+       <table class="table table-striped">
+  		<tbody>
+    		<tr>
+      			<th scope="row"><label for="unitMeasure">Odaberi mjernu jedinicu:</label></th>
+      			<td>
+      	  			<select th:field="*{unitMeasure}">
+              			<option th:each="unit : ${unitList}"
+              				th:value="${unit.id}"
+              				th:utext="${unit.name}"/>
+          			</select>
+      			</td>
+      			<td></td>
+      			<td></td>
+      			<td></td>
+      			<td></td>
+      			<td></td>
+      			<td></td>
+      			<td></td>
+      			<td></td>
+    		</tr>
+    	</tbody>
+    </table>
+    
+         <div class="row">
+             <div class="col-md-3"></div>
+             <div class="col-md-6">
+                 <button type="submit" class="btn btn-success btn-block"><i class="fa fa-user-plus"></i>Kreiraj element</button>
+             </div>
+         </div>
+     </form>
+ </div>
+ 
+      <div th:include="fragments/footer :: footer"/></div>
+ 
+</body>
+</html>
