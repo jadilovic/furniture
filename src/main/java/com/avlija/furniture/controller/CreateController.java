@@ -77,19 +77,31 @@ public class CreateController {
     @RequestMapping(value= {"admin/createelement"}, method=RequestMethod.POST)
     public ModelAndView createElement(@Valid Element element, BindingResult bindingResult) {
      ModelAndView model = new ModelAndView();
+     System.out.println("TEST 1");
+     System.out.println(element.getSifra());
+     System.out.println(element.getElementSize());
+     System.out.println(element.getId());
+     System.out.println(element.getName());
+     System.out.println(element.getUnitMeasure());
+     System.out.println(element.getQuantity());
      Element elementExists = elementRepository.findBySifra(element.getSifra());
-     
+     System.out.println("TEST 2");
      if(elementExists != null) {
     		 bindingResult.rejectValue("sifra", "error.sifra", "Ova šifra već postoji!");
+    	     System.out.println("TEST 3");
      }
      if(bindingResult.hasErrors()) {
+         System.out.println("TEST 4");
       model.setViewName("admin/create_element");
      } else {
+         System.out.println("TEST 5");
    	  	elementRepository.save(element);
+        System.out.println("TEST 6");
    	  model.addObject("msg", "Novi element je uspješno kreiran!");
    	  model.addObject("element", new Element());
    	  model.setViewName("admin/create_element");
      	}
+     System.out.println("TEST 7");
      return model;
     }
 }
