@@ -86,22 +86,27 @@ public class CreateController {
      System.out.println(element.getQuantity());
      Element elementExists = elementRepository.findBySifra(element.getSifra());
      System.out.println("TEST 2");
+     System.out.println(elementExists);
      if(elementExists != null) {
     		 bindingResult.rejectValue("sifra", "error.sifra", "Ova šifra već postoji!");
     	     System.out.println("TEST 3");
      }
      if(bindingResult.hasErrors()) {
          System.out.println("TEST 4");
+         System.out.println(bindingResult);
       model.setViewName("admin/create_element");
      } else {
          System.out.println("TEST 5");
    	  	elementRepository.save(element);
         System.out.println("TEST 6");
    	  model.addObject("msg", "Novi element je uspješno kreiran!");
-   	  model.addObject("element", new Element());
    	  model.setViewName("admin/create_element");
      	}
      System.out.println("TEST 7");
+     Element newElement = new Element();
+     List<UnitMeasure> unitList = unitMeasureRepository.findAll();
+     model.addObject("element", newElement);
+     model.addObject("unitList", unitList);
      return model;
     }
 }
