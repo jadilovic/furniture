@@ -25,9 +25,6 @@ public class Product {
 	@Column(name = "name")
     private String name;
 
-	@Column(name = "quantity")
-    private int quantity;
-	
 	 @ManyToMany(cascade=CascadeType.ALL)
 	 @JoinTable(name="product_element",
 	 joinColumns=@JoinColumn(name="product_id"),
@@ -61,21 +58,6 @@ public class Product {
 	public void setName(String name) {
 		this.name = name;
 	}
-
-	/**
-	 * @return the quantity
-	 */
-	public int getQuantity() {
-		return quantity;
-	}
-
-	/**
-	 * @param quantity the quantity to set
-	 */
-	public void setQuantity(int quantity) {
-		this.quantity = quantity;
-	}
-
 	/**
 	 * @return the elements
 	 */

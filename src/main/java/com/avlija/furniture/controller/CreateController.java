@@ -5,8 +5,10 @@ import java.util.List;
 import javax.validation.Valid;
 
 import com.avlija.furniture.model.Element;
+import com.avlija.furniture.model.Product;
 import com.avlija.furniture.model.UnitMeasure;
 import com.avlija.furniture.repository.ElementRepository;
+import com.avlija.furniture.repository.ProductRepository;
 import com.avlija.furniture.repository.UnitMeasureRepository;
 import com.avlija.furniture.service.UserService;
 
@@ -21,7 +23,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class CreateController {
 
     @Autowired
-    private UserService userService;
+    private ProductRepository productRepository;
 
     @Autowired
     private UnitMeasureRepository unitMeasureRepository;
@@ -77,36 +79,53 @@ public class CreateController {
     @RequestMapping(value= {"admin/createelement"}, method=RequestMethod.POST)
     public ModelAndView createElement(@Valid Element element, BindingResult bindingResult) {
      ModelAndView model = new ModelAndView();
-     System.out.println("TEST 1");
-     System.out.println(element.getSifra());
-     System.out.println(element.getElementSize());
-     System.out.println(element.getId());
-     System.out.println(element.getName());
-     System.out.println(element.getUnitMeasure());
-     System.out.println(element.getQuantity());
      Element elementExists = elementRepository.findBySifra(element.getSifra());
-     System.out.println("TEST 2");
-     System.out.println(elementExists);
      if(elementExists != null) {
     		 bindingResult.rejectValue("sifra", "error.sifra", "Ova šifra već postoji!");
     	     System.out.println("TEST 3");
      }
      if(bindingResult.hasErrors()) {
-         System.out.println("TEST 4");
-         System.out.println(bindingResult);
       model.setViewName("admin/create_element");
      } else {
-         System.out.println("TEST 5");
    	  	elementRepository.save(element);
-        System.out.println("TEST 6");
    	  model.addObject("msg", "Novi element je uspješno kreiran!");
    	  model.setViewName("admin/create_element");
      	}
-     System.out.println("TEST 7");
      Element newElement = new Element();
      List<UnitMeasure> unitList = unitMeasureRepository.findAll();
      model.addObject("element", newElement);
      model.addObject("unitList", unitList);
+     return model;
+    }
+    
+    // CREATE AN PRODUCT
+    
+    @RequestMapping(value= {"admin/createproduct"}, method=RequestMethod.GET)
+    public ModelAndView createProduct() {
+     ModelAndView model = new ModelAndView();
+     Product product = new Product();
+     model.addObject("product", product);
+     model.setViewName("admin/create_product");
+     
+     return model;
+    }
+    
+    @RequestMapping(value= {"admin/createproduct"}, method=RequestMethod.POST)
+    public ModelAndView createProduct(@Valid Product product, BindingResult bindingResult) {
+     ModelAndView model = new ModelAndView();
+     Product productExists = productRepository.findByName(product.getName());
+     if(productExists != null) {
+    		 bindingResult.rejectValue("name", "error.name", "Ovaj naziv proizvoda već postoji!");
+     }
+     if(bindingResult.hasErrors()) {
+      model.setViewName("admin/create_product");
+     } else {
+   	  	productRepository.save(product);
+   	  model.addObject("msg", "Naziv novog proizvoda je uspješno kreiran! Potrebno je dodati elemente od kojih se sastoji proizvod.");
+   	  model.setViewName("admin/create_product2");
+     	}
+     Product newProduct = productRepository.findByName(product.getName());
+     model.addObject("product", newProduct);
      return model;
     }
 }
