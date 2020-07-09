@@ -1,9 +1,13 @@
 package com.avlija.furniture.controller;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.validation.Valid;
 
+import com.avlija.furniture.form.SampleInputs;
 import com.avlija.furniture.model.Element;
 import com.avlija.furniture.model.Product;
 import com.avlija.furniture.model.UnitMeasure;
@@ -12,9 +16,12 @@ import com.avlija.furniture.repository.ProductRepository;
 import com.avlija.furniture.repository.UnitMeasureRepository;
 import com.avlija.furniture.service.UserService;
 
+import javassist.tools.reflect.Sample;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -118,6 +125,8 @@ public class CreateController {
     		 bindingResult.rejectValue("name", "error.name", "Ovaj naziv proizvoda već postoji!");
      }
      if(bindingResult.hasErrors()) {
+      	  model.addObject("msg", "Uneseni naziv već postoji.");
+
       model.setViewName("admin/create_product");
      } else {
    	  	productRepository.save(product);
@@ -128,4 +137,32 @@ public class CreateController {
      model.addObject("product", newProduct);
      return model;
     }
+    
+    @RequestMapping(value= {"admin/addelement/{id}"}, method=RequestMethod.GET)
+    public ModelAndView addElement(@PathVariable(name = "id") Integer id) {
+     ModelAndView model = new ModelAndView();
+     Product product = productRepository.findById(id).get();
+     model.addObject("product", product);
+     model.addObject("elementsList", elementRepository.findAll());
+     model.setViewName("admin/add_elements");
+     
+     return model;
+    }
+    
+    @RequestMapping(value= {"admin/addelement"}, method=RequestMethod.POST)
+    public ModelAndView addElementToProduct(@Valid Product product, BindingResult bindingResult) {
+     ModelAndView model = new ModelAndView();
+     List <Element> elements = new ArrayList<Element>();
+     elements = product.getElements();
+     	Product createdProduct = productRepository.findById(product.getId()).get();
+     	System.out.println("Elements: " + product.getElements());
+     	createdProduct.setElements(elements);
+     	System.out.println("TEST 2");
+   	  	productRepository.save(createdProduct);
+   	  model.addObject("msg", "Dodani su elementi: " + product.getElements());
+   	  model.setViewName("admin/create_product2");
+     model.addObject("product", createdProduct);
+     return model;
+    }
+    
 }

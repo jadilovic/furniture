@@ -1,23 +1,23 @@
 package com.avlija.furniture.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.*;
 
-@Data
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
 @Entity
 @Table(name = "elements")
-public class Element {
+public class Element implements Serializable {
    
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	@Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "element_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private int id;
     
 	@Column(name = "sifra")
@@ -35,6 +35,26 @@ public class Element {
 
 	@Column(name = "quantity")
     private int quantity;
+	
+    @ManyToMany(mappedBy = "elements", fetch = FetchType.LAZY)
+    private Set<Product> products = new HashSet<>();
+
+    public Element() {
+    	
+    }
+	/**
+	 * @return the products
+	 */
+	public Set<Product> getProducts() {
+		return products;
+	}
+
+	/**
+	 * @param products the products to set
+	 */
+	public void setProducts(Set<Product> products) {
+		this.products = products;
+	}
 
 	/**
 	 * @return the id

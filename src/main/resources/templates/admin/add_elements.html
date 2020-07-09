@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+ xmlns:th="http://www.thymeleaf.org">
+<head>
+ <title>Lista elemenata za dodati</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+ <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+ <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+ <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+ <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.0.0/css/font-awesome.min.css">
+</head>
+<body>
+
+<div th:replace="fragments/header :: header"/></div>
+
+ <div class="p-2" align="center">
+   <h5>Odaberite elemenate za dodati proizvodu:</h5>
+   <p><b th:if="${message}" th:text="${message}" th:class="${'alert ' + alertClass}"></b></p>  
+    <p><b th:if="${message2}" th:text="${message2}" th:class="${'alert ' + alertClass}"></b></p>   
+ </div>
+ 
+     <form class="form-horizontal" role="form" method="POST" th:action="@{/admin/addelement}" th:object="${product}">
+      		<input type="hidden" th:field="*{id}" th:value="${productId}"/>
+      		<div class="row">
+             <div class="col-md-3"></div>
+             	<div class="col-md-6">
+              		<div class="alert alert-success" role="alert" th:if="${msg}" th:utext="${msg}"></div>
+             	</div>
+         	</div>
+         <div class="p-3 row">
+             <div class="col-md-3"></div>
+                 <h5>Dodavanje elemenata proizvodu</h5>
+         </div>
+          <table class="table table-striped">
+  			<thead>
+    			<tr>
+      				<th scope="col">#</th>
+      				<th scope="col">ID Broj</th>
+      				<th scope="col">Šifra</th>
+      				<th scope="col">Naziv</th>
+    			</tr>
+  			</thead>
+  			<tbody>
+    			<tr th:each="item : ${elementsList}">
+      			<th scope="row"><span th:text="${itemStat.count}"></span></th>
+      			<td>
+      				<input type="checkbox" th:field="*{elements}" th:value="${item.id}" />
+      				<label th:for="${#ids.prev('elements')}" th:text="${item.id}"></label>
+      			</td>
+      			<td><label th:for="${#ids.prev('elements')}" th:text="${item.getSifra()}"></label></td>
+      			<td><label th:for="${#ids.prev('elements')}" th:text="${item.getName()}"></label></td>
+    		</tr>
+  			</tbody>
+		</table>
+         <div class="row">
+             <div class="col-md-3"></div>
+             <div class="col-md-6">
+                 <button type="submit" class="btn btn-success"><i class="fa fa-user-plus"></i>Dodaj odabrane elemente</button>
+             </div>
+         </div>
+     </form>
+
+ <div th:replace="fragments/footer :: footer"/></div>
+ 
+</body>
+</html>

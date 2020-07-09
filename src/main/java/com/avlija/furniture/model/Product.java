@@ -1,35 +1,39 @@
 package com.avlija.furniture.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-import java.util.Set;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.*;
 
-@Data
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
 @Entity
 @Table(name = "products")
-public class Product {
+public class Product implements Serializable{
    
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	@Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "product_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private int id;
 	
 	@Column(name = "name")
     private String name;
-
-	 @ManyToMany(cascade=CascadeType.ALL)
-	 @JoinTable(name="product_element",
-	 joinColumns=@JoinColumn(name="product_id"),
-	 inverseJoinColumns=@JoinColumn(name="element_id"))
-	 private Set<Element> elements;
+	
+    @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "products_elements",
+            joinColumns = @JoinColumn(name = "product_id"),
+            inverseJoinColumns = @JoinColumn(name = "element_id")
+            )
+    private List <Element> elements = new ArrayList<>();
+    
+    public Product() {
+    	
+    }
 
 	/**
 	 * @return the id
@@ -61,14 +65,14 @@ public class Product {
 	/**
 	 * @return the elements
 	 */
-	public Set<Element> getElements() {
+	public List <Element> getElements() {
 		return elements;
 	}
 
 	/**
 	 * @param elements the elements to set
 	 */
-	public void setElements(Set<Element> elements) {
+	public void setElements(List <Element> elements) {
 		this.elements = elements;
 	}
 

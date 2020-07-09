@@ -2,7 +2,11 @@ package com.avlija.furniture.form;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.avlija.furniture.model.Element;
+
 import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 public class SampleInputs {
 
@@ -22,6 +26,8 @@ public class SampleInputs {
     private String password;
     private String token;
     private String confirmPassword;
+    
+    private List <Element> selectedElements;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private Date dateTimeField;
@@ -224,6 +230,14 @@ public class SampleInputs {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public List <Element> getSelectedElements() {
+		return selectedElements;
+	}
+
+	public void setSelectedElements (List <Element> selectedElements) {
+		this.selectedElements = selectedElements;
 	}
 	
 	
