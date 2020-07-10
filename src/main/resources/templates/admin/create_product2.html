@@ -36,9 +36,15 @@
       <th scope="row">ID Proizvoda:</th>
       <td><span th:text="*{id}"></span></td>
     </tr>
-        <tr>
+    <tr>
       <th scope="row">Naziv Proizvoda:</th>
       <td><span th:text="*{name}"></span></td>
+    </tr>
+    <tr th:each="element : ${product.getElements()}">
+        <th scope="row"><span th:text="${element.getName()}"></span></th>
+        <td>
+           	<a class="btn btn-info btn-block" th:href="@{'/home/productprofile/' + ${element.getId()}}">Info</a>
+        </td>
     </tr>
     <tr>
         <th scope="row">Lista elemenata za dodati:</th>

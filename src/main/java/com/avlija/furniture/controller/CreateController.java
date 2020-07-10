@@ -9,7 +9,9 @@ import javax.validation.Valid;
 
 import com.avlija.furniture.form.SampleInputs;
 import com.avlija.furniture.model.Element;
+import com.avlija.furniture.model.ElementQuantity;
 import com.avlija.furniture.model.Product;
+import com.avlija.furniture.model.ProductElement;
 import com.avlija.furniture.model.UnitMeasure;
 import com.avlija.furniture.repository.ElementRepository;
 import com.avlija.furniture.repository.ProductRepository;
@@ -150,16 +152,18 @@ public class CreateController {
     }
     
     @RequestMapping(value= {"admin/addelement"}, method=RequestMethod.POST)
-    public ModelAndView addElementToProduct(@Valid Product product, BindingResult bindingResult) {
+    public ModelAndView addElementToProduct(@Valid Product product) {
      ModelAndView model = new ModelAndView();
      List <Element> elements = new ArrayList<Element>();
      elements = product.getElements();
      	Product createdProduct = productRepository.findById(product.getId()).get();
-     	System.out.println("Elements: " + product.getElements());
+     	for(Element element: elements) {
+     		ProductElement productElement = new ProductElement(createdProduct.getId(), element.getId());
+     		ElementQuantity elementQuantity = new ElementQuantity(productElement, 0);
+     	}
      	createdProduct.setElements(elements);
-     	System.out.println("TEST 2");
    	  	productRepository.save(createdProduct);
-   	  model.addObject("msg", "Dodani su elementi: " + product.getElements());
+   	  model.addObject("msg", "Izvršena dopuna - izmjena elemenata");
    	  model.setViewName("admin/create_product2");
      model.addObject("product", createdProduct);
      return model;
