@@ -169,6 +169,7 @@ public class CreateController {
    	  model.addObject("msg", "Izvršena dopuna - izmjena elemenata");
    	  model.setViewName("admin/create_product2");
      model.addObject("product", createdProduct);
+     model.addObject("elementsList", elements);
      model.addObject("elementsQuantityList", elementsQuantityList);
      return model;
     }

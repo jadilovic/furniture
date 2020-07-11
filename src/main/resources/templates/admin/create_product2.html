@@ -55,7 +55,7 @@
   </tbody>
 </table>
 
-  <table th:object="${product}" class="table table-striped">
+  <table class="table table-striped">
   <thead>
     <tr>
       <th scope="col">Šifra i naziv elementa</th>
@@ -64,7 +64,7 @@
     </tr>
   </thead>
   <tbody>
-    <tr th:each="element, elementStat : ${product.getElements()}">
+    <tr th:each="element, elementStat : ${elementsList}">
         <th scope="row"><span th:text="${element.getSifra()} + ' - ' + ${element.getName()}"></span></th>
         <td>
         	<span th:text="*{elementsQuantityList[__${elementStat .index}__].quantity}">Stanje</span>
