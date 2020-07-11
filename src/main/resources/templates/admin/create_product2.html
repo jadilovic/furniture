@@ -54,6 +54,28 @@
     </tr>
   </tbody>
 </table>
+
+  <table th:object="${product}" class="table table-striped">
+  <thead>
+    <tr>
+      <th scope="col">Šifra i naziv elementa</th>
+      <th scope="col">Količina elementa u proizvodu</th>
+      <th scope="col">Dopuna - Izmjena količine</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr th:each="element, elementStat : ${product.getElements()}">
+        <th scope="row"><span th:text="${element.getSifra()} + ' - ' + ${element.getName()}"></span></th>
+        <td>
+        	<span th:text="*{elementsQuantityList[__${elementStat .index}__].quantity}">Stanje</span>
+        </td>
+        <td>
+           	<a class="btn btn-info btn-block" th:href="@{'/home/productprofile/' + ${element.getId()}}">Info</a>
+        </td>
+    </tr>
+  </tbody>
+</table>
+
  </div>
       <div th:include="fragments/footer :: footer"/></div>
  

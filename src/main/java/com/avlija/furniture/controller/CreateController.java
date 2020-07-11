@@ -13,12 +13,10 @@ import com.avlija.furniture.model.ElementQuantity;
 import com.avlija.furniture.model.Product;
 import com.avlija.furniture.model.ProductElement;
 import com.avlija.furniture.model.UnitMeasure;
+import com.avlija.furniture.repository.ElementQuantityRepository;
 import com.avlija.furniture.repository.ElementRepository;
 import com.avlija.furniture.repository.ProductRepository;
 import com.avlija.furniture.repository.UnitMeasureRepository;
-import com.avlija.furniture.service.UserService;
-
-import javassist.tools.reflect.Sample;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -39,6 +37,9 @@ public class CreateController {
 
     @Autowired
     private ElementRepository elementRepository;
+    
+    @Autowired
+    private ElementQuantityRepository elementQuantityRepository;
     
     // CREATE UNIT OF MEASUREMENT
     
@@ -160,13 +161,31 @@ public class CreateController {
      	for(Element element: elements) {
      		ProductElement productElement = new ProductElement(createdProduct.getId(), element.getId());
      		ElementQuantity elementQuantity = new ElementQuantity(productElement, 0);
+     		elementQuantityRepository.save(elementQuantity);
      	}
      	createdProduct.setElements(elements);
    	  	productRepository.save(createdProduct);
+   	  	List<ElementQuantity> elementsQuantityList = getElementQuantityList(elements, createdProduct);
    	  model.addObject("msg", "Izvršena dopuna - izmjena elemenata");
    	  model.setViewName("admin/create_product2");
      model.addObject("product", createdProduct);
+     model.addObject("elementsQuantityList", elementsQuantityList);
      return model;
     }
+    
+    private List<ElementQuantity> getElementQuantityList(List<Element> elementList, Product product) {
+   	 List<ElementQuantity> elementQuantitiyList = new ArrayList<ElementQuantity>();
+   	 for(Element element: elementList) {
+   		 ElementQuantity elementQuantity;
+   		 try {
+   			 elementQuantity = elementQuantityRepository.findById(new ProductElement(product.getId(), element.getId())).get();
+   		 } catch(Exception e) {
+   			 elementQuantity = new ElementQuantity(new ProductElement(product.getId(), element.getId()), 0);
+   			 // productQuantityRepository.save(productQuantity);
+   		 }
+   		 elementQuantitiyList.add(elementQuantity);
+   	 }
+   	return elementQuantitiyList;
+   }
     
 }
