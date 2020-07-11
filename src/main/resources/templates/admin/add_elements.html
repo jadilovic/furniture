@@ -13,10 +13,10 @@
 
 <div th:replace="fragments/header :: header"/></div>
 
+ <div class="container">
  <div class="p-2" align="center">
    <h5>Odaberite elemenate za dodati proizvodu:</h5>
-   <p><b th:if="${message}" th:text="${message}" th:class="${'alert ' + alertClass}"></b></p>  
-    <p><b th:if="${message2}" th:text="${message2}" th:class="${'alert ' + alertClass}"></b></p>   
+   <p><b th:if="${message}" th:text="${message}" th:class="${'alert ' + alertClass}"></b></p>
  </div>
  
      <form class="form-horizontal" role="form" method="POST" th:action="@{/admin/addelement}" th:object="${product}">
@@ -27,15 +27,11 @@
               		<div class="alert alert-success" role="alert" th:if="${msg}" th:utext="${msg}"></div>
              	</div>
          	</div>
-         <div class="p-3 row">
-             <div class="col-md-3"></div>
-                 <h5>Dodavanje elemenata proizvodu</h5>
-         </div>
+
           <table class="table table-striped">
   			<thead>
     			<tr>
       				<th scope="col">#</th>
-      				<th scope="col">ID Broj</th>
       				<th scope="col">Šifra</th>
       				<th scope="col">Naziv</th>
     			</tr>
@@ -45,9 +41,8 @@
       			<th scope="row"><span th:text="${itemStat.count}"></span></th>
       			<td>
       				<input type="checkbox" th:field="*{elements}" th:value="${item.id}" />
-      				<label th:for="${#ids.prev('elements')}" th:text="${item.id}"></label>
-      			</td>
-      			<td><label th:for="${#ids.prev('elements')}" th:text="${item.getSifra()}"></label></td>
+					<label th:for="${#ids.prev('elements')}" th:text="${item.getSifra()}"></label>
+				</td>
       			<td><label th:for="${#ids.prev('elements')}" th:text="${item.getName()}"></label></td>
     		</tr>
   			</tbody>
@@ -55,11 +50,11 @@
          <div class="row">
              <div class="col-md-3"></div>
              <div class="col-md-6">
-                 <button type="submit" class="btn btn-success"><i class="fa fa-user-plus"></i>Dodaj odabrane elemente</button>
+                 <button type="submit" class="btn btn-success btn-block"><i class="fa fa-user-plus"></i>Dodaj odabrane elemente</button>
              </div>
          </div>
      </form>
-
+	</div>
  <div th:replace="fragments/footer :: footer"/></div>
  
 </body>
