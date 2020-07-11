@@ -20,7 +20,7 @@
       <div class="row">
          <div class="col-md-3 p-2"></div>
           <div class="col-md-6">
-              <div class="alert alert-success" role="alert" th:if="${msg}" th:utext="${msg}"></div>
+              <div class="alert alert-success" role="alert" th:if="${msg}" th:text="${msg}"></div>
          </div>
       </div>
 
@@ -40,12 +40,6 @@
       <th scope="row">Naziv Proizvoda:</th>
       <td><span th:text="*{name}"></span></td>
     </tr>
-    <tr th:each="element : ${product.getElements()}">
-        <th scope="row"><span th:text="${element.getName()}"></span></th>
-        <td>
-           	<a class="btn btn-info btn-block" th:href="@{'/home/productprofile/' + ${element.getId()}}">Info</a>
-        </td>
-    </tr>
     <tr>
         <th scope="row">Lista elemenata za dodati:</th>
     	<td>
@@ -58,8 +52,8 @@
   <table class="table table-striped">
   <thead>
     <tr>
-      <th scope="col">Šifra i naziv elementa</th>
-      <th scope="col">Količina elementa u proizvodu</th>
+      <th scope="col">Šifra----naziv--elementa</th>
+      <th scope="col">Količina</th>
       <th scope="col">Dopuna - Izmjena količine</th>
     </tr>
   </thead>
@@ -75,6 +69,7 @@
     </tr>
   </tbody>
 </table>
+    <div class="alert alert-success" role="alert" th:if="${elementsList.isEmpty()}"><p>Nema dodanih elemenata</p></div>
 
  </div>
       <div th:include="fragments/footer :: footer"/></div>
