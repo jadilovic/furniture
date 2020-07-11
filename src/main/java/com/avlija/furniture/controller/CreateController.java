@@ -197,6 +197,27 @@ public class CreateController {
         return model;
     }
     
+    @RequestMapping(value= {"admin/elementquantity"}, method=RequestMethod.POST)
+    public ModelAndView addedElementQuantity(@Valid SampleInputs sampleInputs) {
+     ModelAndView model = new ModelAndView();
+     List <Element> elements = new ArrayList<Element>();
+     	Product createdProduct = productRepository.findById(sampleInputs.getPrdId()).get();
+        elements = createdProduct.getElements();
+        Element element = elementRepository.findById(sampleInputs.getElmId()).get();
+        ProductElement productElement = new ProductElement(sampleInputs.getPrdId(), sampleInputs.getElmId());
+        ElementQuantity elementQuantity = elementQuantityRepository.findById(productElement).get();
+        elementQuantity.setQuantity(sampleInputs.getQuantity());
+        elementQuantityRepository.save(elementQuantity);
+   	  	
+        List<ElementQuantity> elementsQuantityList = getElementQuantityList(elements, createdProduct);
+   	  model.addObject("msg", "Izvršena dopuna - izmjena količine elemenata: " + element.getName());
+   	  model.setViewName("admin/create_product2");
+     model.addObject("product", createdProduct);
+     model.addObject("elementsList", elements);
+     model.addObject("elementsQuantityList", elementsQuantityList);
+     return model;
+    }
+    
     private List<ElementQuantity> getElementQuantityList(List<Element> elementList, Product product) {
    	 List<ElementQuantity> elementQuantitiyList = new ArrayList<ElementQuantity>();
    	 for(Element element: elementList) {
