@@ -64,7 +64,7 @@
         	<span th:text="*{elementsQuantityList[__${elementStat .index}__].quantity}">Stanje</span>
         </td>
         <td>
-           	<a class="btn btn-info btn-block" th:href="@{'/home/productprofile/' + ${element.getId()}}">Info</a>
+           	<a class="btn btn-info btn-block" th:href="@{'/admin/quantity/' + ${product.getId()} + '/' + ${element.getId()}}">Izmjeni Količinu</a>
         </td>
     </tr>
   </tbody>

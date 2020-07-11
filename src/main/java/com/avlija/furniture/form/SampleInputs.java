@@ -16,6 +16,8 @@ public class SampleInputs {
     private int userId;
     private int postId;
     private Double elementSize;
+    private int elmId;
+    private int prdId;
     private Integer quantity;
     private String sifra;
     private String name;
@@ -35,6 +37,34 @@ public class SampleInputs {
     public SampleInputs() {
     	
     }
+
+	/**
+	 * @return the elmId
+	 */
+	public int getElmId() {
+		return elmId;
+	}
+
+	/**
+	 * @param elmId the elmId to set
+	 */
+	public void setElmId(int elmId) {
+		this.elmId = elmId;
+	}
+
+	/**
+	 * @return the prdId
+	 */
+	public int getPrdId() {
+		return prdId;
+	}
+
+	/**
+	 * @param prdId the prdId to set
+	 */
+	public void setPrdId(int prdId) {
+		this.prdId = prdId;
+	}
 
 	/**
 	 * @return the sifra
