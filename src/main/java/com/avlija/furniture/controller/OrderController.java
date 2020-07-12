@@ -1,6 +1,7 @@
 package com.avlija.furniture.controller;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -10,11 +11,13 @@ import javax.validation.Valid;
 import com.avlija.furniture.form.SampleInputs;
 import com.avlija.furniture.model.Element;
 import com.avlija.furniture.model.ElementQuantity;
+import com.avlija.furniture.model.Order;
 import com.avlija.furniture.model.Product;
 import com.avlija.furniture.model.ProductElement;
 import com.avlija.furniture.model.UnitMeasure;
 import com.avlija.furniture.repository.ElementQuantityRepository;
 import com.avlija.furniture.repository.ElementRepository;
+import com.avlija.furniture.repository.OrderRepository;
 import com.avlija.furniture.repository.ProductRepository;
 import com.avlija.furniture.repository.UnitMeasureRepository;
 
@@ -33,7 +36,7 @@ public class OrderController {
     private ProductRepository productRepository;
 
     @Autowired
-    private UnitMeasureRepository unitMeasureRepository;
+    private OrderRepository orderRepository;
 
     @Autowired
     private ElementRepository elementRepository;
@@ -44,19 +47,82 @@ public class OrderController {
     // CREATE ORDER
     
     @RequestMapping(value= {"admin/createorder/{id}"}, method=RequestMethod.GET)
-    public ModelAndView addElement(@PathVariable(name = "id") Integer id) {
+    public ModelAndView createOrder(@PathVariable(name = "id") Integer id) {
      ModelAndView model = new ModelAndView();
      Product product = productRepository.findById(id).get();
      List<Element> elementsList = product.getElements();
      List<ElementQuantity> elementsQuantityList = getElementQuantityList(elementsList, product);
+     SampleInputs sampleInputs = new SampleInputs();
+     sampleInputs.setPrdId(id);
+     sampleInputs.setQuantity(0);
      model.addObject("elementsQuantityList", elementsQuantityList);
      model.addObject("product", product);
      model.addObject("elementsList", elementsList);
+     model.addObject("sampleInputs", sampleInputs);
      model.setViewName("admin/order_profile");
      
      return model;
     }
     
+    @RequestMapping(value= {"admin/createorder"}, method=RequestMethod.POST)
+    public ModelAndView addedElementQuantity(@Valid SampleInputs sampleInputs) {
+     ModelAndView model = new ModelAndView();
+     List <Element> elements = new ArrayList<Element>();
+     	Product createdProduct = productRepository.findById(sampleInputs.getPrdId()).get();
+        elements = createdProduct.getElements();
+        int orderQuantity = sampleInputs.getQuantity();
+        List<ElementQuantity> elementsQuantityList = getElementQuantityList(elements, createdProduct);
+        List<Integer> totals = new ArrayList<>();
+        for(ElementQuantity elementQuantity: elementsQuantityList) {
+        	int totalElementQuantity = orderQuantity * elementQuantity.getQuantity();
+        	totals.add(totalElementQuantity);
+        //	for(Element element: elements) {
+        //		int newElementQuantity = element.getQuantity() - totalElementQuantity;
+        //		element.setQuantity(newElementQuantity);
+        //		elementRepository.save(element);
+        //	}
+        }
+        
+   	  model.addObject("msg", "Kreirani radni nalog spreman za potvrdu");
+   	  model.setViewName("admin/confirm_order");
+     model.addObject("product", createdProduct);
+     model.addObject("elementsList", elements);
+     model.addObject("elementsQuantityList", elementsQuantityList);
+     model.addObject("totals", totals);
+     return model;
+    }
+    
+    @RequestMapping(value= {"admin/confirmorder"}, method=RequestMethod.POST)
+    public ModelAndView confirmOrder(@Valid SampleInputs sampleInputs) {
+     ModelAndView model = new ModelAndView();
+     List <Element> elements = new ArrayList<Element>();
+     	Product createdProduct = productRepository.findById(sampleInputs.getPrdId()).get();
+        elements = createdProduct.getElements();
+        int orderQuantity = sampleInputs.getQuantity();
+        Order order = new Order(new Date(), orderQuantity, createdProduct);
+        orderRepository.save(order);
+        
+        List<ElementQuantity> elementsQuantityList = getElementQuantityList(elements, createdProduct);
+        List<Integer> totals = new ArrayList<>();
+        for(ElementQuantity elementQuantity: elementsQuantityList) {
+        	int totalElementQuantity = orderQuantity * elementQuantity.getQuantity();
+        	totals.add(totalElementQuantity);
+        	for(Element element: elements) {
+        		int newElementQuantity = element.getQuantity() - totalElementQuantity;
+        		element.setQuantity(newElementQuantity);
+        		elementRepository.save(element);
+        	}
+        }
+        
+   	  model.addObject("msg", "Kreirani radni nalog spreman za potvrdu");
+   	  model.setViewName("admin/order_profile");
+     model.addObject("product", createdProduct);
+     model.addObject("elementsList", elements);
+     model.addObject("elementsQuantityList", elementsQuantityList);
+     model.addObject("totals", totals);
+     model.addObject("order", order);   
+     return model;
+    }
     /*
     @RequestMapping(value= {"admin/addelement"}, method=RequestMethod.POST)
     public ModelAndView addElementToProduct(@Valid Product product) {
@@ -101,26 +167,7 @@ public class OrderController {
         return model;
     }
     
-    @RequestMapping(value= {"admin/elementquantity"}, method=RequestMethod.POST)
-    public ModelAndView addedElementQuantity(@Valid SampleInputs sampleInputs) {
-     ModelAndView model = new ModelAndView();
-     List <Element> elements = new ArrayList<Element>();
-     	Product createdProduct = productRepository.findById(sampleInputs.getPrdId()).get();
-        elements = createdProduct.getElements();
-        Element element = elementRepository.findById(sampleInputs.getElmId()).get();
-        ProductElement productElement = new ProductElement(sampleInputs.getPrdId(), sampleInputs.getElmId());
-        ElementQuantity elementQuantity = elementQuantityRepository.findById(productElement).get();
-        elementQuantity.setQuantity(sampleInputs.getQuantity());
-        elementQuantityRepository.save(elementQuantity);
-   	  	
-        List<ElementQuantity> elementsQuantityList = getElementQuantityList(elements, createdProduct);
-   	  model.addObject("msg", "Izvršena dopuna - izmjena količine elemenata: " + element.getName());
-   	  model.setViewName("admin/create_product2");
-     model.addObject("product", createdProduct);
-     model.addObject("elementsList", elements);
-     model.addObject("elementsQuantityList", elementsQuantityList);
-     return model;
-    }
+
     
     */
     private List<ElementQuantity> getElementQuantityList(List<Element> elementList, Product product) {

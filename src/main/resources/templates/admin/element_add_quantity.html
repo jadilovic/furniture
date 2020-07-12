@@ -61,7 +61,7 @@
       	<form th:action="@{/admin/elementquantity}" th:object="${sampleInputs}" method="post">
       	   	<input type="hidden" th:field="*{elmId}" readonly="readonly"/>
       	   	<input type="hidden" th:field="*{prdId}" readonly="readonly"/>
-        	<input min="1" step="1" type="number" th:field="*{quantity}" placeholder="količina" />
+        	<input min="1" step="1" type="number" th:field="*{quantity}" placeholder="količina" required autofocus/>
     		<input class="btn btn-success" type="submit" value="Dodaj"/>
 		</form>
 	  </td>

@@ -54,7 +54,8 @@
             <tr>
                 <th scope="col">Šifra</th>
                 <th scope="col">Naziv</th>
-                <th scope="col">Količina za proizvod</th>
+                <th scope="col">Količina po proizvodu</th>
+                <th scope="col">Ukupno količina za radni nalog</th>                
                 <th scope="col">Stanje na skladištu</th>
                 <th scope="col">Veličina</th>                
                 <th scope="col">Jedinica Mjere</th>
@@ -67,6 +68,9 @@
                 <td>
         			<span th:text="*{elementsQuantityList[__${elementStat .index}__].quantity}">Količina za proizvod</span>
         		</td>
+        		<td>
+        			<span th:text="*{totals[__${elementStat .index}__]}">Ukupno količina radni nalog</span>
+        		</td>
                 <td th:text="${element.quantity}">Stanje</td>
                 <td th:text="${element.elementSize}">Veličina</td>                
                 <td th:text="${element.getUnitMeasure().getName()}">Jedinica Mjere</td>   
@@ -78,11 +82,11 @@
        <div class="row">
          <div class="col-md-3"></div>
           <div class="col-md-6">
-              <div class="alert alert-primary" role="alert">Unesite količinu proizvoda za radni nalog
-                 <form th:action="@{/admin/createorder}" th:object="${sampleInputs}" method="post">
+              <div class="alert alert-primary" role="alert">
+                 <form th:action="@{/admin/confirmorder}" th:object="${sampleInputs}" method="post">
       	   			<input type="hidden" th:field="*{prdId}" readonly="readonly"/>
-        			<input min="1" step="1" type="number" th:field="*{quantity}" placeholder="količina" required autofocus/>
-    				<input class="btn btn-success" type="submit" value="Kreiraj Radni Nalog"/>
+        			<p><b>Količina proizvoda: </b></p><input type="number" th:field="*{quantity}" readonly="readonly"/>
+    				<input class="btn btn-success" type="submit" value="Potvrdi Radni Nalog"/>
 				</form>
               </div>
          </div>
