@@ -2,7 +2,7 @@
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml"
  xmlns:th="http://www.thymeleaf.org">
 <head>
- <title>Profil Radnog Naloga</title>
+ <title>Kreiraj Radni Nalog</title>
    <meta name="viewport" content="width=device-width, initial-scale=1">
  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
@@ -24,29 +24,10 @@
        
       <div class="row">
          <div class="col-md-3"></div>
-          <div class="col-md-6">
-              <div class="alert alert-danger" role="alert" th:if="${err}" th:utext="${err}"></div>
+          <div class="col-md-6 alert alert-primary">
+              <h5>Kreiraj Radni Nalog</h5>
          </div>
        </div>
-   
-  <div class="container table-responsive" align="center">
-      
-         <table th:object="${order}" class="table table-striped">
-  <tbody>
-    <tr>
-      <th scope="row">ID Radnog Naloga:</th>
-      <td><span th:text="*{id}"></span></td>
-    </tr>
-    <tr>
-      <th scope="row">Datum:</th>
-      <td><span th:text="${#dates.format(order.created, 'dd-MM-yyyy HH:mm')}"><</span>Date</td>
-    </tr>
-    <tr>
-      <th scope="row">Količina priozvoda naloga:</th>
-      <td><span th:text="*{orderQuant}"></span></td>
-    </tr>
-   </tbody>
-</table>
  
   <table th:object="${product}" class="table table-striped">
   <tbody>
@@ -66,13 +47,14 @@
    </tbody>
 </table>
 
+  <div class="container table-responsive" align="center">
 
     <table class="table table-striped">
         <thead>
             <tr>
                 <th scope="col">Šifra</th>
                 <th scope="col">Naziv</th>
-                <th scope="col">Količina za proizvod</th>
+                <th scope="col">Količina po proizvodu</th>          
                 <th scope="col">Stanje na skladištu</th>
                 <th scope="col">Veličina</th>                
                 <th scope="col">Jedinica Mjere</th>
@@ -91,7 +73,20 @@
             </tr>
         </tbody>
     </table>
-  </div>      
+  </div>  
+       
+       <div class="row">
+         <div class="col-md-3"></div>
+          <div class="col-md-6">
+              <div class="alert alert-primary" role="alert">
+                 <form th:action="@{/admin/createorder}" th:object="${sampleInputs}" method="post">
+      	   			<input type="hidden" th:field="*{prdId}" readonly="readonly"/>
+        			<p><b>Unesite količinu proizvoda: </b></p><input min="1" step="1" placeholder="količina" type="number" th:field="*{quantity}" required autofocus/>
+    				<input class="btn btn-success" type="submit" value="Kreiraj Radni Nalog"/>
+				</form>
+              </div>
+         </div>
+       </div>
        
  </div>
  

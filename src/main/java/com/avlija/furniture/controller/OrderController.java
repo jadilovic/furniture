@@ -59,8 +59,7 @@ public class OrderController {
      model.addObject("product", product);
      model.addObject("elementsList", elementsList);
      model.addObject("sampleInputs", sampleInputs);
-     model.setViewName("admin/order_profile");
-     
+     model.setViewName("admin/create_order");
      return model;
     }
     
@@ -114,7 +113,7 @@ public class OrderController {
         	}
         }
         
-   	  model.addObject("msg", "Kreirani radni nalog spreman za potvrdu");
+   	  model.addObject("msg", "Potvrđen radni nalog");
    	  model.setViewName("admin/order_profile");
      model.addObject("product", createdProduct);
      model.addObject("elementsList", elements);
