@@ -70,8 +70,11 @@
   </tbody>
 </table>
     <div class="alert alert-success" role="alert" th:if="${elementsList.isEmpty()}"><p>Nema dodanih elemenata</p></div>
-
+  	
+  	<a class="btn btn-warning btn-block" th:href="@{'/admin/createorder/' + ${product.id}}">Kreiraj Radni Nalog</a>
+ 
  </div>
+ 
       <div th:include="fragments/footer :: footer"/></div>
  
 </body>
