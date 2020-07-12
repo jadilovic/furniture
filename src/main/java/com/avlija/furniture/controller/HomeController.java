@@ -2,7 +2,10 @@ package com.avlija.furniture.controller;
 
 import javax.validation.Valid;
 
+import com.avlija.furniture.model.Element;
+import com.avlija.furniture.model.Product;
 import com.avlija.furniture.model.User;
+import com.avlija.furniture.repository.ElementRepository;
 import com.avlija.furniture.service.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +13,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -20,6 +24,8 @@ public class HomeController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private ElementRepository elementRepository;
     
     @RequestMapping(value={"/admin/adminPage"}, method = RequestMethod.GET)
     public ModelAndView adminPage(){
@@ -28,6 +34,16 @@ public class HomeController {
         modelAndView.addObject("userName", user.getUserName());
         modelAndView.setViewName("admin/adminPage");
         return modelAndView;
+    }
+    
+    @RequestMapping(value= {"home/elementprofile/{id}"}, method=RequestMethod.GET)
+    public ModelAndView addElement(@PathVariable(name = "id") Integer id) {
+     ModelAndView model = new ModelAndView();
+     Element element = elementRepository.findById(id).get();
+     model.addObject("element", element);
+     model.setViewName("home/element_profile");
+     
+     return model;
     }
 
     private User getCurrentUser() {

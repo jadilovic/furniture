@@ -30,6 +30,7 @@
                 <th scope="col">Naziv</th>
                 <th scope="col">Veličina</th>                
                 <th scope="col">Jedinica Mjere</th>
+                <th scope="col">Info</th>
             </tr>
         </thead>
         <tbody>
@@ -40,11 +41,8 @@
                 <td th:text="${element.elementSize}">Veličina</td>                
                 <td th:text="${element.getUnitMeasure().getName()}">Jedinica Mjere</td>   
                 <td th:object="${element}">
-                	<a class="btn btn-warning" th:href="@{'/home/productprofile/' + *{id}}">Info</a>
+                	<a class="btn btn-warning" th:href="@{'/home/elementprofile/' + *{id}}">Info</a>
                 </td>       
-                <td th:object="${element}">
-                	<a class="btn btn-danger" th:href="@{'/home/listreplaceproducts/' + *{id}}">Lista</a>
-                </td>
             </tr>
         </tbody>
     </table>
