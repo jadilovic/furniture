@@ -3,22 +3,35 @@
       xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <title>Spring Security Tutorial</title>
-    <link rel="stylesheet" type="text/css" th:href="@{/css/login.css}"/>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <title>Furniture Mng App</title>
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+ <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+ <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+ <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+ <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.0.0/css/font-awesome.min.css">
 </head>
 
 <body>
-<form th:action="@{/registration}" method="get">
-    <button class="btn btn-md btn-warning btn-block" type="Submit">Go To Registration Page</button>
-</form>
+<div th:replace="fragments/header :: header"/></div>
 
 <div class="container">
+
+    <div class="p-2">
+       <div class="row">
+         <div class="col-md-3"></div>
+          <div class="col-md-6">
+			<form th:action="@{/registration}" method="get">
+    			<button class="btn btn-md btn-warning btn-block" type="Submit">Go To Registration Page</button><br/>
+			</form>
+		</div>
+	</div>
+</div>
+
     <form th:action="@{/login}" method="POST">
-        <h3 class="form-signin-heading" th:text="Welcome"></h3>
-        <br/>
+    	
+    	<div align="center">
+    	    <h5>Welcome to Furniture Mng App</h5><br/>
+    	</div>
 
         <input type="text" id="user_name" name="user_name" placeholder="User Name"
                class="form-control" required autofocus/> <br/>
@@ -31,9 +44,10 @@
         <button class="btn btn-lg btn-primary btn-block" name="Submit" value="Login" type="Submit"
                 th:text="Login"></button>
     </form>
-    
-                    <a th:href="@{/logout}" class="btn btn-warning active" role="button" aria-pressed="true">Sign Out</a>
-    
+        
 </div>
+
+ <div th:replace="fragments/footer :: footer"/></div>
+
 </body>
 </html>

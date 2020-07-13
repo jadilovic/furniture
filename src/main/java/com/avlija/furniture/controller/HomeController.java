@@ -40,6 +40,7 @@ public class HomeController {
     public ModelAndView addElement(@PathVariable(name = "id") Integer id) {
      ModelAndView model = new ModelAndView();
      Element element = elementRepository.findById(id).get();
+     model.addObject("msg", "Profil Odabranog Elementa");
      model.addObject("element", element);
      model.setViewName("home/element_profile");
      

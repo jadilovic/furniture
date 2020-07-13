@@ -3,23 +3,33 @@
       xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Registration Form</title>
-    <link rel="stylesheet" type="text/css" th:href="@{/css/registration.css}"/>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+ <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+ <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+ <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+ <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.0.0/css/font-awesome.min.css">
 </head>
 <body>
-<form th:action="@{/}" method="get">
-    <button class="btn btn-md btn-warning btn-block" type="Submit">Go To Login Page</button>
-</form>
 
+   <div th:replace="fragments/header :: header"/></div>
+   
 <div class="container">
+
+   <div class="p-2">
+		<form th:action="@{/}" method="get">
+    		<button class="btn btn-md btn-warning btn-block" type="Submit">Go To Login Page</button>
+		</form>
+	</div>
+	
+   <div class="p-2">	
+		<h5>Registration Form</h5>
+	</div>
+	
     <div class="row">
         <div class="col-md-6 col-md-offset-3">
             <form autocomplete="off" action="#" th:action="@{/registration}"
                   th:object="${user}" method="post" class="form-horizontal"
                   role="form">
-                <h2>Registration Form</h2>
                 <div class="form-group">
                     <div class="col-sm-9">
                         <label th:if="${#fields.hasErrors('name')}" th:errors="*{name}"
@@ -74,6 +84,8 @@
         </div>
     </div>
 </div>
+
+ <div th:replace="fragments/footer :: footer"/></div>
 
 </body>
 </html>
