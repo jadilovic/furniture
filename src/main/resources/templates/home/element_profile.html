@@ -53,6 +53,14 @@
       <th scope="row">Količina na Stanju:</th>
       <td><span th:text="*{quantity}"></span></td>
     </tr>
+    <tr>
+      <th scope="row">Izmjeni količinu:</th>
+      <td><span th:text="${element.getUnitMeasure().getName()}"></span></td>
+    </tr>
+    <tr>
+      <th scope="row">Izmjeni specifikacije:</th>
+      <td><span th:text="*{quantity}"></span></td>
+    </tr>    
    </tbody>
 </table>
   </div>         
