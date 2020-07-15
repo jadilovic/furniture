@@ -55,7 +55,9 @@
     </tr>
     <tr>
       <th scope="row">Izmjeni količinu:</th>
-      <td><span th:text="${element.getUnitMeasure().getName()}"></span></td>
+      <td>
+      	<a class="btn btn-success btn-block" th:href="@{'/admin/editelement/' + *{id}}">Dodaj Element</a>
+	</td>
     </tr>
     <tr>
       <th scope="row">Izmjeni specifikacije:</th>

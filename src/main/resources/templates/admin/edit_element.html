@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+ xmlns:th="http://www.thymeleaf.org">
+<head>
+ <title>Izmjena Specifikacija Elementa</title>
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+ <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+ <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+ <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+ <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.0.0/css/font-awesome.min.css">
+</head>
+<body>
+
+<div th:include="fragments/header :: header"/></div>
+
+ <div class="container">
+     <form class="form-horizontal" role="form" method="POST" th:action="@{/admin/editelement}" th:object="${element}">
+      <div class="row">
+             <div class="col-md-3"></div>
+             <div class="col-md-6">
+              <div class="alert alert-success" role="alert" th:if="${msg}" th:utext="${msg}">
+     </div>
+  </div>
+         </div>
+         <div class="p-3 row">
+             <div class="col-md-3"></div>
+                 <h5>Izmjena Specifikacija Elementa</h5>
+         </div>
+         
+         <div class="row">
+             <div class="col-md-3 field-label-responsive">
+                 <label for="sifra">ID Elementa</label>
+             </div>
+             <div class="col-md-6">
+                 <div class="form-group">
+                     <div class="input-group mb-2 mr-sm-2 mb-sm-0">
+                         <div class="input-group-addon" style="width: 2.6rem"><i class="fa fa-suitcase"></i></div>
+                         <input type="text" th:field="*{id}" readonly="readonly">
+                     </div>
+                 </div>
+             </div>
+         </div>         
+         
+         <div class="row">
+             <div class="col-md-3 field-label-responsive">
+                 <label for="sifra">Šifra Elementa</label>
+             </div>
+             <div class="col-md-6">
+                 <div class="form-group">
+                     <div class="input-group mb-2 mr-sm-2 mb-sm-0">
+                         <div class="input-group-addon" style="width: 2.6rem"><i class="fa fa-suitcase"></i></div>
+                         <input type="text" th:field="*{sifra}" class="form-control" id="sifra" required autofocus>                         
+                         <input type="text" th:field="*{sifra}" class="form-control" id="sifra" required autofocus>
+                     </div>
+                 </div>
+             </div>
+             <div class="col-md-3">
+                 <div class="form-control-feedback">
+                    <span class="text-danger align-middle" th:if="${#fields.hasErrors('sifra')}" th:errors="*{sifra}">
+                       </span>
+                 </div>
+             </div>
+         </div>
+
+         <div class="row">
+             <div class="col-md-3 field-label-responsive">
+                 <label for="name">Naziv Elementa</label>
+             </div>
+             <div class="col-md-6">
+                 <div class="form-group">
+                     <div class="input-group mb-2 mr-sm-2 mb-sm-0">
+                         <div class="input-group-addon" style="width: 2.6rem"><i class="fa fa-pencil-square"></i></div>
+                         <input type="text" th:field="*{name}" class="form-control" id="name"
+                                placeholder="Naziv elementa" required autofocus>
+                     </div>
+                 </div>
+             </div>
+         </div>
+         
+         <div class="row">
+             <div class="col-md-3 field-label-responsive">
+                 <label for="elementSize">Veličina Elementa</label>
+             </div>
+             <div class="col-md-6">
+                 <div class="form-group">
+                     <div class="input-group mb-2 mr-sm-2 mb-sm-0">
+                         <div class="input-group-addon" style="width: 2.6rem"><i class="fa fa-resize-full"></i></div>
+                         <input type="text" th:field="*{elementSize}" class="form-control" id="elementSize"
+                                placeholder="Nije obavezan unos">
+                     </div>
+                 </div>
+             </div>
+         </div>
+         
+         <div class="row">
+             <div class="col-md-3 field-label-responsive">
+                 <label for="unitMeasure">Odaberite Jedinicu Mjere</label>
+             </div>
+             <div class="col-md-6">
+                 <div class="form-group">
+                     <div class="input-group mb-2 mr-sm-2 mb-sm-0">
+                         <div class="input-group-addon" style="width: 2.6rem"><i class="fa fa-random"></i></div>
+        					<select th:field="*{unitMeasure.id}">
+            					<option th:each="unit : ${unitList}"
+                    				th:value="${unit.id}"
+                    				th:text="${unit.name}"/>
+        					</select>
+                     </div>
+                 </div>
+             </div>
+         </div>
+         
+         <div class="row">
+             <div class="col-md-3 field-label-responsive">
+                 <label for="quantity">Količina Elementa</label>
+             </div>
+             <div class="col-md-6">
+                 <div class="form-group">
+                     <div class="input-group mb-2 mr-sm-2 mb-sm-0">
+                         <div class="input-group-addon" style="width: 2.6rem"><i class="fa fa-sort-numeric-asc"></i></div>
+                         <input type="number" th:field="*{quantity}" class="form-control" id="quantity"
+                                placeholder="Početna količina na stanju" required autofocus>
+                     </div>
+                 </div>
+             </div>
+         </div>
+          
+         <div class="row">
+             <div class="col-md-3"></div>
+             <div class="col-md-6">
+                 <button type="submit" class="btn btn-success btn-block"><i class="fa fa-user-plus"></i>Kreiraj element</button>
+             </div>
+         </div>
+     </form>
+ </div>
+ 
+      <div th:include="fragments/footer :: footer"/></div>
+ 
+</body>
+</html>
