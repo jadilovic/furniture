@@ -56,7 +56,7 @@ public class EditController {
     }
     
     @RequestMapping(value= {"admin/editelement"}, method=RequestMethod.POST)
-    public ModelAndView createElement(@Valid Element element, BindingResult bindingResult) {
+    public ModelAndView editElement(@Valid Element element, BindingResult bindingResult) {
      ModelAndView model = new ModelAndView();
      Element oldElement = elementRepository.findById(element.getId()).get();
      Element elementExists = elementRepository.findBySifra(element.getSifra());
@@ -67,14 +67,33 @@ public class EditController {
      if(bindingResult.hasErrors()) {
       model.setViewName("admin/edit_element");
      } else {
-    	 oldElement = element;
+    	oldElement = element;
    	  	elementRepository.save(oldElement);
-   	  model.addObject("msg", element.getName() + " je uspješno izmjenjen!");
-   	  model.setViewName("admin/edit_element");
+   	  	model.addObject("msg", element.getName() + " je uspješno izmjenjen!");
+   	  	model.setViewName("home/element_profile");
      	}
-     List<UnitMeasure> unitList = unitMeasureRepository.findAll();
      model.addObject("element", oldElement);
-     model.addObject("unitList", unitList);
+     return model;
+    }
+    
+    @RequestMapping(value= {"/home/editelementquantity/{id}"}, method=RequestMethod.GET)
+    public ModelAndView editQuantity(@PathVariable(name = "id") Integer id) {
+     ModelAndView model = new ModelAndView();
+     Element element = elementRepository.findById(id).get();
+     model.addObject("element", element);
+     model.setViewName("home/edit_element_quantity");
+     return model;
+    }
+    
+    @RequestMapping(value= {"/home/editelementquantity"}, method=RequestMethod.POST)
+    public ModelAndView editQuantity(@Valid Element element) {
+     ModelAndView model = new ModelAndView();
+     	Element oldElement = elementRepository.findById(element.getId()).get();
+    	oldElement = element;
+   	  	elementRepository.save(oldElement);
+   	  	model.addObject("msg", element.getName() + " količina na stanju je uspješno dopunjena!");
+   	  	model.setViewName("home/element_profile");
+   	  	model.addObject("element", oldElement);
      return model;
     }
     
