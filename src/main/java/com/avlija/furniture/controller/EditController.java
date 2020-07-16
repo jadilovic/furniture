@@ -90,7 +90,7 @@ public class EditController {
     public ModelAndView editQuantity(@Valid Element element) {
      ModelAndView model = new ModelAndView();
      	Element oldElement = elementRepository.findById(element.getId()).get();
-    	oldElement = element;
+    	oldElement.setQuantity(element.getQuantity());
    	  	elementRepository.save(oldElement);
    	  	model.addObject("msg", element.getName() + " količina na stanju je uspješno dopunjena!");
    	  	model.setViewName("home/element_profile");
