@@ -59,25 +59,21 @@ public class EditController {
     public ModelAndView editElement(@Valid Element element, BindingResult bindingResult) {
      ModelAndView model = new ModelAndView();
      Element oldElement = elementRepository.findById(element.getId()).get();
-     Element elementExists = elementRepository.findBySifra(element.getSifra());
-     if(elementExists != null) {
-    		 bindingResult.rejectValue("sifra", "error.sifra", "Ova šifra već postoji!");
-    	     System.out.println("TEST 3");
-     }
-     if(bindingResult.hasErrors()) {
+     Element elementExists = elementRepository.findBySifra(element.getSifra());     
+     if(!oldElement.getSifra().equals(element.getSifra()) && (elementExists != null)) {
+    	 model.addObject("msg", "'" + element.getSifra() + "' već postoji!");
          List<UnitMeasure> unitList = unitMeasureRepository.findAll();
          model.addObject("unitList", unitList);
-      model.setViewName("admin/edit_element");
-     } else {
-    	 System.out.println(element.getUnitMeasure().getName());
-    	oldElement = element;
-   	  	elementRepository.save(oldElement);
-   	  	model.addObject("msg", element.getName() + " je uspješno izmjenjen!");
-   	  	model.setViewName("home/element_profile");
+         model.setViewName("admin/edit_element");
+         } else {
+        	 oldElement = element;
+        	 oldElement.setUnitMeasure(unitMeasureRepository.findById(element.getUnitMeasure().getId()).get());
+   	  		elementRepository.save(oldElement);
+   	  		model.addObject("msg", element.getName() + " je uspješno izmjenjen!");
+   	  		model.setViewName("home/element_profile");
      	}
-	 System.out.println("Unit Measure " + element.getUnitMeasure().getId());
-	 Element newElement = elementRepository.findById(element.getId()).get();
-     model.addObject("element", newElement);
+	 	Element newElement = elementRepository.findById(element.getId()).get();
+	 	model.addObject("element", newElement);
      return model;
     }
     
