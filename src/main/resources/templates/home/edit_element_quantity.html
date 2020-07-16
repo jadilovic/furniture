@@ -91,7 +91,12 @@
                  <div class="form-group">
                      <div class="input-group mb-2 mr-sm-2 mb-sm-0">
                          <div class="input-group-addon" style="width: 2.6rem"><i class="fa fa-random"></i></div>
-                         <input type="text" th:field="*{unitMeasure.id}" th:text="${element.getUnitMeasure().getName()}" class="form-control" readonly="readonly">
+                         <input type="text" th:text="${element.getUnitMeasure().getName()}" class="form-control" readonly="readonly">
+                            <select th:field="*{unitMeasure.id}">
+            					<option th:each="unit : ${unitList}"
+                    				th:value="${unit.id}"
+                    				th:text="${unit.name}"/>
+        					</select>
                      </div>
                  </div>
              </div>

@@ -35,6 +35,7 @@ public class DisplayController {
     public ModelAndView createMeasure() {
      ModelAndView model = new ModelAndView();
      List<Element> elementsList = elementRepository.findAll();
+     System.out.println(elementsList);
      model.addObject("elementsList", elementsList);
      model.setViewName("home/list_elements");
      

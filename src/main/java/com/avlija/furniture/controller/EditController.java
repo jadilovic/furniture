@@ -65,14 +65,19 @@ public class EditController {
     	     System.out.println("TEST 3");
      }
      if(bindingResult.hasErrors()) {
+         List<UnitMeasure> unitList = unitMeasureRepository.findAll();
+         model.addObject("unitList", unitList);
       model.setViewName("admin/edit_element");
      } else {
+    	 System.out.println(element.getUnitMeasure().getName());
     	oldElement = element;
    	  	elementRepository.save(oldElement);
    	  	model.addObject("msg", element.getName() + " je uspješno izmjenjen!");
    	  	model.setViewName("home/element_profile");
      	}
-     model.addObject("element", oldElement);
+	 System.out.println("Unit Measure " + element.getUnitMeasure().getId());
+	 Element newElement = elementRepository.findById(element.getId()).get();
+     model.addObject("element", newElement);
      return model;
     }
     
