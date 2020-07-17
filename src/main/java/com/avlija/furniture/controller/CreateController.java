@@ -57,7 +57,6 @@ public class CreateController {
     public ModelAndView createUnitMeasure(@Valid UnitMeasure unitMeasure, BindingResult bindingResult) {
      ModelAndView model = new ModelAndView();
      UnitMeasure unitMeasureExists = unitMeasureRepository.findByName(unitMeasure.getName());
-     
      if(unitMeasureExists != null) {
       bindingResult.rejectValue("name", "error.unitMeasure", "Ova jedinica mjere već postoji!");
      }
@@ -87,24 +86,24 @@ public class CreateController {
     }
     
     @RequestMapping(value= {"admin/createelement"}, method=RequestMethod.POST)
-    public ModelAndView createElement(@Valid Element element, BindingResult bindingResult) {
+    public ModelAndView createElement(@Valid Element element) {
      ModelAndView model = new ModelAndView();
      Element elementExists = elementRepository.findBySifra(element.getSifra());
      if(elementExists != null) {
-    		 bindingResult.rejectValue("sifra", "error.sifra", "Ova šifra već postoji!");
-    	     System.out.println("TEST 3");
-     }
-     if(bindingResult.hasErrors()) {
-      model.setViewName("admin/create_element");
+    	 model.addObject("msg", "Ova šifra već postoji!");
+         List<UnitMeasure> unitList = unitMeasureRepository.findAll();
+         Element element2 = new Element();
+         model.addObject("element", element2);
+         model.addObject("unitList", unitList);
+         model.setViewName("admin/create_element");
      } else {
    	  	elementRepository.save(element);
-   	  model.addObject("msg", "Novi element je uspješno kreiran!");
-   	  model.setViewName("admin/create_element");
+   	  	UnitMeasure unitMeasure = unitMeasureRepository.findById(element.getUnitMeasure().getId()).get();
+   	  	element.setUnitMeasure(unitMeasure);
+        model.addObject("element", element);
+   	  	model.addObject("msg", "Novi element je uspješno kreiran!");
+   	  	model.setViewName("home/element_profile");
      	}
-     Element newElement = new Element();
-     List<UnitMeasure> unitList = unitMeasureRepository.findAll();
-     model.addObject("element", newElement);
-     model.addObject("unitList", unitList);
      return model;
     }
     
