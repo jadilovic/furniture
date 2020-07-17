@@ -75,11 +75,6 @@ public class OrderController {
         for(ElementQuantity elementQuantity: elementsQuantityList) {
         	int totalElementQuantity = orderQuantity * elementQuantity.getQuantity();
         	totals.add(totalElementQuantity);
-        //	for(Element element: elements) {
-        //		int newElementQuantity = element.getQuantity() - totalElementQuantity;
-        //		element.setQuantity(newElementQuantity);
-        //		elementRepository.save(element);
-        //	}
         }
         
    	  model.addObject("msg", "Kreirani radni nalog spreman za potvrdu");
@@ -106,20 +101,19 @@ public class OrderController {
         for(ElementQuantity elementQuantity: elementsQuantityList) {
         	int totalElementQuantity = orderQuantity * elementQuantity.getQuantity();
         	totals.add(totalElementQuantity);
-        	for(Element element: elements) {
+        	Element element = elementRepository.findById(elementQuantity.getProductElement().getElementId()).get();
         		int newElementQuantity = element.getQuantity() - totalElementQuantity;
         		element.setQuantity(newElementQuantity);
         		elementRepository.save(element);
-        	}
         }
         
-   	  model.addObject("msg", "Potvrđen radni nalog");
-   	  model.setViewName("admin/order_profile");
-     model.addObject("product", createdProduct);
-     model.addObject("elementsList", elements);
-     model.addObject("elementsQuantityList", elementsQuantityList);
-     model.addObject("totals", totals);
-     model.addObject("order", order);   
+   	  	model.addObject("msg", "Potvrđen radni nalog");
+   	  	model.setViewName("admin/order_profile");
+   	  	model.addObject("product", createdProduct);
+   	  	model.addObject("elementsList", elements);
+   	  	model.addObject("elementsQuantityList", elementsQuantityList);
+   	  	model.addObject("totals", totals);
+   	  	model.addObject("order", order);   
      return model;
     }
     /*

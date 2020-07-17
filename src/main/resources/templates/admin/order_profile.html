@@ -39,7 +39,7 @@
     </tr>
     <tr>
       <th scope="row">Datum:</th>
-      <td><span th:text="${#dates.format(order.created, 'dd-MM-yyyy HH:mm')}"><</span>Date</td>
+      <td><span th:text="${#dates.format(order.created, 'dd-MM-yyyy HH:mm')}"></span>Date</td>
     </tr>
     <tr>
       <th scope="row">Količina priozvoda naloga:</th>
@@ -72,7 +72,8 @@
             <tr>
                 <th scope="col">Šifra</th>
                 <th scope="col">Naziv</th>
-                <th scope="col">Količina za proizvod</th>
+                <th scope="col">Količina po proizvodu</th>
+                <th scope="col">Ukupno količina</th>                                
                 <th scope="col">Stanje na skladištu</th>
                 <th scope="col">Veličina</th>                
                 <th scope="col">Jedinica Mjere</th>
@@ -85,6 +86,9 @@
                 <td>
         			<span th:text="*{elementsQuantityList[__${elementStat .index}__].quantity}">Količina za proizvod</span>
         		</td>
+        		<td>
+        			<span th:text="*{totals[__${elementStat .index}__]}">Ukupno količina radni nalog</span>
+        		</td>        		
                 <td th:text="${element.quantity}">Stanje</td>
                 <td th:text="${element.elementSize}">Veličina</td>                
                 <td th:text="${element.getUnitMeasure().getName()}">Jedinica Mjere</td>   
