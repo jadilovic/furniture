@@ -39,10 +39,10 @@
     </tr>
     <tr>
       <th scope="row">Datum:</th>
-      <td><span th:text="${#dates.format(order.created, 'dd-MM-yyyy HH:mm')}"></span>Date</td>
+      <td><span th:text="${#dates.format(order.created, 'dd-MM-yyyy HH:mm')}"></span></td>
     </tr>
     <tr>
-      <th scope="row">Količina priozvoda naloga:</th>
+      <th scope="row">Količina priozvoda:</th>
       <td><span th:text="*{orderQuant}"></span></td>
     </tr>
    </tbody>
