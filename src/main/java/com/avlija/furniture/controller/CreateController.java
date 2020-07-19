@@ -146,7 +146,10 @@ public class CreateController {
     public ModelAndView addElement(@PathVariable(name = "id") Integer id) {
      ModelAndView model = new ModelAndView();
      Product product = productRepository.findById(id).get();
+     SampleInputs sampleInputs = new SampleInputs();
+     sampleInputs.setId(id);
      model.addObject("product", product);
+     model.addObject("sampleInputs", sampleInputs);
      model.addObject("elementsList", elementRepository.findAll());
      model.setViewName("admin/add_elements");
      

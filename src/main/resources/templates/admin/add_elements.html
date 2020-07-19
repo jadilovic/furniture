@@ -13,10 +13,50 @@
 
 <div th:replace="fragments/header :: header"/></div>
 
+   <div class="container">
+   
+      <p><b th:if="${message}" th:text="${message}" th:class="${'alert ' + alertClass}"></b></p>
+   
+  <div class="card-deck mb-2 text-center">
+    <div class="card mb-4 shadow-sm">
+      <div class="card-body">
+		<form th:action="@{/admin/searchelementsifra}" th:object="${sampleInputs}" method="post">
+        		<input type="hidden" th:field="*{id}"/>		
+        		<input type="text" th:field="*{sifra}" placeholder="Sifra elementa" required autofocus/>
+        		<div class="p-1">
+      				<input class="btn btn-info btn-block" type="submit" value="Traži Elemente po Šifri"/>      		
+        		</div>
+			</form>
+      </div>
+    </div>
+    <div class="card mb-4 shadow-sm">
+      <div class="card-body">
+		<form th:action="@{/home/productsearchkeyword}" th:object="${sampleInputs}" method="post">
+        		<input type="hidden" th:field="*{id}"/>				
+        		<input type="text" th:field="*{keyWord}" placeholder="Kljucna rijec" required autofocus/>
+        		<div class="p-1">
+      				<input class="btn btn-warning btn-block" type="submit" value="Traži Elemente po Ključnoj Riječi"/>      		
+        		</div>
+			</form>
+      </div>
+    </div>
+    <div class="card mb-4 shadow-sm">
+      <div class="card-body">
+		<form th:action="@{/home/searchproductname}" th:object="${sampleInputs}" method="post">
+        		<input type="hidden" th:field="*{id}"/>				
+        		<input type="text" th:field="*{name}" placeholder="naziv" required autofocus/>
+        		<div class="p-1">
+      				<input class="btn btn-danger btn-block" type="submit" value="Traži Elemente po Nazivu"/>      		
+        		</div>
+			</form>
+      </div>
+    </div>
+  </div>
+ </div>
+ 
  <div class="container">
- <div class="p-2" align="center">
+ <div align="center">
    <h5>Odaberite elemenate za dodati proizvodu:</h5>
-   <p><b th:if="${message}" th:text="${message}" th:class="${'alert ' + alertClass}"></b></p>
  </div>
  
      <form class="form-horizontal" role="form" method="POST" th:action="@{/admin/addelement}" th:object="${product}">

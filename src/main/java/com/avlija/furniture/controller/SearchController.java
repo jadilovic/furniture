@@ -117,6 +117,25 @@ public class SearchController {
      return model;
     }
     
+    @RequestMapping(value= {"admin/searchelementsifra"}, method=RequestMethod.POST)
+    public ModelAndView addElementToProduct(@Valid SampleInputs sampleInputs) {
+     ModelAndView model = new ModelAndView();
+     List <Element> elements = new ArrayList<Element>();
+    	 Element element = elementRepository.findBySifra(sampleInputs.getSifra());
+    	 if(element == null) {
+        	 model.addObject("message", "Nije pronađen element sa šifrom: " + sampleInputs.getSifra());
+             model.addObject("elementsList", elementRepository.findAll());
+    	 	} else {
+    	 		elements.add(element);
+    	 		model.addObject("elementsList", elements);
+    	 		}
+     	Product product = productRepository.findById(sampleInputs.getId()).get();
+          model.addObject("product", product);
+          model.addObject("sampleInputs", sampleInputs);
+          model.setViewName("admin/add_elements");
+     return model;
+    }
+    
     private List<ElementQuantity> getElementQuantityList(List<Element> elementList, Product product) {
    	 List<ElementQuantity> elementQuantitiyList = new ArrayList<ElementQuantity>();
    	 for(Element element: elementList) {
