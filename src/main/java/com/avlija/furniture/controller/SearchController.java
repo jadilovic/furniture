@@ -49,7 +49,7 @@ public class SearchController {
     // SEARCH PRODUCTS
     
     @RequestMapping(value= {"home/productsearch"}, method=RequestMethod.GET)
-    public ModelAndView allElements() {
+    public ModelAndView productSearch() {
      ModelAndView model = new ModelAndView();
      SampleInputs sampleInputs = new SampleInputs();
      model.addObject("sampleInputs", sampleInputs);
@@ -58,6 +58,26 @@ public class SearchController {
      return model;
     }
     
+    @RequestMapping(value= {"home/productsearchid"}, method=RequestMethod.POST)
+    public ModelAndView productSearchId(@Valid SampleInputs sampleInputs) {
+     ModelAndView model = new ModelAndView();
+     int productId = sampleInputs.getId();
+     try {
+         Product product = productRepository.findById(productId).get();
+         List <Element> elements = new ArrayList<Element>();
+         elements = product.getElements();
+       	  	List<ElementQuantity> elementsQuantityList = getElementQuantityList(elements, product);
+       	  	model.addObject("msg", "Informacije o proizvodu");
+       	  	model.setViewName("home/product_profile");
+         model.addObject("product", product);
+         model.addObject("elementsList", elements);
+         model.addObject("elementsQuantityList", elementsQuantityList);
+     } catch(Exception e) {
+      	  model.addObject("msg", "Nije pronađen proizvod sa ID brojem: " + productId);
+       	  model.setViewName("home/search_product");
+     }
+     return model;
+    }
     
     private List<ElementQuantity> getElementQuantityList(List<Element> elementList, Product product) {
    	 List<ElementQuantity> elementQuantitiyList = new ArrayList<ElementQuantity>();
