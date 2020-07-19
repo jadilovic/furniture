@@ -73,7 +73,45 @@ public class SearchController {
          model.addObject("elementsList", elements);
          model.addObject("elementsQuantityList", elementsQuantityList);
      } catch(Exception e) {
-      	  model.addObject("msg", "Nije pronađen proizvod sa ID brojem: " + productId);
+      	  model.addObject("err", "Nije pronađen proizvod sa ID brojem: " + productId);
+       	  model.setViewName("home/search_product");
+     }
+     return model;
+    }
+    
+    @RequestMapping(value= {"home/productsearchkeyword"}, method=RequestMethod.POST)
+    public ModelAndView productSearchKeyWord(@Valid SampleInputs sampleInputs) {
+     ModelAndView model = new ModelAndView();
+     String keyWord = sampleInputs.getKeyWord();
+         List<Product> productsList = productRepository.findByNameContaining(keyWord);
+         if(productsList.isEmpty()) {
+         	  model.addObject("err", "Nije pronađen proizvod koji sadrži ključnu riječ: " + keyWord);
+           	  model.setViewName("home/search_product");
+         	} else {
+         		model.addObject("msg", "Lista proizvoda koji sadrže ključnu riječ: " + keyWord);
+         		model.setViewName("home/list_products");
+         		model.addObject("productsList", productsList);
+         		}
+         	return model;
+    	}
+    
+    
+    @RequestMapping(value= {"home/searchproductname"}, method=RequestMethod.POST)
+    public ModelAndView productSearchName(@Valid SampleInputs sampleInputs) {
+     ModelAndView model = new ModelAndView();
+     String productName = sampleInputs.getName();
+     try {
+         Product product = productRepository.findByName(productName);
+         List <Element> elements = new ArrayList<Element>();
+         elements = product.getElements();
+       	  	List<ElementQuantity> elementsQuantityList = getElementQuantityList(elements, product);
+       	  	model.addObject("msg", "Informacije o proizvodu");
+       	  	model.setViewName("home/product_profile");
+         model.addObject("product", product);
+         model.addObject("elementsList", elements);
+         model.addObject("elementsQuantityList", elementsQuantityList);
+     } catch(Exception e) {
+      	  model.addObject("err", "Nije pronađen proizvod sa nazivom: " + productName);
        	  model.setViewName("home/search_product");
      }
      return model;

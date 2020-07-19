@@ -28,6 +28,7 @@ public class SampleInputs {
     private String password;
     private String token;
     private String confirmPassword;
+    private String keyWord;
     
     private List <Element> selectedElements;
 
@@ -268,6 +269,14 @@ public class SampleInputs {
 
 	public void setSelectedElements (List <Element> selectedElements) {
 		this.selectedElements = selectedElements;
+	}
+
+	public String getKeyWord() {
+		return keyWord;
+	}
+
+	public void setKeyWord(String keyWord) {
+		this.keyWord = keyWord;
 	}
 	
 	

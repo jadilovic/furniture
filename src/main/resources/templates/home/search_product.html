@@ -57,8 +57,8 @@
         <h5 class="my-0 font-weight-normal">Unesite Ključnu Riječ</h5>
       </div>
       <div class="card-body">
-		<form th:action="@{/home/productprofile}" th:object="${sampleInputs}" method="post">
-        		<input type="text" th:field="*{sifra}" placeholder="sifra" />
+		<form th:action="@{/home/productsearchkeyword}" th:object="${sampleInputs}" method="post">
+        		<input type="text" th:field="*{keyWord}" placeholder="Kljucna rijec" required autofocus/>
         		<div class="p-3">
       				<input class="btn btn-warning btn-block btn-lg" type="submit" value="Traži"/>      		
         		</div>
@@ -70,8 +70,8 @@
         <h5 class="my-0 font-weight-normal">Unesite Naziv Proizvoda</h5>
       </div>
       <div class="card-body">
-		<form th:action="@{/home/productprofile}" th:object="${sampleInputs}" method="post">
-        		<input type="text" th:field="*{sifra}" placeholder="sifra" />
+		<form th:action="@{/home/searchproductname}" th:object="${sampleInputs}" method="post">
+        		<input type="text" th:field="*{name}" placeholder="naziv" required autofocus/>
         		<div class="p-3">
       				<input class="btn btn-danger btn-block btn-lg" type="submit" value="Traži"/>      		
         		</div>
