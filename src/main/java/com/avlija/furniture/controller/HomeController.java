@@ -36,6 +36,15 @@ public class HomeController {
         return modelAndView;
     }
     
+    @RequestMapping(value={"/home/clientPage"}, method = RequestMethod.GET)
+    public ModelAndView clientPage(){
+        ModelAndView modelAndView = new ModelAndView();
+        User user = getCurrentUser();
+        modelAndView.addObject("userName", user.getUserName());
+        modelAndView.setViewName("home/clientPage");
+        return modelAndView;
+    }
+    
     @RequestMapping(value= {"home/elementprofile/{id}"}, method=RequestMethod.GET)
     public ModelAndView addElement(@PathVariable(name = "id") Integer id) {
      ModelAndView model = new ModelAndView();

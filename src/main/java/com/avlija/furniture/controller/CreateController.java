@@ -164,6 +164,9 @@ public class CreateController {
      	Product createdProduct = productRepository.findById(product.getId()).get();
      	for(Element element: elements) {
      		ProductElement productElement = new ProductElement(createdProduct.getId(), element.getId());
+     		if(elementQuantityExists(productElement)) {
+     			break;
+     		}
      		ElementQuantity elementQuantity = new ElementQuantity(productElement, 0);
      		elementQuantityRepository.save(elementQuantity);
      	}
@@ -177,8 +180,9 @@ public class CreateController {
      model.addObject("elementsQuantityList", elementsQuantityList);
      return model;
     }
-    
-    @RequestMapping(value="admin/quantity/{productId}/{elementId}", method=RequestMethod.GET)
+
+
+	@RequestMapping(value="admin/quantity/{productId}/{elementId}", method=RequestMethod.GET)
     public ModelAndView getSpecificQuestions(@PathVariable String productId, @PathVariable String elementId) {
     	ModelAndView model = new ModelAndView();
     	int prdId = Integer.parseInt(productId);
@@ -235,4 +239,18 @@ public class CreateController {
    	return elementQuantitiyList;
    }
 
+    
+    private boolean elementQuantityExists(ProductElement productElement) {
+    	try {
+    		ElementQuantity elementQuantity = elementQuantityRepository.findById(productElement).get();
+    		if(elementQuantity == null) {
+    			return false;
+    		} else {
+    			return true;
+    		}
+    	} catch (Exception e) {
+    		return false;
+    	}
+	}
+    
 }

@@ -68,6 +68,15 @@
     </table>
   </div>      
  </div>
+  	
+  	   <div th:if="${!elementsList.isEmpty()}" class="row" th:object="${product}">
+         <div class="col-md-3"></div>
+          <div class="col-md-6">
+              <div class="alert alert-primary" role="alert">Priprema Radnog Naloga
+  	  				<a class="btn btn-warning btn-block" th:href="@{'/admin/createorder/' + *{id}}">Kreiraj Radni Nalog</a>
+              </div>
+         </div>
+       </div>
  
         <div class="row" th:object="${product}">
          <div class="col-md-3"></div>

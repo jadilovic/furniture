@@ -52,7 +52,7 @@ public class DisplayController {
     public ModelAndView allElements() {
      ModelAndView model = new ModelAndView();
      List<Element> elementsList = elementRepository.findAll();
-     System.out.println(elementsList);
+     model.addObject("sampleInputs", new SampleInputs());
      model.addObject("elementsList", elementsList);
      model.setViewName("home/list_elements");
      

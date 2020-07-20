@@ -118,16 +118,17 @@ public class SearchController {
     }
     
     @RequestMapping(value= {"admin/searchelementsifra"}, method=RequestMethod.POST)
-    public ModelAndView addElementToProduct(@Valid SampleInputs sampleInputs) {
+    public ModelAndView searchElemntBySifra(@Valid SampleInputs sampleInputs) {
      ModelAndView model = new ModelAndView();
      List <Element> elements = new ArrayList<Element>();
     	 Element element = elementRepository.findBySifra(sampleInputs.getSifra());
     	 if(element == null) {
-        	 model.addObject("message", "Nije pronađen element sa šifrom: " + sampleInputs.getSifra());
+        	 model.addObject("err", "Nije pronađen element sa šifrom: " + sampleInputs.getSifra());
              model.addObject("elementsList", elementRepository.findAll());
     	 	} else {
     	 		elements.add(element);
     	 		model.addObject("elementsList", elements);
+           	 model.addObject("msg", "Pronađen element sa šifrom: " + sampleInputs.getSifra());		
     	 		}
      	Product product = productRepository.findById(sampleInputs.getId()).get();
           model.addObject("product", product);
@@ -135,6 +136,61 @@ public class SearchController {
           model.setViewName("admin/add_elements");
      return model;
     }
+    
+    
+    @RequestMapping(value= {"home/elementsearchkeyword"}, method=RequestMethod.POST)
+    public ModelAndView elementSearchKeyWord(@Valid SampleInputs sampleInputs) {
+     ModelAndView model = new ModelAndView();
+     String keyWord = sampleInputs.getKeyWord();
+         List<Element> elementsList = elementRepository.findByNameContaining(keyWord);
+         if(elementsList.isEmpty()) {
+         	  model.addObject("err", "Nije pronađen element koji sadrži ključnu riječ: " + keyWord);
+              model.addObject("elementsList", elementRepository.findAll());
+         	} else {
+         		model.addObject("msg", "Lista elemenata koji sadrže ključnu riječ: " + keyWord);
+      			model.addObject("elementsList", elementsList);         		
+         		}
+      	Product product = productRepository.findById(sampleInputs.getId()).get();
+        model.addObject("product", product);
+        model.addObject("sampleInputs", sampleInputs);         
+  			model.setViewName("admin/add_elements");
+         	return model;
+    	}
+    
+    
+    @RequestMapping(value= {"home/searchelement"}, method=RequestMethod.POST)
+    public ModelAndView searchElementSifra(@Valid SampleInputs sampleInputs) {
+     ModelAndView model = new ModelAndView();
+     List <Element> elements = new ArrayList<Element>();
+    	 Element element = elementRepository.findBySifra(sampleInputs.getSifra());
+    	 if(element == null) {
+        	 model.addObject("err", "Nije pronađen element sa šifrom: " + sampleInputs.getSifra());
+    	 	} else {
+    	 		elements.add(element);
+           	 model.addObject("msg", "Pronađen element sa šifrom: " + sampleInputs.getSifra());		
+    	 		}
+	 		model.addObject("elementsList", elements);    	 
+          model.addObject("sampleInputs", new SampleInputs());
+          model.setViewName("home/list_elements");
+     return model;
+    }
+    
+    
+    @RequestMapping(value= {"home/searchelements"}, method=RequestMethod.POST)
+    public ModelAndView elementsSearchKeyWord(@Valid SampleInputs sampleInputs) {
+     ModelAndView model = new ModelAndView();
+     String keyWord = sampleInputs.getKeyWord();
+         List<Element> elementsList = elementRepository.findByNameContaining(keyWord);
+         if(elementsList.isEmpty()) {
+         	  model.addObject("err", "Nije pronađen element koji sadrži ključnu riječ: " + keyWord);
+         	} else {
+         		model.addObject("msg", "Lista elemenata koji sadrže ključnu riječ: " + keyWord);
+         		}
+			model.addObject("elementsList", elementsList);         		
+			model.addObject("sampleInputs", new SampleInputs());         
+  			model.setViewName("home/list_elements");
+         	return model;
+    	}
     
     private List<ElementQuantity> getElementQuantityList(List<Element> elementList, Product product) {
    	 List<ElementQuantity> elementQuantitiyList = new ArrayList<ElementQuantity>();

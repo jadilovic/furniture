@@ -15,7 +15,13 @@
 
    <div class="container">
    
-      <p><b th:if="${message}" th:text="${message}" th:class="${'alert ' + alertClass}"></b></p>
+   <div class="text-center p-1">
+      <p><b th:if="${msg}" th:text="${msg}" class="alert alert-success" role="alert"></b></p>   
+   </div>
+   
+   <div class="text-center p-1">
+      <p><b th:if="${err}" th:text="${err}" class="alert alert-danger" role="alert"></b></p>   
+   </div>
    
   <div class="card-deck mb-2 text-center">
     <div class="card mb-4 shadow-sm">
@@ -31,7 +37,7 @@
     </div>
     <div class="card mb-4 shadow-sm">
       <div class="card-body">
-		<form th:action="@{/home/productsearchkeyword}" th:object="${sampleInputs}" method="post">
+		<form th:action="@{/home/elementsearchkeyword}" th:object="${sampleInputs}" method="post">
         		<input type="hidden" th:field="*{id}"/>				
         		<input type="text" th:field="*{keyWord}" placeholder="Kljucna rijec" required autofocus/>
         		<div class="p-1">
@@ -40,6 +46,7 @@
 			</form>
       </div>
     </div>
+    <!--  
     <div class="card mb-4 shadow-sm">
       <div class="card-body">
 		<form th:action="@{/home/searchproductname}" th:object="${sampleInputs}" method="post">
@@ -51,6 +58,7 @@
 			</form>
       </div>
     </div>
+    -->
   </div>
  </div>
  
@@ -61,12 +69,6 @@
  
      <form class="form-horizontal" role="form" method="POST" th:action="@{/admin/addelement}" th:object="${product}">
       		<input type="hidden" th:field="*{id}" th:value="${productId}"/>
-      		<div class="row">
-             <div class="col-md-3"></div>
-             	<div class="col-md-6">
-              		<div class="alert alert-success" role="alert" th:if="${msg}" th:utext="${msg}"></div>
-             	</div>
-         	</div>
 
           <table class="table table-striped">
   			<thead>

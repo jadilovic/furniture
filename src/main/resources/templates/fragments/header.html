@@ -14,24 +14,24 @@
 	<div th:fragment="header">
 	    <!-- this is header -->
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
-  	<a class="navbar-brand font-weight-bold" th:href="@{/home/home}">YAP Database</a>
+  	<a class="navbar-brand font-weight-bold" th:href="@{/home/home}">Furniture Database</a>
   		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
     		<span class="navbar-toggler-icon"></span>
   		</button>
   		<div class="collapse navbar-collapse" id="navbarText">
     	<ul class="navbar-nav mr-auto">
       	  <li class="p-1 nav-item active">
-        	<a th:href="@{/user/client}" class="btn btn-primary active btn-block btn-lg" role="button" aria-pressed="true">Klijent<span class="sr-only">(current)</span></a>
+        	<a th:href="@{/home/clientPage}" class="btn btn-primary active btn-block btn-lg" role="button" aria-pressed="true">Klijent<span class="sr-only">(current)</span></a>
       	  </li>
       	  <li class="p-1 nav-item">
-        	<a th:href="@{/admin/adminPage}" class="btn btn-info active btn-block btn-lg" role="button" aria-pressed="true">Admin</a>
+        	<a th:href="@{/home/allelements}" class="btn btn-info active btn-block btn-lg" role="button" aria-pressed="true">Elementi</a>
       	  </li>
       	  <li class="p-1 nav-item">
-        	<a th:href="@{/user/alltransactions}" class="btn btn-success active btn-block btn-lg" role="button" aria-pressed="true">Pregled Transakcija</a>
+        	<a th:href="@{/home/productsearch}" class="btn btn-success active btn-block btn-lg" role="button" aria-pressed="true">Proizvodi</a>
       	  </li>
     	</ul>
     	<span class="p-1 navbar-text">
-      		<a th:href="@{/home/homesearch}" class="btn btn-warning active btn-block btn-lg" role="button" aria-pressed="true">Pretraga Autodijelova</a>
+      		<a th:href="@{/home/allorders}" class="btn btn-warning active btn-block btn-lg" role="button" aria-pressed="true">Pretraga Radnih Naloga</a>
     	</span>
   	  </div>
 	</nav>
