@@ -93,6 +93,8 @@ public class DisplayController {
     public ModelAndView allOrders() {
      ModelAndView model = new ModelAndView();
      List<Order> ordersList = orderRepository.findAll();
+     model.addObject("message", "Lista radnih naloga");     
+     model.addObject("sampleInputs", new SampleInputs());
      model.addObject("ordersList", ordersList);
      model.setViewName("home/list_orders");
      

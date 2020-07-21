@@ -13,15 +13,57 @@
 
 <div th:replace="fragments/header :: header"/></div>
 
- <div class="p-2" align="center">
-   <h5>Lista radnih naloga:</h5>
-   <p><b th:if="${message}" th:text="${message}" th:class="${'alert ' + alertClass}"></b></p>  
-    <p><b th:if="${message2}" th:text="${message2}" th:class="${'alert ' + alertClass}"></b></p>   
+
+  <div class="container">
+  <div class="card-deck mb-1 text-center">
+    <div class="card mb-1 shadow-sm">
+      <div class="card-header">
+        <p class="my-0 font-weight-normal"><b>ID Broj Radnog Naloga</b></p>
+      </div>
+      <div class="card-body">
+		<form th:action="@{/home/productsearchid}" th:object="${sampleInputs}" method="post">
+        		<input type="number" th:field="*{id}" placeholder="ID broj radnog naloga" required autofocus/>
+        		<div class="p-3">
+      				<input class="btn btn-info btn-block" type="submit" value="Traži"/>      		
+        		</div>
+			</form>
+      </div>
+    </div>
+    <div class="card mb-1 shadow-sm">
+      <div class="card-header">
+        <p class="my-0 font-weight-normal"><b>ID Proizvoda Radnog Naloga</b></p>
+      </div>
+      <div class="card-body">
+		<form th:action="@{/home/productsearchkeyword}" th:object="${sampleInputs}" method="post">
+        		<input type="number" th:field="*{keyWord}" placeholder="Kljucna rijec" required autofocus/>
+        		<div class="p-3">
+      				<input class="btn btn-warning btn-block" type="submit" value="Traži"/>      		
+        		</div>
+			</form>
+      </div>
+    </div>
+    <div class="card mb-1 shadow-sm">
+      <div class="card-header">
+        <p class="my-0 font-weight-normal"><b>Datum Radnog Naloga</b></p>
+      </div>
+      <div class="card-body">
+		<form th:action="@{/home/searchproductname}" th:object="${sampleInputs}" method="post">
+        		<input type="text" th:field="*{name}" placeholder="Datum radnog naloga" required autofocus/>
+        		<div class="p-3">
+      				<input class="btn btn-danger btn-block" type="submit" value="Traži"/>      		
+        		</div>
+			</form>
+      </div>
+    </div>
+  </div>
  </div>
 
-
   <div class="container table-responsive" align="center">
-
+ 
+ <div class="p-2" align="center">
+   <p><b th:if="${message}" th:text="${message}" th:class="${'alert ' + alertClass}"></b></p> 
+ </div>
+ 
     <table class="table table-striped">
         <thead>
             <tr>
