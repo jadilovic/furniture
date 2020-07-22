@@ -127,6 +127,88 @@ public class DisplayController {
      return model;
     }
     
+    @RequestMapping(value= {"home/ordersearchid"}, method=RequestMethod.POST)
+    public ModelAndView orderSearchId(@Valid SampleInputs sampleInputs) {
+     ModelAndView model = new ModelAndView();
+     Long orderId = sampleInputs.getId().longValue();
+     try {
+    	 Order order = orderRepository.findById(orderId).get();
+         Product product = productRepository.findById(order.getProduct().getId()).get();
+         List <Element> elements = new ArrayList<Element>();
+         elements = product.getElements();
+       	  	List<ElementQuantity> elementsQuantityList = getElementQuantityList(elements, product);
+            List<Integer> totals = new ArrayList<>();
+            int orderQuantity = order.getOrderQuant();
+            for(ElementQuantity elementQuantity: elementsQuantityList) {
+            	int totalElementQuantity = orderQuantity * elementQuantity.getQuantity();
+            	totals.add(totalElementQuantity);
+            	}    
+       	  	model.addObject("msg", "Profil Radnog Naloga");
+       	  	model.setViewName("admin/order_profile");
+       	  	model.addObject("product", product);
+       	  	model.addObject("elementsList", elements);
+       	  	model.addObject("elementsQuantityList", elementsQuantityList);
+       	  	model.addObject("totals", totals);
+       	  	model.addObject("order", order); 
+     } catch(Exception e) {
+      	  model.addObject("err", "Nije pronađen radni nalog sa ID brojem: " + sampleInputs.getId());
+          List<Order> ordersList = orderRepository.findAll();
+          model.addObject("message", "Lista radnih naloga");     
+          model.addObject("sampleInputs", new SampleInputs());
+          model.addObject("ordersList", ordersList);
+          model.setViewName("home/list_orders");
+     }
+     return model;
+    }
+    
+    
+    @RequestMapping(value= {"home/ordersearchprdid"}, method=RequestMethod.POST)
+    public ModelAndView productSearchKeyWord(@Valid SampleInputs sampleInputs) {
+     ModelAndView model = new ModelAndView();
+     int productId = sampleInputs.getId();
+     try {
+         Product product = productRepository.findById(productId).get();
+         List<Order> ordersList = orderRepository.findByProduct(product);
+         if(ordersList.isEmpty()) {
+         	  model.addObject("err", "Nije pronađen radni nalog koji sadrži ID proizvoda: " + productId);
+         	} else {
+         		model.addObject("message", "Lista radnih naloga sa ID proizvodom: " + productId);
+         		model.addObject("ordersList", ordersList);
+         		}
+     } catch (Exception e) {
+     	  model.addObject("err", "Nije pronađen proizvod sa ID brojem: " + sampleInputs.getId());
+          List<Order> ordersList = orderRepository.findAll();
+          model.addObject("message", "Lista radnih naloga");     
+          model.addObject("sampleInputs", new SampleInputs());
+          model.addObject("ordersList", ordersList);
+     }
+     model.setViewName("home/list_orders");
+         	return model;
+    	}
+    
+    /*
+    @RequestMapping(value= {"home/searchproductname"}, method=RequestMethod.POST)
+    public ModelAndView productSearchName(@Valid SampleInputs sampleInputs) {
+     ModelAndView model = new ModelAndView();
+     String productName = sampleInputs.getName();
+     try {
+         Product product = productRepository.findByName(productName);
+         List <Element> elements = new ArrayList<Element>();
+         elements = product.getElements();
+       	  	List<ElementQuantity> elementsQuantityList = getElementQuantityList(elements, product);
+       	  	model.addObject("msg", "Informacije o proizvodu");
+       	  	model.setViewName("home/product_profile");
+         model.addObject("product", product);
+         model.addObject("elementsList", elements);
+         model.addObject("elementsQuantityList", elementsQuantityList);
+     } catch(Exception e) {
+      	  model.addObject("err", "Nije pronađen proizvod sa nazivom: " + productName);
+       	  model.setViewName("home/search_product");
+     }
+     return model;
+    }
+    */
+    
     private List<ElementQuantity> getElementQuantityList(List<Element> elementList, Product product) {
    	 List<ElementQuantity> elementQuantitiyList = new ArrayList<ElementQuantity>();
    	 for(Element element: elementList) {

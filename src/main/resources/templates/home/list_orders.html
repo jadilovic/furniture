@@ -13,7 +13,13 @@
 
 <div th:replace="fragments/header :: header"/></div>
 
-
+      <div class="row">
+         <div class="col-md-3"></div>
+          <div class="col-md-6">
+              <div class="alert alert-danger" role="alert" th:if="${err}" th:utext="${err}"></div>
+         </div>
+       </div>
+       
   <div class="container">
   <div class="card-deck mb-1 text-center">
     <div class="card mb-1 shadow-sm">
@@ -21,7 +27,7 @@
         <p class="my-0 font-weight-normal"><b>ID Broj Radnog Naloga</b></p>
       </div>
       <div class="card-body">
-		<form th:action="@{/home/productsearchid}" th:object="${sampleInputs}" method="post">
+		<form th:action="@{/home/ordersearchid}" th:object="${sampleInputs}" method="post">
         		<input type="number" th:field="*{id}" placeholder="ID broj radnog naloga" required autofocus/>
         		<div class="p-3">
       				<input class="btn btn-info btn-block" type="submit" value="Traži"/>      		
@@ -34,8 +40,8 @@
         <p class="my-0 font-weight-normal"><b>ID Proizvoda Radnog Naloga</b></p>
       </div>
       <div class="card-body">
-		<form th:action="@{/home/productsearchkeyword}" th:object="${sampleInputs}" method="post">
-        		<input type="number" th:field="*{keyWord}" placeholder="Kljucna rijec" required autofocus/>
+		<form th:action="@{/home/ordersearchprdid}" th:object="${sampleInputs}" method="post">
+        		<input type="number" th:field="*{id}" placeholder="ID broj proizvoda" required autofocus/>
         		<div class="p-3">
       				<input class="btn btn-warning btn-block" type="submit" value="Traži"/>      		
         		</div>
