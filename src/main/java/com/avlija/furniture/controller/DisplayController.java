@@ -1,5 +1,8 @@
 package com.avlija.furniture.controller;
 
+import java.text.ParseException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -19,10 +22,13 @@ import com.avlija.furniture.repository.OrderRepository;
 import com.avlija.furniture.repository.ProductRepository;
 import com.avlija.furniture.repository.UnitMeasureRepository;
 import com.avlija.furniture.service.UserService;
+import com.avlija.furniture.form.LocalDateAttributeConverter;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -186,28 +192,46 @@ public class DisplayController {
          	return model;
     	}
     
-    /*
-    @RequestMapping(value= {"home/searchproductname"}, method=RequestMethod.POST)
-    public ModelAndView productSearchName(@Valid SampleInputs sampleInputs) {
-     ModelAndView model = new ModelAndView();
-     String productName = sampleInputs.getName();
-     try {
-         Product product = productRepository.findByName(productName);
-         List <Element> elements = new ArrayList<Element>();
-         elements = product.getElements();
-       	  	List<ElementQuantity> elementsQuantityList = getElementQuantityList(elements, product);
-       	  	model.addObject("msg", "Informacije o proizvodu");
-       	  	model.setViewName("home/product_profile");
-         model.addObject("product", product);
-         model.addObject("elementsList", elements);
-         model.addObject("elementsQuantityList", elementsQuantityList);
-     } catch(Exception e) {
-      	  model.addObject("err", "Nije pronađen proizvod sa nazivom: " + productName);
-       	  model.setViewName("home/search_product");
-     }
-     return model;
+    @RequestMapping(value = "home/searchorderdate", method = RequestMethod.POST)
+    public ModelAndView searchByDate(@ModelAttribute("command") SampleInputs sampleInputs) throws ParseException {
+        ModelAndView model = new ModelAndView("home/list_orders");
+
+        String inputSearchDate = sampleInputs.getSearchDate();
+        
+        System.out.println("TEST 1" + inputSearchDate);
+        List<Order> orders = searchByDate(inputSearchDate);
+
+   	 if(orders.size() == 0) {
+    	  model.addObject("err", "Nije pronađen radni nalog sa datumom: " + inputSearchDate);
+          List<Order> ordersList = orderRepository.findAll();
+          model.addObject("message", "Lista radnih naloga");     
+          model.addObject("ordersList", ordersList);
+   	 	} else {
+     		model.addObject("message", "Lista radnih naloga na datum: " + inputSearchDate);
+     		model.addObject("ordersList", orders);
+   	 	}
+   	 	model.addObject("sampleInputs", new SampleInputs());
+        return model;    
     }
-    */
+    
+    public List<Order> searchByDate(String inputSearchDate) {
+   	 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+   	 LocalDate dateInput = LocalDate.parse(inputSearchDate, formatter);
+   		 
+   		 System.out.println("TEST 1, TEST 1, TEST 1");
+   		 System.out.println("Check in: " + dateInput.toString());
+   		 
+   		 LocalDateAttributeConverter converter = new LocalDateAttributeConverter();
+   		 java.sql.Date date = converter.convertToDatabaseColumn(dateInput);
+   		 
+   		 System.out.println("TEST 1.5, TEST 1.5, TEST 1.5");
+   		 System.out.println("Check in: " + date.toString());
+   		 
+   		 List<Order> ordersOnDate = new ArrayList<>();
+   		 ordersOnDate = orderRepository.findByCreated(date);
+   		return ordersOnDate;
+    	}
+
     
     private List<ElementQuantity> getElementQuantityList(List<Element> elementList, Product product) {
    	 List<ElementQuantity> elementQuantitiyList = new ArrayList<ElementQuantity>();

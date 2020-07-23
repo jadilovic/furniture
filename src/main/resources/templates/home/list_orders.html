@@ -8,6 +8,8 @@
  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
  <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.0.0/css/font-awesome.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/css/bootstrap-datepicker.min.css" rel="stylesheet"/>
+
 </head>
 <body>
 
@@ -53,8 +55,8 @@
         <p class="my-0 font-weight-normal"><b>Datum Radnog Naloga</b></p>
       </div>
       <div class="card-body">
-		<form th:action="@{/home/searchproductname}" th:object="${sampleInputs}" method="post">
-        		<input type="text" th:field="*{name}" placeholder="Datum radnog naloga" required autofocus/>
+		<form th:action="@{/home/searchorderdate}" th:object="${sampleInputs}" method="post">
+        		<input width="276" th:field="*{searchDate}" type="text" class="form-control" id="date" name="date" data-date-format="dd/mm/yyyy" placeholder="Datum radnog naloga" required autofocus></input>
         		<div class="p-3">
       				<input class="btn btn-danger btn-block" type="submit" value="Traži"/>      		
         		</div>
@@ -96,7 +98,23 @@
   		<div class="p-2" align="center">
     	 <a th:href="@{/home/homesearch}" class="btn-info btn-lg" role="button" aria-pressed="true">Pretraga Elemenata</a>
   		</div>
+  		
+<div class="input-group date" data-provide="datepicker">
+        <input type="text" class="form-control" id="date" name="date"></input>
+            <div class="input-group-addon">
+                <span class="glyphicon glyphicon-th"></span>
+            </div>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/js/bootstrap-datepicker.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+        <script>
+        $('#date').datepicker({ dateFormat: 'dd-mm-yy' })
+</script>
+  		
  <div th:replace="fragments/footer :: footer"/></div>
- 
+
 </body>
 </html>

@@ -21,7 +21,7 @@ public class SampleInputs {
     private Integer quantity;
     private String sifra;
     private String name;
-    private String brandName;
+    private String searchDate;
     private String modelName;
     private String groupName;
     private String email;
@@ -123,20 +123,6 @@ public class SampleInputs {
 	 */
 	public void setDateTimeField(Date dateTimeField) {
 		this.dateTimeField = dateTimeField;
-	}
-
-	/**
-	 * @return the brandName
-	 */
-	public String getBrandName() {
-		return brandName;
-	}
-
-	/**
-	 * @param brandName the brandName to set
-	 */
-	public void setBrandName(String brandName) {
-		this.brandName = brandName;
 	}
 
 	/**
@@ -277,6 +263,14 @@ public class SampleInputs {
 
 	public void setKeyWord(String keyWord) {
 		this.keyWord = keyWord;
+	}
+
+	public String getSearchDate() {
+		return searchDate;
+	}
+
+	public void setSearchDate(String searchDate) {
+		this.searchDate = searchDate;
 	}
 	
 	
