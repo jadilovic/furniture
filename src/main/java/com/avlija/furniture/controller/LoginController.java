@@ -1,5 +1,7 @@
 package com.avlija.furniture.controller;
 
+import java.util.Date;
+
 import javax.validation.Valid;
 
 import com.avlija.furniture.model.User;
@@ -48,6 +50,7 @@ public class LoginController {
         if (bindingResult.hasErrors()) {
             modelAndView.setViewName("registration");
         } else {
+        	user.setCreated(new Date());
             userService.saveUser(user);
             modelAndView.addObject("successMessage", "User has been registered successfully");
             modelAndView.addObject("user", new User());

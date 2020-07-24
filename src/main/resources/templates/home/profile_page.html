@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+ xmlns:th="http://www.thymeleaf.org">
+<head>
+ <title>User Profile</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+ <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+ <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+ <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+ <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.0.0/css/font-awesome.min.css">
+</head>
+<body>
+
+<div th:replace="fragments/header :: header"/></div>
+
+ <div class="container">
+ 
+      <div class="alert alert-success" role="alert" th:if="${msg}" th:utext="${msg}">
+     </div>
+     
+  <table th:object="${userProfile}" class="table">
+  <thead>
+    <tr>
+      <th scope="col">Naziv</th>
+      <th scope="col">Info</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">Korisnički ID:</th>
+      <td><span th:text="*{id}"></span></td>
+    </tr>
+    <tr>
+      <th scope="row">E-mail:</th>
+      <td><span th:text="*{email}"></span></td>
+    </tr>
+    <tr>
+      <th scope="row">Ime:</th>
+      <td><span th:text="*{name}"></span></td>
+    </tr>
+    <tr>
+      <th scope="row">Prezime:</th>
+      <td><span th:text="*{lastName}"></span></td>
+    </tr>
+    <tr>
+      <th scope="row">Korisničko Ime:</th>
+      <td><span th:text="*{userName}"></span></td>
+    </tr>
+    <tr>
+      <th scope="row">Datum Kreiran:</th>
+      <td><span th:text="${#dates.format(userProfile.created, 'dd-MM-yyyy HH:mm')}"></span></td>
+    </tr>
+    <tr th:each="role : ${roles}">
+        <th scope="row">Role:</th>
+        <td><span th:text="${role.getRole()}"></span></td>
+    </tr>
+    <tr>
+      <th scope="row">Aktivan:</th>
+      <td><span th:text="*{active}"></span></td>
+    </tr>
+  </tbody>
+</table>
+
+ </div>
+ 
+ <div th:replace="fragments/footer :: footer"/></div>
+ 
+</body>
+</html>

@@ -22,7 +22,7 @@
 	</div>
 	
    <div class="p-2">	
-		<h5>Registration Form</h5>
+		<h5>Forma Registracije</h5>
 	</div>
 	
     <div class="row">
@@ -34,7 +34,7 @@
                     <div class="col-sm-9">
                         <label th:if="${#fields.hasErrors('name')}" th:errors="*{name}"
                                class="validation-message"></label>
-                        <input type="text" th:field="*{name}" placeholder="Name"
+                        <input type="text" th:field="*{name}" placeholder="Ime"
                                class="form-control"/>
                     </div>
                 </div>
@@ -44,7 +44,7 @@
                         <label th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"
                                class="validation-message"></label>
                         <input type="text" th:field="*{lastName}"
-                               placeholder="Last Name" class="form-control"/>
+                               placeholder="Prezime" class="form-control"/>
                     </div>
                 </div>
                 <div class="form-group">
@@ -57,7 +57,7 @@
                 </div>
                 <div class="form-group">
                     <div class="col-sm-9">
-                        <input type="text" th:field="*{userName}" placeholder="User Name"
+                        <input type="text" th:field="*{userName}" placeholder="Korisničko ime"
                                class="form-control"/> <label
                             th:if="${#fields.hasErrors('userName')}" th:errors="*{userName}"
                             class="validation-message"></label>
@@ -66,7 +66,7 @@
                 <div class="form-group">
                     <div class="col-sm-9">
                         <input type="password" th:field="*{password}"
-                               placeholder="Password" class="form-control"/> <label
+                               placeholder="Lozinka" class="form-control"/> <label
                             th:if="${#fields.hasErrors('password')}" th:errors="*{password}"
                             class="validation-message"></label>
                     </div>
@@ -74,7 +74,7 @@
 
                 <div class="form-group">
                     <div class="col-sm-9">
-                        <button type="submit" class="btn btn-primary btn-block">Register User</button>
+                        <button type="submit" class="btn btn-primary btn-block">Registracija Korisnika</button>
                     </div>
                 </div>
 

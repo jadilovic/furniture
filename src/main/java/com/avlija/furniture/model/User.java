@@ -9,6 +9,8 @@ import org.hibernate.validator.constraints.Length;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
+
+import java.util.Date;
 import java.util.Set;
 
 @Data
@@ -49,6 +51,9 @@ public class User {
     
     @Column(name = "active")
     private Boolean active;
+    
+    @Column(name = "created")
+    private Date created;
     
     @ManyToMany(cascade = CascadeType.MERGE)
     @JoinTable(name = "user_role",
@@ -151,5 +156,17 @@ public class User {
 	 */
 	public void setRoles(Set<Role> roles) {
 		this.roles = roles;
+	}
+	/**
+	 * @return the created
+	 */
+	public Date getCreated() {
+		return created;
+	}
+	/**
+	 * @param created the created to set
+	 */
+	public void setCreated(Date created) {
+		this.created = created;
 	}
 }

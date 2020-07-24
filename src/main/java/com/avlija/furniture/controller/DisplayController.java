@@ -26,6 +26,7 @@ import com.avlija.furniture.form.LocalDateAttributeConverter;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -98,7 +99,7 @@ public class DisplayController {
     @RequestMapping(value= {"home/allorders"}, method=RequestMethod.GET)
     public ModelAndView allOrders() {
      ModelAndView model = new ModelAndView();
-     List<Order> ordersList = orderRepository.findAll();
+     List<Order> ordersList = orderRepository.findAll(Sort.by("created").descending());
      model.addObject("message", "Lista radnih naloga");     
      model.addObject("sampleInputs", new SampleInputs());
      model.addObject("ordersList", ordersList);
@@ -158,7 +159,7 @@ public class DisplayController {
        	  	model.addObject("order", order); 
      } catch(Exception e) {
       	  model.addObject("err", "Nije pronađen radni nalog sa ID brojem: " + sampleInputs.getId());
-          List<Order> ordersList = orderRepository.findAll();
+          List<Order> ordersList = orderRepository.findAll(Sort.by("created").descending());
           model.addObject("message", "Lista radnih naloga");     
           model.addObject("sampleInputs", new SampleInputs());
           model.addObject("ordersList", ordersList);
@@ -174,7 +175,7 @@ public class DisplayController {
      int productId = sampleInputs.getId();
      try {
          Product product = productRepository.findById(productId).get();
-         List<Order> ordersList = orderRepository.findByProduct(product);
+         List<Order> ordersList = orderRepository.findByProduct(product, Sort.by("created").descending());
          if(ordersList.isEmpty()) {
          	  model.addObject("err", "Nije pronađen radni nalog koji sadrži ID proizvoda: " + productId);
          	} else {
@@ -183,7 +184,7 @@ public class DisplayController {
          		}
      } catch (Exception e) {
      	  model.addObject("err", "Nije pronađen proizvod sa ID brojem: " + sampleInputs.getId());
-          List<Order> ordersList = orderRepository.findAll();
+          List<Order> ordersList = orderRepository.findAll(Sort.by("created").descending());
           model.addObject("message", "Lista radnih naloga");     
           model.addObject("sampleInputs", new SampleInputs());
           model.addObject("ordersList", ordersList);
@@ -203,7 +204,7 @@ public class DisplayController {
 
    	 if(orders.size() == 0) {
     	  model.addObject("err", "Nije pronađen radni nalog sa datumom: " + inputSearchDate);
-          List<Order> ordersList = orderRepository.findAll();
+          List<Order> ordersList = orderRepository.findAll(Sort.by("created").descending());
           model.addObject("message", "Lista radnih naloga");     
           model.addObject("ordersList", ordersList);
    	 	} else {
@@ -228,7 +229,7 @@ public class DisplayController {
    		 System.out.println("Check in: " + date.toString());
    		 
    		 List<Order> ordersOnDate = new ArrayList<>();
-   		 ordersOnDate = orderRepository.findByCreated(date);
+   		 ordersOnDate = orderRepository.findByCreatedDate(date);
    		return ordersOnDate;
     	}
 

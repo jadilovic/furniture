@@ -18,7 +18,6 @@ public class Order implements Serializable{
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 	
-	@Temporal(TemporalType.DATE)
     private Date created;
     
     private int orderQuant;

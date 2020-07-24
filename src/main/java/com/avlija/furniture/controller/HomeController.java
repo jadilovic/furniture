@@ -55,6 +55,16 @@ public class HomeController {
      
      return model;
     }
+    
+    @RequestMapping(value={"/home/profile"}, method = RequestMethod.GET)
+    public ModelAndView userProfilePage(){
+        ModelAndView modelAndView = new ModelAndView();
+        User user = getCurrentUser();
+        modelAndView.addObject("userProfile", user);
+        modelAndView.addObject("msg", "Korisnički profil za " + user.getUserName());
+        modelAndView.setViewName("home/profile_page");
+        return modelAndView;
+    }
 
     private User getCurrentUser() {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
