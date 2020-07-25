@@ -127,7 +127,11 @@ public class SearchController {
     	 if(element == null) {
         	 model.addObject("err", "Nije pronađen element sa šifrom: " + sampleInputs.getSifra());
              model.addObject("elementsList", elements);
-    	 	} else {
+    	 	}
+    	 if(elementAlreadyInProduct(element, elements)){
+        	 model.addObject("err", "Pronađen element sa šifrom: '" + sampleInputs.getSifra() + "', ali već postoji u proizvodu.");
+             model.addObject("elementsList", elements);
+    	 } else {
     	 		newElements.add(element);
     	 		for(Element item: elements) {
     	 			newElements.add(item);
@@ -140,24 +144,32 @@ public class SearchController {
           model.setViewName("admin/add_elements");
      return model;
     }
-    
-    
-    @RequestMapping(value= {"home/elementsearchkeyword"}, method=RequestMethod.POST)
+
+	@RequestMapping(value= {"home/elementsearchkeyword"}, method=RequestMethod.POST)
     public ModelAndView elementSearchKeyWord(@Valid SampleInputs sampleInputs) {
      ModelAndView model = new ModelAndView();
      String keyWord = sampleInputs.getKeyWord();
    	Product product = productRepository.findById(sampleInputs.getId()).get();
-         List<Element> elementsList = elementRepository.findByNameContaining(keyWord);
+         List<Element> foundElements = elementRepository.findByNameContaining(keyWord);
          List<Element> elements = product.getElements();
-         if(elementsList.isEmpty()) {
+         if(foundElements.isEmpty()) {
          	  model.addObject("err", "Nije pronađen element koji sadrži ključnu riječ: " + keyWord);
               model.addObject("elementsList", elements);
          	} else {
-         		model.addObject("msg", "Lista elemenata koji sadrže ključnu riječ: " + keyWord);
+         		List<Element> selectionElements = new ArrayList<>();
+         		foundElements.removeAll(elements);
+         		if(foundElements.isEmpty()) {
+             		model.addObject("msg", "Lista elemenata koji sadrže ključnu riječ: '" + keyWord + "' se već nalaze u proizvodu.");
+         			} else {
+             		model.addObject("msg", "Lista elemenata koji sadrže ključnu riječ: " + keyWord);
+             			for(Element item: foundElements) {
+             				selectionElements.add(item);
+             				}
+         				}
     	 		for(Element item: elements) {
-    	 			elementsList.add(item);
-    	 		}
-      			model.addObject("elementsList", elementsList);         		
+    	 			selectionElements.add(item);
+    	 			}
+      			model.addObject("elementsList", selectionElements);         		
          		}
         model.addObject("product", product);
         model.addObject("sampleInputs", sampleInputs);         
@@ -213,4 +225,14 @@ public class SearchController {
    	 }
    	return elementQuantitiyList;
    }
+    
+    private boolean elementAlreadyInProduct(Element element, List<Element> elements) {
+		for(Element check: elements) {
+			if(check.getId() == element.getId()) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 }
