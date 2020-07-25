@@ -215,25 +215,22 @@ public class DisplayController {
         return model;    
     }
     
+    // ORDER DATE
     public List<Order> searchByDate(String inputSearchDate) {
    	 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-   	 LocalDate dateInput = LocalDate.parse(inputSearchDate, formatter);
-   		 
-   		 System.out.println("TEST 1, TEST 1, TEST 1");
-   		 System.out.println("Check in: " + dateInput.toString());
-   		 
-   		 LocalDateAttributeConverter converter = new LocalDateAttributeConverter();
-   		 java.sql.Date date = converter.convertToDatabaseColumn(dateInput);
-   		 
-   		 System.out.println("TEST 1.5, TEST 1.5, TEST 1.5");
-   		 System.out.println("Check in: " + date.toString());
-   		 
-   		 List<Order> ordersOnDate = new ArrayList<>();
-   		 ordersOnDate = orderRepository.findByCreatedDate(date);
+		 List<Order> ordersOnDate = new ArrayList<>();
+		 try {
+			 LocalDate dateInput = LocalDate.parse(inputSearchDate, formatter);
+			 LocalDateAttributeConverter converter = new LocalDateAttributeConverter();
+			 java.sql.Date date = converter.convertToDatabaseColumn(dateInput);
+			 ordersOnDate = orderRepository.findByCreatedDate(date);
+		 	} catch (Exception e) {
+		 		System.out.println("Pogresan unos datuma.");
+		 		}
    		return ordersOnDate;
     	}
 
-    
+    // GET ELEMENT QUANTITY
     private List<ElementQuantity> getElementQuantityList(List<Element> elementList, Product product) {
    	 List<ElementQuantity> elementQuantitiyList = new ArrayList<ElementQuantity>();
    	 for(Element element: elementList) {

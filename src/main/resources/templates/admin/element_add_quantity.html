@@ -62,7 +62,9 @@
       	   	<input type="hidden" th:field="*{elmId}" readonly="readonly"/>
       	   	<input type="hidden" th:field="*{prdId}" readonly="readonly"/>
         	<input min="1" step="1" type="number" th:field="*{quantity}" placeholder="količina" required autofocus/>
-    		<input class="btn btn-success" type="submit" value="Dodaj"/>
+    		<div class="p-1">
+    			<input class="btn btn-success btn-block" type="submit" value="Dodaj"/>
+    		</div>
 		</form>
 	  </td>
     </tr>

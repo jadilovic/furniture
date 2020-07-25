@@ -82,7 +82,9 @@
                  <form th:action="@{/admin/createorder}" th:object="${sampleInputs}" method="post">
       	   			<input type="hidden" th:field="*{prdId}" readonly="readonly"/>
         			<p><b>Unesite količinu proizvoda: </b></p><input min="1" step="1" placeholder="količina" type="number" th:field="*{quantity}" required autofocus/>
-    				<input class="btn btn-success" type="submit" value="Kreiraj Radni Nalog"/>
+    				<div class="p-1">
+    				   	<input class="btn btn-success btn-block" type="submit" value="Kreiraj Radni Nalog"/>
+    				</div>
 				</form>
               </div>
          </div>

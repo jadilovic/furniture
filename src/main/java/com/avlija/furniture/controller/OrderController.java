@@ -116,53 +116,8 @@ public class OrderController {
    	  	model.addObject("order", order);   
      return model;
     }
-    /*
-    @RequestMapping(value= {"admin/addelement"}, method=RequestMethod.POST)
-    public ModelAndView addElementToProduct(@Valid Product product) {
-     ModelAndView model = new ModelAndView();
-     List <Element> elements = new ArrayList<Element>();
-     elements = product.getElements();
-     	Product createdProduct = productRepository.findById(product.getId()).get();
-     	for(Element element: elements) {
-     		ProductElement productElement = new ProductElement(createdProduct.getId(), element.getId());
-     		ElementQuantity elementQuantity = new ElementQuantity(productElement, 0);
-     		elementQuantityRepository.save(elementQuantity);
-     	}
-     	createdProduct.setElements(elements);
-   	  	productRepository.save(createdProduct);
-   	  	List<ElementQuantity> elementsQuantityList = getElementQuantityList(elements, createdProduct);
-   	  model.addObject("msg", "Izvršena dopuna - izmjena elemenata");
-   	  model.setViewName("admin/create_product2");
-     model.addObject("product", createdProduct);
-     model.addObject("elementsList", elements);
-     model.addObject("elementsQuantityList", elementsQuantityList);
-     return model;
-    }
-    
-    @RequestMapping(value="admin/quantity/{productId}/{elementId}", method=RequestMethod.GET)
-    public ModelAndView getSpecificQuestions(@PathVariable String productId, @PathVariable String elementId) {
-    	ModelAndView model = new ModelAndView();
-    	int prdId = Integer.parseInt(productId);
-    	int elmId = Integer.parseInt(elementId);
-    	ProductElement productElement = new ProductElement(prdId, elmId);
-    	ElementQuantity elementQuantity = elementQuantityRepository.findById(productElement).get();
-    	Product product = productRepository.findById(prdId).get();
-    	Element element = elementRepository.findById(elmId).get();
-    	SampleInputs sampleInputs = new SampleInputs();
-    	sampleInputs.setElmId(elmId);
-    	sampleInputs.setPrdId(prdId);
-    	sampleInputs.setQuantity(elementQuantity.getQuantity());
-    	model.setViewName("admin/element_add_quantity");
-        model.addObject("sampleInputs", sampleInputs);
-        model.addObject("element", element);
-        model.addObject("elementQuantity", elementQuantity);        
-        model.addObject("msg", "Dodaj potrebnu količinu elementa u proizvodu: " + product.getName());
-        return model;
-    }
-    
 
     
-    */
     private List<ElementQuantity> getElementQuantityList(List<Element> elementList, Product product) {
    	 List<ElementQuantity> elementQuantitiyList = new ArrayList<ElementQuantity>();
    	 for(Element element: elementList) {
