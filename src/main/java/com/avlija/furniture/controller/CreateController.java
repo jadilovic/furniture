@@ -150,7 +150,7 @@ public class CreateController {
      sampleInputs.setId(id);
      model.addObject("product", product);
      model.addObject("sampleInputs", sampleInputs);
-     model.addObject("elementsList", elementRepository.findAll());
+     model.addObject("elementsList", product.getElements());
      model.setViewName("admin/add_elements");
      
      return model;

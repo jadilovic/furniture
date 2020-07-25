@@ -120,17 +120,21 @@ public class SearchController {
     @RequestMapping(value= {"admin/searchelementsifra"}, method=RequestMethod.POST)
     public ModelAndView searchElemntBySifra(@Valid SampleInputs sampleInputs) {
      ModelAndView model = new ModelAndView();
-     List <Element> elements = new ArrayList<Element>();
+     List <Element> newElements = new ArrayList<Element>();
     	 Element element = elementRepository.findBySifra(sampleInputs.getSifra());
+      	Product product = productRepository.findById(sampleInputs.getId()).get();
+      	List<Element> elements = product.getElements();
     	 if(element == null) {
         	 model.addObject("err", "Nije pronađen element sa šifrom: " + sampleInputs.getSifra());
-             model.addObject("elementsList", elementRepository.findAll());
+             model.addObject("elementsList", elements);
     	 	} else {
-    	 		elements.add(element);
-    	 		model.addObject("elementsList", elements);
+    	 		newElements.add(element);
+    	 		for(Element item: elements) {
+    	 			newElements.add(item);
+    	 		}
+    	 		model.addObject("elementsList", newElements);
            	 model.addObject("msg", "Pronađen element sa šifrom: " + sampleInputs.getSifra());		
     	 		}
-     	Product product = productRepository.findById(sampleInputs.getId()).get();
           model.addObject("product", product);
           model.addObject("sampleInputs", sampleInputs);
           model.setViewName("admin/add_elements");
@@ -142,15 +146,19 @@ public class SearchController {
     public ModelAndView elementSearchKeyWord(@Valid SampleInputs sampleInputs) {
      ModelAndView model = new ModelAndView();
      String keyWord = sampleInputs.getKeyWord();
+   	Product product = productRepository.findById(sampleInputs.getId()).get();
          List<Element> elementsList = elementRepository.findByNameContaining(keyWord);
+         List<Element> elements = product.getElements();
          if(elementsList.isEmpty()) {
          	  model.addObject("err", "Nije pronađen element koji sadrži ključnu riječ: " + keyWord);
-              model.addObject("elementsList", elementRepository.findAll());
+              model.addObject("elementsList", elements);
          	} else {
          		model.addObject("msg", "Lista elemenata koji sadrže ključnu riječ: " + keyWord);
+    	 		for(Element item: elements) {
+    	 			elementsList.add(item);
+    	 		}
       			model.addObject("elementsList", elementsList);         		
          		}
-      	Product product = productRepository.findById(sampleInputs.getId()).get();
         model.addObject("product", product);
         model.addObject("sampleInputs", sampleInputs);         
   			model.setViewName("admin/add_elements");
@@ -174,7 +182,6 @@ public class SearchController {
           model.setViewName("home/list_elements");
      return model;
     }
-    
     
     @RequestMapping(value= {"home/searchelements"}, method=RequestMethod.POST)
     public ModelAndView elementsSearchKeyWord(@Valid SampleInputs sampleInputs) {
