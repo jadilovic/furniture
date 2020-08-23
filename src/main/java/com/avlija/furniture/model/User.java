@@ -61,7 +61,22 @@ public class User {
     			inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;
 	
+    @Transient
+    private String role;
+    
     /**
+	 * @return the role
+	 */
+	public String getRole() {
+		return role;
+	}
+	/**
+	 * @param role the role to set
+	 */
+	public void setRole(String role) {
+		this.role = role;
+	}
+	/**
 	 * @return the id
 	 */
 	public int getId() {

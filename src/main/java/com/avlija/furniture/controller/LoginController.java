@@ -33,6 +33,7 @@ public class LoginController {
     public ModelAndView registration(){
         ModelAndView modelAndView = new ModelAndView();
         User user = new User();
+        user.setRole("CLIENT");
         modelAndView.addObject("user", user);
         modelAndView.setViewName("registration");
         return modelAndView;
@@ -70,5 +71,11 @@ public class LoginController {
         return modelAndView;
     }
 
+    @RequestMapping(value= {"/access_denied"}, method=RequestMethod.GET)
+    public ModelAndView accessDenied() {
+     ModelAndView model = new ModelAndView();
+     model.setViewName("access_denied");
+     return model;
+    }
 
 }

@@ -98,6 +98,7 @@ public class EditController {
      return model;
     }
     
+    
     private List<ElementQuantity> getElementQuantityList(List<Element> elementList, Product product) {
    	 List<ElementQuantity> elementQuantitiyList = new ArrayList<ElementQuantity>();
    	 for(Element element: elementList) {
@@ -112,5 +113,5 @@ public class EditController {
    	 }
    	return elementQuantitiyList;
    }
-
+    
 }

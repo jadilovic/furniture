@@ -1,9 +1,13 @@
 package com.avlija.furniture.controller;
 
+import java.util.List;
+import java.util.Set;
+
 import javax.validation.Valid;
 
 import com.avlija.furniture.model.Element;
 import com.avlija.furniture.model.Product;
+import com.avlija.furniture.model.Role;
 import com.avlija.furniture.model.User;
 import com.avlija.furniture.repository.ElementRepository;
 import com.avlija.furniture.service.UserService;
@@ -60,10 +64,58 @@ public class HomeController {
     public ModelAndView userProfilePage(){
         ModelAndView modelAndView = new ModelAndView();
         User user = getCurrentUser();
+        Set <Role> roles = user.getRoles();
         modelAndView.addObject("userProfile", user);
+        modelAndView.addObject("roles", roles);
         modelAndView.addObject("msg", "Korisnički profil za " + user.getUserName());
         modelAndView.setViewName("home/profile_page");
         return modelAndView;
+    }
+    
+    @RequestMapping(value= {"/admin/allusers"}, method=RequestMethod.GET)
+    public ModelAndView showAllUsers() {
+     ModelAndView model = new ModelAndView();
+     List<User> listUsers = userService.findAllUsers();
+     model.addObject("listUsers", listUsers);
+     User user = new User();
+     model.addObject("user", user);
+     model.setViewName("admin/list_all_users");
+     
+     return model;
+    }
+    
+    @RequestMapping(value= {"admin/editprofile/{id}"}, method=RequestMethod.GET)
+    public ModelAndView editProfile(@PathVariable(name = "id") Integer id) {
+     ModelAndView model = new ModelAndView();
+     User user = userRepository.findById(id).get();
+     Set<Role> roles = user.getRoles();
+     for(Role role: roles)
+   	  user.setRole(role.getRole());
+     model.addObject("user", user);
+     model.setViewName("admin/edit_user");
+     return model;
+    }
+    
+    @RequestMapping(value= {"admin/editprofile"}, method=RequestMethod.POST)
+    public ModelAndView editProduct(@Valid User user) {
+     ModelAndView model = new ModelAndView();
+     
+     User changedUser = userRepository.findByEmail(user.getEmail());
+     changedUser.setFirstname(user.getFirstname());
+     changedUser.setLastname(user.getLastname());
+     changedUser.setRole(user.getRole());
+     changedUser.setCountry(user.getCountry());
+     changedUser.setActive(user.getActive());
+     userService.updateUser(changedUser);
+     
+     Set<Role> roles = changedUser.getRoles();
+     
+   	  model.addObject("msg", "Izmjena podataka profila korisnika izvrsena");
+   	  model.addObject("userProfile", changedUser);
+   	  model.addObject("roles", roles);
+   	  model.setViewName("user/profile_page");
+    
+     return model;
     }
 
     private User getCurrentUser() {
