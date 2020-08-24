@@ -24,36 +24,59 @@
          </div>
          <div class="p-3 row">
              <div class="col-md-3"></div>
-                 <h5>Izmjena profila korisnika YEP baze podataka</h5>
+                 <h5>Izmjena profila korisnika</h5>
          </div>
+         
+         <!-- KORISNIČKO IME  -->
          <div class="row">
              <div class="col-md-3 field-label-responsive">
-                 <label for="name">First Name</label>
+                 <label for="userName">Korisničko Ime</label>
              </div>
              <div class="col-md-6">
                  <div class="form-group">
                      <div class="input-group mb-2 mr-sm-2 mb-sm-0">
                          <div class="input-group-addon" style="width: 2.6rem"><i class="fa fa-user"></i></div>
-                         <input type="text" th:field="*{firstname}" class="form-control" id="firstname"
-                                placeholder="First Name" required autofocus>
+                         <input type="text" th:field="*{userName}" class="form-control" id="userName"
+                                placeholder="Korisničko ime" required autofocus>
+                         <input type="hidden" th:field="*{id}" class="form-control" id="id">
+                         <input type="hidden" th:field="*{password}" class="form-control" id="password">
                      </div>
                  </div>
              </div>
          </div>
+         <!-- IME  -->
          <div class="row">
              <div class="col-md-3 field-label-responsive">
-                 <label for="name">Last Name</label>
+                 <label for="name">Ime</label>
              </div>
              <div class="col-md-6">
                  <div class="form-group">
                      <div class="input-group mb-2 mr-sm-2 mb-sm-0">
                          <div class="input-group-addon" style="width: 2.6rem"><i class="fa fa-user"></i></div>
-                         <input type="text" th:field="*{lastname}" class="form-control" id="lastname"
-                                placeholder="Last name" required autofocus>
+                         <input type="text" th:field="*{name}" class="form-control" id="name"
+                                placeholder="Ime" required autofocus>
                      </div>
                  </div>
              </div>
          </div>
+         
+         <!-- PREZIME  -->
+         <div class="row">
+             <div class="col-md-3 field-label-responsive">
+                 <label for="lastName">Prezime</label>
+             </div>
+             <div class="col-md-6">
+                 <div class="form-group">
+                     <div class="input-group mb-2 mr-sm-2 mb-sm-0">
+                         <div class="input-group-addon" style="width: 2.6rem"><i class="fa fa-user"></i></div>
+                         <input type="text" th:field="*{lastName}" class="form-control" id="lastName"
+                                placeholder="Preizime" required autofocus>
+                     </div>
+                 </div>
+             </div>
+         </div>
+         
+         <!-- EMAIL -->
          <div class="row">
              <div class="col-md-3 field-label-responsive">
                  <label for="email">Email</label>
@@ -85,29 +108,8 @@
                      <div class="input-group mb-2 mr-sm-2 mb-sm-0">
                          <div class="input-group-addon" style="width: 2.6rem"><i class="fa fa-suitcase"></i></div>
                     		<select th:field="*{role}">
-    							<option th:value="'GUEST'" th:text="GOST"></option>
     							<option th:value="'CLIENT'" th:text="KLIJENT"></option>
     							<option th:value="'ADMIN'" th:text="ADMIN"></option>
-							</select>
-                     </div>
-                 </div>
-             </div>
-         </div>
-         
-        <!-- DRZAVA -->
-         <div class="row">
-             <div class="col-md-3 field-label-responsive">
-                 <label for="role">Država</label>
-             </div>
-             <div class="col-md-6">
-                 <div class="form-group has-danger">
-                     <div class="input-group mb-2 mr-sm-2 mb-sm-0">
-                         <div class="input-group-addon" style="width: 2.6rem"><i class="fa fa-map-marker"></i></div>
-                    		<select th:field="*{country}" name="country" id="country">
-    							<option value="Bosna i Hercegovina">Bosna i Hercegovina</option>
-    							<option value="Crna Gora">Crna Gora</option>
-    							<option value="Hrvatska">Hrvatska</option>
-    							<option value="Srbija">Srbija</option>
 							</select>
                      </div>
                  </div>

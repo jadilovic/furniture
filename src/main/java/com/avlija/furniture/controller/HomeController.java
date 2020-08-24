@@ -87,7 +87,7 @@ public class HomeController {
     @RequestMapping(value= {"admin/editprofile/{id}"}, method=RequestMethod.GET)
     public ModelAndView editProfile(@PathVariable(name = "id") Integer id) {
      ModelAndView model = new ModelAndView();
-     User user = userRepository.findById(id).get();
+     User user = userService.findUserById(id);
      Set<Role> roles = user.getRoles();
      for(Role role: roles)
    	  user.setRole(role.getRole());
@@ -100,11 +100,12 @@ public class HomeController {
     public ModelAndView editProduct(@Valid User user) {
      ModelAndView model = new ModelAndView();
      
-     User changedUser = userRepository.findByEmail(user.getEmail());
-     changedUser.setFirstname(user.getFirstname());
-     changedUser.setLastname(user.getLastname());
+     User changedUser = userService.findUserById(user.getId());
+     System.out.println(changedUser.getId() + ", NNNNNN password: " + changedUser.getPassword());
+     changedUser.setUserName(user.getUserName());
+     changedUser.setName(user.getName());
+     changedUser.setLastName(user.getLastName());
      changedUser.setRole(user.getRole());
-     changedUser.setCountry(user.getCountry());
      changedUser.setActive(user.getActive());
      userService.updateUser(changedUser);
      
@@ -113,7 +114,7 @@ public class HomeController {
    	  model.addObject("msg", "Izmjena podataka profila korisnika izvrsena");
    	  model.addObject("userProfile", changedUser);
    	  model.addObject("roles", roles);
-   	  model.setViewName("user/profile_page");
+   	  model.setViewName("home/profile_page");
     
      return model;
     }

@@ -36,6 +36,10 @@ public class UserService {
     public User findUserByUserName(String userName) {
         return userRepository.findByUserName(userName);
     }
+    
+    public User findUserById(int id) {
+        return userRepository.findById(id).get();
+    }
 
     public User saveUser(User user) {
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
@@ -44,6 +48,13 @@ public class UserService {
         user.setRoles(new HashSet<Role>(Arrays.asList(userRole)));
         return userRepository.save(user);
     }
+    
+    public void updateUser(User user) {
+    	  Role userRole = roleRepository.findByRole(user.getRole());
+    	  user.setRoles(new HashSet<Role>(Arrays.asList(userRole)));
+    	  userRepository.save(user);
+    }
+
 
 	public List<User> findAllUsers() {
 		return userRepository.findAll();

@@ -23,6 +23,9 @@ public class Product implements Serializable{
 	@Column(name = "name")
     private String name;
 	
+	@Column(name = "product_size")
+    private String productSize;
+	
     @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     @JoinTable(
             name = "products_elements",
@@ -74,6 +77,20 @@ public class Product implements Serializable{
 	 */
 	public void setElements(List <Element> elements) {
 		this.elements = elements;
+	}
+
+	/**
+	 * @return the productSize
+	 */
+	public String getProductSize() {
+		return productSize;
+	}
+
+	/**
+	 * @param productSize the productSize to set
+	 */
+	public void setProductSize(String productSize) {
+		this.productSize = productSize;
 	}
 
 
