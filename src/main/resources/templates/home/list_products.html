@@ -27,6 +27,7 @@
             <tr>
                 <th scope="col">ID Broj</th>
                 <th scope="col">Naziv</th>
+                <th scope="col">Mjera</th>                
                 <th scope="col">Info</th>
             </tr>
         </thead>
@@ -34,6 +35,7 @@
             <tr scope="row" th:each="product, productStat : ${productsList}">
                 <td th:text="${product.id}">ID</td>
                 <td th:text="${product.name}">Naziv</td> 
+                <td th:text="${product.productSize}">Mjera</td>                 
                 <td th:object="${product}">
                 	<a class="btn btn-warning" th:href="@{'/home/productprofile/' + *{id}}">Info</a>
                 </td>       

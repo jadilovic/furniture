@@ -41,6 +41,10 @@
       <td><span th:text="*{name}"></span></td>
     </tr>
     <tr>
+      <th scope="row">Mjera Proizvoda:</th>
+      <td><span th:text="*{productSize}"></span></td>
+    </tr>
+    <tr>
         <th scope="row">Lista elemenata za dodati:</th>
     	<td>
     		<a class="btn btn-success btn-block" th:href="@{'/admin/addelement/' + ${product.id}}">Dodaj Element</a>

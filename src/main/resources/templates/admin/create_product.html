@@ -19,7 +19,7 @@
       <div class="row">
              <div class="col-md-3"></div>
              <div class="col-md-6">
-              <div class="alert alert-success" role="alert" th:if="${msg}" th:utext="${msg}">
+              <div class="alert alert-danger" role="alert" th:if="${msg}" th:utext="${msg}">
      </div>
              </div>
          </div>
@@ -35,7 +35,7 @@
              <div class="col-md-6">
                  <div class="form-group">
                      <div class="input-group mb-2 mr-sm-2 mb-sm-0">
-                         <div class="input-group-addon" style="width: 2.6rem"><i class="fa fa-user"></i></div>
+                         <div class="input-group-addon" style="width: 2.6rem"><i class="fa fa-pencil-square"></i></div>
                          <input type="text" th:field="*{name}" class="form-control" id="name"
                                 placeholder="Naziv proizvoda" required autofocus>
                      </div>
@@ -51,14 +51,14 @@
          
          <div class="row">
              <div class="col-md-3 field-label-responsive">
-                 <label for="name">Naziv Proizvoda</label>
+                 <label for="productSize">Mjere Proizvoda</label>
              </div>
              <div class="col-md-6">
                  <div class="form-group">
                      <div class="input-group mb-2 mr-sm-2 mb-sm-0">
-                         <div class="input-group-addon" style="width: 2.6rem"><i class="fa fa-user"></i></div>
-                         <input type="text" th:field="*{name}" class="form-control" id="name"
-                                placeholder="Naziv proizvoda" required autofocus>
+                         <div class="input-group-addon" style="width: 2.6rem"><i class="fa fa-resize-full"></i></div>
+                         <input type="text" th:field="*{productSize}" class="form-control" id="productSize"
+                                placeholder="Mjere proizvoda" required autofocus>
                      </div>
                  </div>
              </div>

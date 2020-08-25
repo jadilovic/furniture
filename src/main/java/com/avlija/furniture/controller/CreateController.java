@@ -123,11 +123,12 @@ public class CreateController {
     public ModelAndView createProduct(@Valid Product product, BindingResult bindingResult) {
      ModelAndView model = new ModelAndView();
      Product productExists = productRepository.findByName(product.getName());
-     if(productExists != null) {
-    		 bindingResult.rejectValue("name", "error.name", "Ovaj naziv proizvoda već postoji!");
+     Product productExists2 = productRepository.findByProductSize(product.getProductSize());
+     if(productExists != null && productExists2 != null) {
+    		 bindingResult.rejectValue("name", "error.name", "Ovaj naziv proizvoda i mjera već postoji!");
      }
      if(bindingResult.hasErrors()) {
-      	  model.addObject("msg", "Uneseni naziv već postoji.");
+      	  model.addObject("msg", "Uneseni naziv proizvoda i mjere već postoji.");
 
       model.setViewName("admin/create_product");
      } else {
