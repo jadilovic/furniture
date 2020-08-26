@@ -16,6 +16,7 @@ import com.avlija.furniture.model.ProductElement;
 import com.avlija.furniture.model.UnitMeasure;
 import com.avlija.furniture.repository.ElementQuantityRepository;
 import com.avlija.furniture.repository.ElementRepository;
+import com.avlija.furniture.repository.ListOfProductsRepository;
 import com.avlija.furniture.repository.ProductRepository;
 import com.avlija.furniture.repository.UnitMeasureRepository;
 
@@ -34,7 +35,7 @@ public class ListController {
     private ProductRepository productRepository;
 
     @Autowired
-    private UnitMeasureRepository unitMeasureRepository;
+    private ListOfProductsRepository listOfProductsRepository;
 
     @Autowired
     private ElementRepository elementRepository;
@@ -46,7 +47,7 @@ public class ListController {
     // CREATE LIST OF PRODUCTS
     
     @RequestMapping(value= {"admin/createlist"}, method=RequestMethod.GET)
-    public ModelAndView createProduct() {
+    public ModelAndView createList() {
      ModelAndView model = new ModelAndView();
      ListOfProducts listOfProducts = new ListOfProducts();
      model.addObject("listOfProducts", listOfProducts);
@@ -56,44 +57,75 @@ public class ListController {
     }
     
     @RequestMapping(value= {"admin/createlist"}, method=RequestMethod.POST)
-    public ModelAndView createProduct(@Valid Product product, BindingResult bindingResult) {
+    public ModelAndView createList(@Valid ListOfProducts listOfProducts, BindingResult bindingResult) {
      ModelAndView model = new ModelAndView();
-     Product productExists = productRepository.findByName(product.getName());
-     Product productExists2 = productRepository.findByProductSize(product.getProductSize());
-     if(productExists != null && productExists2 != null) {
-    		 bindingResult.rejectValue("name", "error.name", "Ovaj naziv proizvoda i mjera već postoji!");
+     ListOfProducts listExists = listOfProductsRepository.findByName(listOfProducts.getName());
+     if(listExists != null) {
+    		 bindingResult.rejectValue("name", "error.name", "Ovaj naziv liste proizvoda već postoji!");
      }
      if(bindingResult.hasErrors()) {
-      	  model.addObject("msg", "Uneseni naziv proizvoda i mjere već postoji.");
-
-      model.setViewName("admin/create_product");
+      	  model.addObject("msg", "Uneseni naziv liste proizvoda već postoji.");
+          ListOfProducts newList = new ListOfProducts();
+          model.addObject("listOfProducts", newList);
+      	  model.setViewName("admin/create_list");
      } else {
-   	  	productRepository.save(product);
-   	  model.addObject("msg", "Naziv novog proizvoda je uspješno kreiran! Potrebno je dodati elemente od kojih se sastoji proizvod.");
-   	  model.setViewName("admin/create_product2");
+   	  	listOfProductsRepository.save(listOfProducts);
+   	  model.addObject("msg", "Naziv nove liste proizvoda je uspješno kreiran! Potrebno je dodati proizvode od kojih se sastoji lista.");
+   	  model.setViewName("admin/create_list2");
+      
+   	  ListOfProducts newList = listOfProductsRepository.findByName(listOfProducts.getName());
+      List<Product> products = new ArrayList<>();
+      model.addObject("productsList", products);
+      model.addObject("list", newList);
      	}
-     Product newProduct = productRepository.findByName(product.getName());
-     List<Element> elements = new ArrayList<>();
-     model.addObject("elementsList", elements);
-     model.addObject("product", newProduct);
      return model;
     }
     
-    @RequestMapping(value= {"admin/addelement/{id}"}, method=RequestMethod.GET)
-    public ModelAndView addElement(@PathVariable(name = "id") Integer id) {
+    
+    // DISPLAY ALL LISTS
+    
+    @RequestMapping(value= {"home/alllists"}, method=RequestMethod.GET)
+    public ModelAndView allLists() {
      ModelAndView model = new ModelAndView();
-     Product product = productRepository.findById(id).get();
-     SampleInputs sampleInputs = new SampleInputs();
-     sampleInputs.setId(id);
-     model.addObject("product", product);
-     model.addObject("sampleInputs", sampleInputs);
-     model.addObject("elementsList", product.getElements());
-     model.setViewName("admin/add_elements");
+     List<ListOfProducts> listOfProductsLists = listOfProductsRepository.findAll();
+     model.addObject("listOfProductsLists", listOfProductsLists);
+     model.setViewName("home/list_of_products_lists");
      
      return model;
     }
     
-    @RequestMapping(value= {"admin/addelement"}, method=RequestMethod.POST)
+    // LIST PROFILE
+    
+    @RequestMapping(value= {"home/listprofile/{id}"}, method=RequestMethod.GET)
+    public ModelAndView listProfile(@PathVariable(name = "id") Integer id) {
+     ModelAndView model = new ModelAndView();
+     ListOfProducts listOfProducts = listOfProductsRepository.findById(id).get();
+     model.addObject("list", listOfProducts);
+     model.addObject("productsList", listOfProducts.getProducts());
+     model.setViewName("home/list_profile");
+     
+     return model;
+    }
+    
+    
+    // ADD PRODUCTS TO THE LIST
+    
+    @RequestMapping(value= {"admin/addproducts/{id}"}, method=RequestMethod.GET)
+    public ModelAndView addElement(@PathVariable(name = "id") Integer id) {
+     ModelAndView model = new ModelAndView();
+     ListOfProducts listOfProducts = listOfProductsRepository.findById(id).get();
+     SampleInputs sampleInputs = new SampleInputs();
+     sampleInputs.setListId(id);
+     model.addObject("list", listOfProducts);
+     model.addObject("sampleInputs", sampleInputs);
+     model.addObject("productsList", listOfProducts.getProducts());
+     model.setViewName("admin/add_products");
+     
+     return model;
+    }
+    
+    /**
+    @RequestMapping(value= {"admin/addproduct"}, method=RequestMethod.POST)
     public ModelAndView addElementToProduct(@Valid Product product) {
      ModelAndView model = new ModelAndView();
      List <Element> elements = new ArrayList<Element>();
@@ -117,8 +149,85 @@ public class ListController {
      model.addObject("elementsQuantityList", elementsQuantityList);
      return model;
     }
+**/
 
+    // SEARCH PRODUCT BY ID TO BE ADDED TO THE LIST
+    
+    @RequestMapping(value= {"home/searchproductid"}, method=RequestMethod.POST)
+    public ModelAndView searchProductById(@Valid SampleInputs sampleInputs) {
+     ModelAndView model = new ModelAndView();
+     List <Product> newProducts = new ArrayList<Product>();
+    	ListOfProducts listOfProducts = listOfProductsRepository.findById(sampleInputs.getListId()).get();
+    	System.out.println("Product id number: " + sampleInputs.getPrdId());
+      	Product product = productRepository.findById(sampleInputs.getPrdId()).get();
+      	List<Product> products = listOfProducts.getProducts();
+    	 if(product == null) {
+        	 model.addObject("err", "Nije pronađen proizovd sa ID brojem: " + sampleInputs.getPrdId());
+             model.addObject("list", listOfProducts);
+    	 	}
+    	 if(productAlreadyInList(product, products)){
+        	 model.addObject("err", "Pronađen proizvod sa ID brojem: '" + sampleInputs.getPrdId() + "', ali već postoji u listi.");
+             model.addObject("list", listOfProducts);
+    	 } else {
+    	 		newProducts.add(product);
+    	 		for(Product item: products) {
+    	 			newProducts.add(item);
+    	 		}
+    	 		model.addObject("productsList", newProducts);
+           	 model.addObject("msg", "Pronađen proizvod sa ID brojem: " + sampleInputs.getPrdId());		
+    	 		}
+          model.addObject("list", listOfProducts);
+          model.addObject("sampleInputs", sampleInputs);
+          model.setViewName("admin/add_products");
+     return model;
+    }
 
+	private boolean productAlreadyInList(Product product, List<Product> products) {
+		for(Product check: products) {
+			if(check.getId() == product.getId()) {
+				return true;
+			}
+		}
+		return false;
+	}
+    
+	// SEARCH PRODUCT BY KEYWORD
+	
+	@RequestMapping(value= {"home/productsearchkeyword2"}, method=RequestMethod.POST)
+    public ModelAndView productSearchKeyWord(@Valid SampleInputs sampleInputs) {
+     ModelAndView model = new ModelAndView();
+     String keyWord = sampleInputs.getKeyWord();
+   	ListOfProducts listOfProducts = listOfProductsRepository.findById(sampleInputs.getListId()).get();
+         List<Product> foundProducts = productRepository.findByNameContaining(keyWord);
+         List<Product> products = listOfProducts.getProducts();
+         if(foundProducts.isEmpty()) {
+         	  model.addObject("err", "Nije pronađen proizvod koji sadrži ključnu riječ: " + keyWord);
+              model.addObject("productsList", products);
+         	} else {
+         		List<Product> selectionProducts = new ArrayList<>();
+         		foundProducts.removeAll(products);
+         		if(foundProducts.isEmpty()) {
+             		model.addObject("msg", "Lista elemenata koji sadrže ključnu riječ: '" + keyWord + "' se već nalaze u proizvodu.");
+         			} else {
+             		model.addObject("msg", "Lista elemenata koji sadrže ključnu riječ: " + keyWord);
+             			for(Product item: foundProducts) {
+             				selectionProducts.add(item);
+             				}
+         				}
+    	 		for(Product item: products) {
+    	 			selectionProducts.add(item);
+    	 			}
+      			model.addObject("productsList", selectionProducts);         		
+         		}
+        model.addObject("list", listOfProducts);
+        model.addObject("sampleInputs", sampleInputs);         
+  			model.setViewName("admin/add_products");
+         	return model;
+    	}
+    
+	
+	
+    /**
 	@RequestMapping(value="admin/quantity/{productId}/{elementId}", method=RequestMethod.GET)
     public ModelAndView getSpecificQuestions(@PathVariable String productId, @PathVariable String elementId) {
     	ModelAndView model = new ModelAndView();
@@ -189,5 +298,5 @@ public class ListController {
     		return false;
     	}
 	}
-    
+    **/
 }

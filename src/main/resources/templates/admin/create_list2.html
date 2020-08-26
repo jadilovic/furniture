@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+ xmlns:th="http://www.thymeleaf.org">
+<head>
+ <title>Dodavanje Proizvoda Listi</title>
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+ <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+ <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+ <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+ <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.0.0/css/font-awesome.min.css">
+</head>
+<body>
+
+<div th:include="fragments/header :: header"/></div>
+
+ <div class="container">
+
+<div class="p-1"></div>
+
+      <div class="row">
+         <div class="col-md-3 p-2"></div>
+          <div class="col-md-6">
+              <div class="alert alert-success" role="alert" th:if="${msg}" th:text="${msg}"></div>
+         </div>
+      </div>
+
+  <table th:object="${list}" class="table table-striped">
+  <thead>
+    <tr>
+      <th scope="col"></th>
+      <th scope="col">Dodaj proizvode u listu</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">ID Liste:</th>
+      <td><span th:text="*{id}"></span></td>
+    </tr>
+    <tr>
+      <th scope="row">Naziv Liste:</th>
+      <td><span th:text="*{name}"></span></td>
+    </tr>
+    <tr>
+        <th scope="row">Proizvodi za dodati:</th>
+    	<td>
+    		<a class="btn btn-success btn-block" th:href="@{'/admin/addproducts/' + ${list.id}}">Dodaj Proizvod</a>
+    	</td>
+    </tr>
+  </tbody>
+</table>
+
+  <table class="table table-striped">
+  <thead>
+    <tr>
+      <th scope="col">ID----naziv--proizvoda</th>
+      <th scope="col">Količina</th>
+      <th scope="col">Dopuna - Izmjena količine</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr th:each="product, productStat : ${productsList}">
+        <th scope="row"><span th:text="${product.getId()} + ' - ' + ${product.getName()}"></span></th>
+        <td>
+        	<span th:text="*{productsQuantityList[__${productStat .index}__].quantity}">Stanje</span>
+        </td>
+        <td>
+           	<a class="btn btn-info btn-block" th:href="@{'/admin/quantity/' + ${list.getId()} + '/' + ${product.getId()}}">Izmjeni Količinu</a>
+        </td>
+    </tr>
+  </tbody>
+</table>
+    <div class="alert alert-success" role="alert" th:if="${productsList.isEmpty()}"><p>Nema dodanih proizvoda</p></div>
+  	
+  	<div th:if="${!productsList.isEmpty()}">
+  	  	<a class="btn btn-warning btn-block" th:href="@{'/admin/createorder/' + ${list.id}}">Kreiraj Radni Nalog</a>
+  	</div>
+ 
+ </div>
+ 
+      <div th:include="fragments/footer :: footer"/></div>
+ 
+</body>
+</html>

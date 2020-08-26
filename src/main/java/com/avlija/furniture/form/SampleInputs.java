@@ -13,6 +13,7 @@ public class SampleInputs {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date dateField;
     private Integer id;
+    private int listId;
     private int userId;
     private int postId;
     private Double elementSize;
@@ -38,6 +39,23 @@ public class SampleInputs {
     public SampleInputs() {
     	
     }
+
+    
+	/**
+	 * @return the listId
+	 */
+	public int getListId() {
+		return listId;
+	}
+
+
+	/**
+	 * @param listId the listId to set
+	 */
+	public void setListId(int listId) {
+		this.listId = listId;
+	}
+
 
 	/**
 	 * @return the elmId

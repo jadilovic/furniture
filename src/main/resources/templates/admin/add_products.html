@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+ xmlns:th="http://www.thymeleaf.org">
+<head>
+ <title>Lista proizvoda za dodati</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+ <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+ <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+ <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+ <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.0.0/css/font-awesome.min.css">
+</head>
+<body>
+
+<div th:replace="fragments/header :: header"/></div>
+
+   <div class="container">
+   
+   <div class="text-center p-1">
+      <p><b th:if="${msg}" th:text="${msg}" class="alert alert-success" role="alert"></b></p>   
+   </div>
+   
+   <div class="text-center p-1">
+      <p><b th:if="${err}" th:text="${err}" class="alert alert-danger" role="alert"></b></p>   
+   </div>
+   
+  <div class="card-deck mb-2 text-center">
+    <div class="card mb-4 shadow-sm">
+      <div class="card-body">
+		<form th:action="@{/home/searchproductid}" th:object="${sampleInputs}" method="post">
+        		<input type="hidden" th:field="*{listId}"/>		
+        		<input type="number" th:field="*{prdId}" placeholder="ID Proizvoda" required autofocus/>
+        		<div class="p-1">
+      				<input class="btn btn-info btn-block" type="submit" value="Traži Proizvod po ID broju"/>      		
+        		</div>
+			</form>
+      </div>
+    </div>
+    <div class="card mb-4 shadow-sm">
+      <div class="card-body">
+		<form th:action="@{/home/productsearchkeyword2}" th:object="${sampleInputs}" method="post">
+        		<input type="hidden" th:field="*{listId}"/>				
+        		<input type="text" th:field="*{keyWord}" placeholder="Kljucna rijec" required autofocus/>
+        		<div class="p-1">
+      				<input class="btn btn-warning btn-block" type="submit" value="Traži Proizvode po Ključnoj Riječi"/>      		
+        		</div>
+			</form>
+      </div>
+    </div>
+  </div>
+ </div>
+ 
+ <div class="container">
+ <div align="center">
+   <h5>Odaberite proizvode za dodati u listu:</h5>
+ </div>
+ 
+     <form class="form-horizontal" role="form" method="POST" th:action="@{/admin/addelement}" th:object="${list}">
+      		<input type="hidden" th:field="*{id}"/>
+
+          <table class="table table-striped">
+  			<thead>
+    			<tr>
+      				<th scope="col">#</th>
+      				<th scope="col">ID</th>
+      				<th scope="col">Naziv</th>
+    			</tr>
+  			</thead>
+  			<tbody>
+    			<tr th:each="item : ${productsList}">
+      			<th scope="row"><span th:text="${itemStat.count}"></span></th>
+      			<td>
+      				<input type="checkbox" th:field="*{products}" th:value="${item.id}" />
+					<label th:for="${#ids.prev('products')}" th:text="${item.getId()}"></label>
+				</td>
+      			<td><label th:for="${#ids.prev('products')}" th:text="${item.getName()}"></label></td>
+    		</tr>
+  			</tbody>
+		</table>
+         <div class="row">
+             <div class="col-md-3"></div>
+             <div class="col-md-6">
+                 <button type="submit" class="btn btn-success btn-block"><i class="fa fa-user-plus"></i>Dodaj odabrane elemente</button>
+             </div>
+         </div>
+     </form>
+	</div>
+ <div th:replace="fragments/footer :: footer"/></div>
+ 
+</body>
+</html>
