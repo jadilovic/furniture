@@ -158,23 +158,27 @@ public class ListController {
      ModelAndView model = new ModelAndView();
      List <Product> newProducts = new ArrayList<Product>();
     	ListOfProducts listOfProducts = listOfProductsRepository.findById(sampleInputs.getListId()).get();
-    	System.out.println("Product id number: " + sampleInputs.getPrdId());
-      	Product product = productRepository.findById(sampleInputs.getPrdId()).get();
+      	Product product;
+    	try {
+    		product = productRepository.findById(sampleInputs.getPrdId()).get();
+    	} catch(Exception ex) {
+    		product = null;
+    	}
       	List<Product> products = listOfProducts.getProducts();
     	 if(product == null) {
         	 model.addObject("err", "Nije pronađen proizovd sa ID brojem: " + sampleInputs.getPrdId());
-             model.addObject("list", listOfProducts);
+ 	 		 model.addObject("productsList", products);        	 
     	 	}
     	 if(productAlreadyInList(product, products)){
         	 model.addObject("err", "Pronađen proizvod sa ID brojem: '" + sampleInputs.getPrdId() + "', ali već postoji u listi.");
-             model.addObject("list", listOfProducts);
-    	 } else {
+ 	 		 model.addObject("productsList", products);    	 	
+    	 	} else {
     	 		newProducts.add(product);
     	 		for(Product item: products) {
     	 			newProducts.add(item);
     	 		}
     	 		model.addObject("productsList", newProducts);
-           	 model.addObject("msg", "Pronađen proizvod sa ID brojem: " + sampleInputs.getPrdId());		
+    	 		model.addObject("msg", "Pronađen proizvod sa ID brojem: " + sampleInputs.getPrdId());		
     	 		}
           model.addObject("list", listOfProducts);
           model.addObject("sampleInputs", sampleInputs);

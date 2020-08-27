@@ -55,8 +55,8 @@
  </div>
  
      <form class="form-horizontal" role="form" method="POST" th:action="@{/admin/addelement}" th:object="${list}">
-      		<input type="hidden" th:field="*{id}"/>
-
+       <input type="hidden" th:field="*{id}"/>
+		<div th:if="${!productsList.isEmpty()}">
           <table class="table table-striped">
   			<thead>
     			<tr>
@@ -75,7 +75,9 @@
       			<td><label th:for="${#ids.prev('products')}" th:text="${item.getName()}"></label></td>
     		</tr>
   			</tbody>
-		</table>
+		   </table>		
+		</div>
+
          <div class="row">
              <div class="col-md-3"></div>
              <div class="col-md-6">

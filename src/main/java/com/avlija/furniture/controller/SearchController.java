@@ -124,9 +124,12 @@ public class SearchController {
     	 Element element = elementRepository.findBySifra(sampleInputs.getSifra());
       	Product product = productRepository.findById(sampleInputs.getId()).get();
       	List<Element> elements = product.getElements();
+      	System.out.println("ELEMENTS: " + elements.isEmpty());
+      	Boolean empty = elements.isEmpty();
     	 if(element == null) {
         	 model.addObject("err", "Nije pronađen element sa šifrom: " + sampleInputs.getSifra());
              model.addObject("elementsList", elements);
+             model.addObject("empty", empty);
     	 	}
     	 if(elementAlreadyInProduct(element, elements)){
         	 model.addObject("err", "Pronađen element sa šifrom: '" + sampleInputs.getSifra() + "', ali već postoji u proizvodu.");

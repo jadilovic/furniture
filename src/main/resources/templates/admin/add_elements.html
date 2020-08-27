@@ -53,8 +53,7 @@
  <div align="center">
    <h5>Odaberite elemenate za dodati proizvodu:</h5>
  </div>
- 
-     <form class="form-horizontal" role="form" method="POST" th:action="@{/admin/addelement}" th:object="${product}">
+ 	<form class="form-horizontal" role="form" method="POST" th:action="@{/admin/addelement}" th:object="${product}">
       		<input type="hidden" th:field="*{id}"/>
 
           <table class="table table-striped">
@@ -66,7 +65,7 @@
     			</tr>
   			</thead>
   			<tbody>
-    			<tr th:each="item : ${elementsList}">
+    			<tr th:unless="${empty}" th:each="item : ${elementsList}">
       			<th scope="row"><span th:text="${itemStat.count}"></span></th>
       			<td>
       				<input type="checkbox" th:field="*{elements}" th:value="${item.id}" />
@@ -83,7 +82,7 @@
              </div>
          </div>
      </form>
-	</div>
+  </div>
  <div th:replace="fragments/footer :: footer"/></div>
  
 </body>
