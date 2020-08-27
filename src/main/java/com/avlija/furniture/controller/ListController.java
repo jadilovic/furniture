@@ -165,11 +165,13 @@ public class ListController {
     		product = null;
     	}
       	List<Product> products = listOfProducts.getProducts();
+      	Boolean emptyListOfProducts = products.isEmpty();
     	 if(product == null) {
         	 model.addObject("err", "Nije pronađen proizovd sa ID brojem: " + sampleInputs.getPrdId());
- 	 		 model.addObject("productsList", products);        	 
+ 	 		 model.addObject("productsList", products); 
+ 	 		 model.addObject("emptyListOfProducts", emptyListOfProducts);
     	 	}
-    	 if(productAlreadyInList(product, products)){
+    	 else if(productAlreadyInList(product, products)){
         	 model.addObject("err", "Pronađen proizvod sa ID brojem: '" + sampleInputs.getPrdId() + "', ali već postoji u listi.");
  	 		 model.addObject("productsList", products);    	 	
     	 	} else {

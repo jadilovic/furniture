@@ -131,7 +131,7 @@ public class SearchController {
              model.addObject("elementsList", elements);
              model.addObject("empty", empty);
     	 	}
-    	 if(elementAlreadyInProduct(element, elements)){
+    	 else if(elementAlreadyInProduct(element, elements)){
         	 model.addObject("err", "Pronađen element sa šifrom: '" + sampleInputs.getSifra() + "', ali već postoji u proizvodu.");
              model.addObject("elementsList", elements);
     	 } else {
@@ -140,8 +140,8 @@ public class SearchController {
     	 			newElements.add(item);
     	 		}
     	 		model.addObject("elementsList", newElements);
-           	 model.addObject("msg", "Pronađen element sa šifrom: " + sampleInputs.getSifra());		
-    	 		}
+    	 		model.addObject("msg", "Pronađen element sa šifrom: " + sampleInputs.getSifra());		
+    	 	}
           model.addObject("product", product);
           model.addObject("sampleInputs", sampleInputs);
           model.setViewName("admin/add_elements");

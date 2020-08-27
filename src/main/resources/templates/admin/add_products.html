@@ -54,9 +54,8 @@
    <h5>Odaberite proizvode za dodati u listu:</h5>
  </div>
  
-     <form class="form-horizontal" role="form" method="POST" th:action="@{/admin/addelement}" th:object="${list}">
+     <form class="form-horizontal" role="form" method="POST" th:action="@{/admin/addproduct}" th:object="${list}">
        <input type="hidden" th:field="*{id}"/>
-		<div th:if="${!productsList.isEmpty()}">
           <table class="table table-striped">
   			<thead>
     			<tr>
@@ -66,7 +65,7 @@
     			</tr>
   			</thead>
   			<tbody>
-    			<tr th:each="item : ${productsList}">
+    			<tr th:unless="${emptyListOfProducts}" th:each="item : ${productsList}">
       			<th scope="row"><span th:text="${itemStat.count}"></span></th>
       			<td>
       				<input type="checkbox" th:field="*{products}" th:value="${item.id}" />
@@ -75,8 +74,7 @@
       			<td><label th:for="${#ids.prev('products')}" th:text="${item.getName()}"></label></td>
     		</tr>
   			</tbody>
-		   </table>		
-		</div>
+		   </table>
 
          <div class="row">
              <div class="col-md-3"></div>
