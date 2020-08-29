@@ -1,5 +1,6 @@
 package com.avlija.furniture.model;
 
+import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -15,12 +16,20 @@ public class ProductQuantity {
 	@NotNull
 	private int quantity;
 	
+	 @Column(name="comments")
+	 private String comment;
+	 
+	 @Column(name="buyers")
+	 private String buyer;
+	
 	public ProductQuantity() {
 	}
 
-	public ProductQuantity(ListProduct listProduct, @NotNull int quantity) {
+	public ProductQuantity(ListProduct listProduct, @NotNull int quantity, String comment, String buyer) {
 		this.listProduct = listProduct;
 		this.quantity = quantity;
+		this.comment = comment;
+		this.buyer = buyer;
 	}
 
 	/**
@@ -49,6 +58,34 @@ public class ProductQuantity {
 	 */
 	public void setQuantity(int quantity) {
 		this.quantity = quantity;
+	}
+
+	/**
+	 * @return the comment
+	 */
+	public String getComment() {
+		return comment;
+	}
+
+	/**
+	 * @param comment the comment to set
+	 */
+	public void setComment(String comment) {
+		this.comment = comment;
+	}
+
+	/**
+	 * @return the buyer
+	 */
+	public String getBuyer() {
+		return buyer;
+	}
+
+	/**
+	 * @param buyer the buyer to set
+	 */
+	public void setBuyer(String buyer) {
+		this.buyer = buyer;
 	}
 	
 	

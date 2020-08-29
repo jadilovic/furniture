@@ -11,12 +11,15 @@ import com.avlija.furniture.form.SampleInputs;
 import com.avlija.furniture.model.Element;
 import com.avlija.furniture.model.ElementQuantity;
 import com.avlija.furniture.model.ListOfProducts;
+import com.avlija.furniture.model.ListProduct;
 import com.avlija.furniture.model.Product;
 import com.avlija.furniture.model.ProductElement;
+import com.avlija.furniture.model.ProductQuantity;
 import com.avlija.furniture.model.UnitMeasure;
 import com.avlija.furniture.repository.ElementQuantityRepository;
 import com.avlija.furniture.repository.ElementRepository;
 import com.avlija.furniture.repository.ListOfProductsRepository;
+import com.avlija.furniture.repository.ProductQuantityRepository;
 import com.avlija.furniture.repository.ProductRepository;
 import com.avlija.furniture.repository.UnitMeasureRepository;
 
@@ -38,7 +41,7 @@ public class ListController {
     private ListOfProductsRepository listOfProductsRepository;
 
     @Autowired
-    private ElementRepository elementRepository;
+    private ProductQuantityRepository productQuantityRepository;
     
     @Autowired
     private ElementQuantityRepository elementQuantityRepository;
@@ -124,36 +127,68 @@ public class ListController {
      return model;
     }
     
-    /**
+    
+    // ADDING PRODUCTS TO THE PRODUCTS LIST
+    
     @RequestMapping(value= {"admin/addproduct"}, method=RequestMethod.POST)
-    public ModelAndView addElementToProduct(@Valid Product product) {
+    public ModelAndView addElementToProduct(@Valid ListOfProducts list) {
      ModelAndView model = new ModelAndView();
-     List <Element> elements = new ArrayList<Element>();
-     elements = product.getElements();
-     	Product createdProduct = productRepository.findById(product.getId()).get();
-     	for(Element element: elements) {
-     		ProductElement productElement = new ProductElement(createdProduct.getId(), element.getId());
-     		if(elementQuantityExists(productElement)) {
+     List <Product> products = new ArrayList<>();
+     System.out.println("TEST TEST TEST");
+     products = list.getProducts();
+     	ListOfProducts listOfProducts = listOfProductsRepository.findById(list.getId()).get();
+     	for(Product product: products) {
+     		ListProduct listProduct = new ListProduct(list.getId(), product.getId());
+     		if(productQuantityExists(listProduct)) {
      			break;
      		}
-     		ElementQuantity elementQuantity = new ElementQuantity(productElement, 0);
-     		elementQuantityRepository.save(elementQuantity);
+     		ProductQuantity productQuantity = new ProductQuantity(listProduct, 0, null, null);
+     		productQuantityRepository.save(productQuantity);
      	}
-     	createdProduct.setElements(elements);
-   	  	productRepository.save(createdProduct);
-   	  	List<ElementQuantity> elementsQuantityList = getElementQuantityList(elements, createdProduct);
+     	listOfProducts.setProducts(products);
+   	  	listOfProductsRepository.save(listOfProducts);
+   	  	List<ProductQuantity> productsQuantityList = getProductQuantityList(products, listOfProducts);
    	  model.addObject("msg", "Izvršena dopuna - izmjena elemenata");
-   	  model.setViewName("admin/create_product2");
-     model.addObject("product", createdProduct);
-     model.addObject("elementsList", elements);
-     model.addObject("elementsQuantityList", elementsQuantityList);
+   	  model.setViewName("admin/create_list2");
+     model.addObject("list", listOfProducts);
+     model.addObject("productsList", products);
+     model.addObject("productsQuantityList", productsQuantityList);
      return model;
     }
-**/
 
-    // SEARCH PRODUCT BY ID TO BE ADDED TO THE LIST
-    
-    @RequestMapping(value= {"home/searchproductid"}, method=RequestMethod.POST)
+
+    private List<ProductQuantity> getProductQuantityList(List<Product> products, ListOfProducts listOfProducts) {
+      	 List<ProductQuantity> productQuantitiyList = new ArrayList<ProductQuantity>();
+       	 for(Product product: products) {
+       		 ProductQuantity productQuantity;
+       		 try {
+       			 productQuantity = productQuantityRepository.findById(new ListProduct(listOfProducts.getId(), product.getId())).get();
+       		 } catch(Exception e) {
+       			 productQuantity = new ProductQuantity(new ListProduct(listOfProducts.getId(), product.getId()), 0, null, null);
+       			 // productQuantityRepository.save(productQuantity);
+       		 }
+       		 productQuantitiyList.add(productQuantity);
+       	 }
+       	return productQuantitiyList;
+	}
+
+	private boolean productQuantityExists(ListProduct listProduct) {
+    	try {
+    		ProductQuantity productQuantity = productQuantityRepository.findById(listProduct).get();
+    		if(productQuantity == null) {
+    			return false;
+    		} else {
+    			return true;
+    		}
+    	} catch (Exception e) {
+    		return false;
+    	}
+	}
+	
+	
+	   // SEARCH PRODUCT BY ID TO BE ADDED TO THE LIST
+
+	@RequestMapping(value= {"home/searchproductid"}, method=RequestMethod.POST)
     public ModelAndView searchProductById(@Valid SampleInputs sampleInputs) {
      ModelAndView model = new ModelAndView();
      List <Product> newProducts = new ArrayList<Product>();
