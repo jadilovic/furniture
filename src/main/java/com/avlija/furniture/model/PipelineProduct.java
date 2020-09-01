@@ -7,21 +7,21 @@ import javax.persistence.Embeddable;
 import javax.validation.constraints.NotNull;
 
 @Embeddable
-public class ListProduct implements Serializable{
+public class PipelineProduct implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 	
 	@NotNull
-	private int listId;
+	private int pipelineId;
 	
 	@NotNull
 	private int productId;
 	
-	public ListProduct() {
+	public PipelineProduct() {
 	}
 
-	public ListProduct(@NotNull int listId, @NotNull int productId) {
-		this.listId = listId;
+	public PipelineProduct(@NotNull int pipelineId, @NotNull int productId) {
+		this.pipelineId = pipelineId;
 		this.productId = productId;
 	}
 
@@ -40,17 +40,17 @@ public class ListProduct implements Serializable{
 	}
 
 	/**
-	 * @return the listId
+	 * @return the pipelineId
 	 */
-	public int getListId() {
-		return listId;
+	public int getPipelineId() {
+		return pipelineId;
 	}
 
 	/**
-	 * @param listId the listId to set
+	 * @param pipelineId the pipelineId to set
 	 */
-	public void setListId(int listId) {
-		this.listId = listId;
+	public void setPipelineId(int pipelineId) {
+		this.pipelineId = pipelineId;
 	}
 
 

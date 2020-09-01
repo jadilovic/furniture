@@ -4,22 +4,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
-import com.avlija.furniture.repository.ElementRepository;
+import com.avlija.furniture.repository.ProductRepository;
 
 
 
 @Component
-public class ElementConverter implements Converter<String, Element>{
+public class ProductConverter implements Converter<String, Product>{
 	
     @Autowired
-    private ElementRepository elementRepository;
+    private ProductRepository productRepository;
 
 	@Override
-	public Element convert(String id) {
+	public Product convert(String id) {
 
 		int parsedId = Integer.parseInt(id);
-		Element element = elementRepository.findById(parsedId).get();
-		return element;
+		Product product = productRepository.findById(parsedId).get();
+		return product;
 	}
 
 }

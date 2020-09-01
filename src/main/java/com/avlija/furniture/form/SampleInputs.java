@@ -3,17 +3,17 @@ package com.avlija.furniture.form;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.avlija.furniture.model.Element;
+import com.avlija.furniture.model.Product;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 public class SampleInputs {
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date dateField;
     private Integer id;
-    private int listId;
+    private int pipelineId;
     private int userId;
     private int postId;
     private Double elementSize;
@@ -32,6 +32,7 @@ public class SampleInputs {
     private String keyWord;
     
     private List <Element> selectedElements;
+    private List<Product> selectedProducts;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private Date dateTimeField;
@@ -39,23 +40,6 @@ public class SampleInputs {
     public SampleInputs() {
     	
     }
-
-    
-	/**
-	 * @return the listId
-	 */
-	public int getListId() {
-		return listId;
-	}
-
-
-	/**
-	 * @param listId the listId to set
-	 */
-	public void setListId(int listId) {
-		this.listId = listId;
-	}
-
 
 	/**
 	 * @return the elmId
@@ -289,6 +273,26 @@ public class SampleInputs {
 
 	public void setSearchDate(String searchDate) {
 		this.searchDate = searchDate;
+	}
+
+
+	public List<Product> getSelectedProducts() {
+		return selectedProducts;
+	}
+
+
+	public void setSelectedProducts(List<Product> selectedProducts) {
+		this.selectedProducts = selectedProducts;
+	}
+
+
+	public int getPipelineId() {
+		return pipelineId;
+	}
+
+
+	public void setPipelineId(int pipelineId) {
+		this.pipelineId = pipelineId;
 	}
 	
 	

@@ -24,7 +24,7 @@
          </div>
       </div>
 
-  <table th:object="${list}" class="table table-striped">
+  <table th:object="${pipeline}" class="table table-striped">
   <thead>
     <tr>
       <th scope="col"></th>
@@ -43,7 +43,7 @@
     <tr>
         <th scope="row">Proizvodi za dodati:</th>
     	<td>
-    		<a class="btn btn-success btn-block" th:href="@{'/admin/addproducts/' + ${list.id}}">Dodaj Proizvod</a>
+    		<a class="btn btn-success btn-block" th:href="@{'/admin/addproduct/' + ${pipeline.id}}">Dodaj Proizvod</a>
     	</td>
     </tr>
   </tbody>
@@ -64,7 +64,7 @@
         	<span th:text="*{productsQuantityList[__${productStat .index}__].quantity}">Stanje</span>
         </td>
         <td>
-           	<a class="btn btn-info btn-block" th:href="@{'/admin/quantity/' + ${list.getId()} + '/' + ${product.getId()}}">Izmjeni Količinu</a>
+           	<a class="btn btn-info btn-block" th:href="@{'/admin/quantity/' + ${pipeline.getId()} + '/' + ${product.getId()}}">Izmjeni Količinu</a>
         </td>
     </tr>
   </tbody>
@@ -72,7 +72,7 @@
     <div class="alert alert-success" role="alert" th:if="${productsList.isEmpty()}"><p>Nema dodanih proizvoda</p></div>
   	
   	<div th:if="${!productsList.isEmpty()}">
-  	  	<a class="btn btn-warning btn-block" th:href="@{'/admin/createorder/' + ${list.id}}">Kreiraj Radni Nalog</a>
+  	  	<a class="btn btn-warning btn-block" th:href="@{'/admin/createorder/' + ${pipeline.id}}">Kreiraj Radni Nalog</a>
   	</div>
  
  </div>

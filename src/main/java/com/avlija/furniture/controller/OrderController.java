@@ -2,10 +2,7 @@ package com.avlija.furniture.controller;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-
 import javax.validation.Valid;
 
 import com.avlija.furniture.form.SampleInputs;
@@ -14,16 +11,12 @@ import com.avlija.furniture.model.ElementQuantity;
 import com.avlija.furniture.model.Order;
 import com.avlija.furniture.model.Product;
 import com.avlija.furniture.model.ProductElement;
-import com.avlija.furniture.model.UnitMeasure;
 import com.avlija.furniture.repository.ElementQuantityRepository;
 import com.avlija.furniture.repository.ElementRepository;
 import com.avlija.furniture.repository.OrderRepository;
 import com.avlija.furniture.repository.ProductRepository;
-import com.avlija.furniture.repository.UnitMeasureRepository;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;

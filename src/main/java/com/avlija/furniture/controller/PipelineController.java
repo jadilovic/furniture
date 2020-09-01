@@ -1,28 +1,18 @@
 package com.avlija.furniture.controller;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-
 import javax.validation.Valid;
 
 import com.avlija.furniture.form.SampleInputs;
-import com.avlija.furniture.model.Element;
-import com.avlija.furniture.model.ElementQuantity;
-import com.avlija.furniture.model.ListOfProducts;
-import com.avlija.furniture.model.ListProduct;
+import com.avlija.furniture.model.Pipeline;
+import com.avlija.furniture.model.PipelineProduct;
 import com.avlija.furniture.model.Product;
-import com.avlija.furniture.model.ProductElement;
 import com.avlija.furniture.model.ProductQuantity;
-import com.avlija.furniture.model.UnitMeasure;
 import com.avlija.furniture.repository.ElementQuantityRepository;
-import com.avlija.furniture.repository.ElementRepository;
-import com.avlija.furniture.repository.ListOfProductsRepository;
+import com.avlija.furniture.repository.PipelineRepository;
 import com.avlija.furniture.repository.ProductQuantityRepository;
 import com.avlija.furniture.repository.ProductRepository;
-import com.avlija.furniture.repository.UnitMeasureRepository;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -32,13 +22,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
-public class ListController {
+public class PipelineController {
 
     @Autowired
     private ProductRepository productRepository;
 
     @Autowired
-    private ListOfProductsRepository listOfProductsRepository;
+    private PipelineRepository pipelineRepository;
 
     @Autowired
     private ProductQuantityRepository productQuantityRepository;
@@ -47,65 +37,69 @@ public class ListController {
     private ElementQuantityRepository elementQuantityRepository;
 
 
-    // CREATE LIST OF PRODUCTS
+    // CREATE PIPELINE OF PRODUCTS GET
     
-    @RequestMapping(value= {"admin/createlist"}, method=RequestMethod.GET)
-    public ModelAndView createList() {
+    @RequestMapping(value= {"admin/createpipeline"}, method=RequestMethod.GET)
+    public ModelAndView createPipeline() {
      ModelAndView model = new ModelAndView();
-     ListOfProducts listOfProducts = new ListOfProducts();
-     model.addObject("listOfProducts", listOfProducts);
-     model.setViewName("admin/create_list");
+     Pipeline pipeline = new Pipeline();
+     model.addObject("pipeline", pipeline);
+     model.setViewName("admin/create_pipeline");
      
      return model;
     }
     
-    @RequestMapping(value= {"admin/createlist"}, method=RequestMethod.POST)
-    public ModelAndView createList(@Valid ListOfProducts listOfProducts, BindingResult bindingResult) {
+    
+    // CREATE PIPELINE POST
+    @RequestMapping(value= {"admin/createpipeline"}, method=RequestMethod.POST)
+    public ModelAndView createPipeline(@Valid Pipeline pipeline, BindingResult bindingResult) {
      ModelAndView model = new ModelAndView();
-     ListOfProducts listExists = listOfProductsRepository.findByName(listOfProducts.getName());
-     if(listExists != null) {
+     Pipeline pipelineExists = pipelineRepository.findByName(pipeline.getName());
+     if(pipelineExists != null) {
     		 bindingResult.rejectValue("name", "error.name", "Ovaj naziv liste proizvoda već postoji!");
      }
      if(bindingResult.hasErrors()) {
       	  model.addObject("msg", "Uneseni naziv liste proizvoda već postoji.");
-          ListOfProducts newList = new ListOfProducts();
-          model.addObject("listOfProducts", newList);
-      	  model.setViewName("admin/create_list");
+          Pipeline newPipeline = new Pipeline();
+          model.addObject("pipeline", newPipeline);
+      	  model.setViewName("admin/create_pipeline");
      } else {
-   	  	listOfProductsRepository.save(listOfProducts);
-   	  model.addObject("msg", "Naziv nove liste proizvoda je uspješno kreiran! Potrebno je dodati proizvode od kojih se sastoji lista.");
-   	  model.setViewName("admin/create_list2");
+   	  	pipelineRepository.save(pipeline);
       
-   	  ListOfProducts newList = listOfProductsRepository.findByName(listOfProducts.getName());
+   	  Pipeline createdPipeline = pipelineRepository.findByName(pipeline.getName());
       List<Product> products = new ArrayList<>();
+      SampleInputs sampleInputs = new SampleInputs();
+   	  model.addObject("msg", "Naziv nove liste proizvoda je uspješno kreiran! Potrebno je dodati proizvode od kojih se sastoji lista.");
+      model.addObject("sampleInputs", sampleInputs);
       model.addObject("productsList", products);
-      model.addObject("list", newList);
+      model.addObject("pipeline", createdPipeline);
+   	  model.setViewName("admin/create_pipeline2");
      	}
      return model;
     }
     
     
-    // DISPLAY ALL LISTS
+    // DISPLAY ALL PIPELINES
     
-    @RequestMapping(value= {"home/alllists"}, method=RequestMethod.GET)
-    public ModelAndView allLists() {
+    @RequestMapping(value= {"home/allpipelines"}, method=RequestMethod.GET)
+    public ModelAndView allPipelines() {
      ModelAndView model = new ModelAndView();
-     List<ListOfProducts> listOfProductsLists = listOfProductsRepository.findAll();
-     model.addObject("listOfProductsLists", listOfProductsLists);
-     model.setViewName("home/list_of_products_lists");
+     List<Pipeline> pipelines = pipelineRepository.findAll();
+     model.addObject("pipelines", pipelines);
+     model.setViewName("home/list_of_pipelines");
      
      return model;
     }
     
-    // LIST PROFILE
+    // PIPELINE PROFILE
     
-    @RequestMapping(value= {"home/listprofile/{id}"}, method=RequestMethod.GET)
+    @RequestMapping(value= {"home/pipelineprofile/{id}"}, method=RequestMethod.GET)
     public ModelAndView listProfile(@PathVariable(name = "id") Integer id) {
      ModelAndView model = new ModelAndView();
-     ListOfProducts listOfProducts = listOfProductsRepository.findById(id).get();
-     model.addObject("list", listOfProducts);
-     model.addObject("productsList", listOfProducts.getProducts());
-     model.setViewName("home/list_profile");
+     Pipeline pipeline = pipelineRepository.findById(id).get();
+     model.addObject("pipeline", pipeline);
+     model.addObject("productsList", pipeline.getProducts());
+     model.setViewName("home/pipeline_profile");
      
      return model;
     }
@@ -113,15 +107,19 @@ public class ListController {
     
     // ADD PRODUCTS TO THE LIST
     
-    @RequestMapping(value= {"admin/addproducts/{id}"}, method=RequestMethod.GET)
-    public ModelAndView addElement(@PathVariable(name = "id") Integer id) {
+    @RequestMapping(value= {"admin/addproduct/{id}"}, method=RequestMethod.GET)
+    public ModelAndView addProductsToPipelineGET(@PathVariable(name = "id") Integer id) {
      ModelAndView model = new ModelAndView();
-     ListOfProducts listOfProducts = listOfProductsRepository.findById(id).get();
+     Pipeline pipeline = pipelineRepository.findById(id).get();
+     Boolean emptyPipeline = pipeline.getProducts().isEmpty();
+     
      SampleInputs sampleInputs = new SampleInputs();
-     sampleInputs.setListId(id);
-     model.addObject("list", listOfProducts);
+  	System.out.println("PRODUCTS IN OBJECT:" + pipeline.getProducts());
+     sampleInputs.setPipelineId(id);
      model.addObject("sampleInputs", sampleInputs);
-     model.addObject("productsList", listOfProducts.getProducts());
+     model.addObject("pipeline", pipeline);
+     model.addObject("productsList", pipeline.getProducts());
+     model.addObject("emptyPipeline", emptyPipeline);
      model.setViewName("admin/add_products");
      
      return model;
@@ -130,41 +128,50 @@ public class ListController {
     
     // ADDING PRODUCTS TO THE PRODUCTS LIST
     
-    @RequestMapping(value= {"admin/addproduct"}, method=RequestMethod.POST)
-    public ModelAndView addElementToProduct(@Valid ListOfProducts list) {
+    @RequestMapping(value= {"admin/addproducts"}, method=RequestMethod.POST)
+    public ModelAndView addProductsToPipelinePOST(@Valid Pipeline pipeline) {
      ModelAndView model = new ModelAndView();
-     List <Product> products = new ArrayList<>();
-     System.out.println("TEST TEST TEST");
-     products = list.getProducts();
-     	ListOfProducts listOfProducts = listOfProductsRepository.findById(list.getId()).get();
-     	for(Product product: products) {
-     		ListProduct listProduct = new ListProduct(list.getId(), product.getId());
-     		if(productQuantityExists(listProduct)) {
+     List <Product> selectedProducts = new ArrayList<>();
+     selectedProducts = pipeline.getProducts();
+
+     Pipeline savedPipeline = pipelineRepository.findById(pipeline.getId()).get();
+
+     	System.out.println("SELECTED PRODUCTS IN OBJECT:" + selectedProducts);
+     	System.out.println("EXISTING PRODUCTS IN OBJECT:" + savedPipeline.getProducts());
+
+     	for(Product product: selectedProducts) {
+     		PipelineProduct pipelineProduct = new PipelineProduct(pipeline.getId(), product.getId());
+     		if(productQuantityExists(pipelineProduct)) {
      			break;
      		}
-     		ProductQuantity productQuantity = new ProductQuantity(listProduct, 0, null, null);
+     		ProductQuantity productQuantity = new ProductQuantity(pipelineProduct, 0, null, null);
      		productQuantityRepository.save(productQuantity);
      	}
-     	listOfProducts.setProducts(products);
-   	  	listOfProductsRepository.save(listOfProducts);
-   	  	List<ProductQuantity> productsQuantityList = getProductQuantityList(products, listOfProducts);
-   	  model.addObject("msg", "Izvršena dopuna - izmjena elemenata");
-   	  model.setViewName("admin/create_list2");
-     model.addObject("list", listOfProducts);
-     model.addObject("productsList", products);
+     	
+     	savedPipeline.setProducts(selectedProducts);
+   	  	pipelineRepository.save(savedPipeline);
+   	  	
+   	  	List<ProductQuantity> productsQuantityList = getProductQuantityList(selectedProducts, savedPipeline);
+     	System.out.println("PRODUCTS IN OBJECT:" + savedPipeline.getProducts());
+     	System.out.println("PRODUCTS IN OBJECT FROM DATABASE:" + pipelineRepository.findById(pipeline.getId()).get().getProducts());
+     	
+   	  model.addObject("msg", "Izvršena dopuna - izmjena proizvoda");
+   	  model.setViewName("admin/create_pipeline2");
+     model.addObject("pipeline", savedPipeline);
+     model.addObject("productsList", savedPipeline.getProducts());
      model.addObject("productsQuantityList", productsQuantityList);
      return model;
     }
 
 
-    private List<ProductQuantity> getProductQuantityList(List<Product> products, ListOfProducts listOfProducts) {
+    private List<ProductQuantity> getProductQuantityList(List<Product> products, Pipeline pipeline) {
       	 List<ProductQuantity> productQuantitiyList = new ArrayList<ProductQuantity>();
        	 for(Product product: products) {
        		 ProductQuantity productQuantity;
        		 try {
-       			 productQuantity = productQuantityRepository.findById(new ListProduct(listOfProducts.getId(), product.getId())).get();
+       			 productQuantity = productQuantityRepository.findById(new PipelineProduct(pipeline.getId(), product.getId())).get();
        		 } catch(Exception e) {
-       			 productQuantity = new ProductQuantity(new ListProduct(listOfProducts.getId(), product.getId()), 0, null, null);
+       			 productQuantity = new ProductQuantity(new PipelineProduct(pipeline.getId(), product.getId()), 0, null, null);
        			 // productQuantityRepository.save(productQuantity);
        		 }
        		 productQuantitiyList.add(productQuantity);
@@ -172,9 +179,9 @@ public class ListController {
        	return productQuantitiyList;
 	}
 
-	private boolean productQuantityExists(ListProduct listProduct) {
+	private boolean productQuantityExists(PipelineProduct pipelineProduct) {
     	try {
-    		ProductQuantity productQuantity = productQuantityRepository.findById(listProduct).get();
+    		ProductQuantity productQuantity = productQuantityRepository.findById(pipelineProduct).get();
     		if(productQuantity == null) {
     			return false;
     		} else {
@@ -191,40 +198,47 @@ public class ListController {
 	@RequestMapping(value= {"home/searchproductid"}, method=RequestMethod.POST)
     public ModelAndView searchProductById(@Valid SampleInputs sampleInputs) {
      ModelAndView model = new ModelAndView();
-     List <Product> newProducts = new ArrayList<Product>();
-    	ListOfProducts listOfProducts = listOfProductsRepository.findById(sampleInputs.getListId()).get();
+     	
+     	List <Product> pipelineProducts = new ArrayList<Product>();
+    	Pipeline pipeline = pipelineRepository.findById(sampleInputs.getPipelineId()).get();
+      	pipelineProducts = pipeline.getProducts();
+      	Boolean emptyPipeline = pipelineProducts.isEmpty();
+      	
+     	List <Product> products = new ArrayList<Product>();
+      	
       	Product product;
     	try {
     		product = productRepository.findById(sampleInputs.getPrdId()).get();
     	} catch(Exception ex) {
     		product = null;
     	}
-      	List<Product> products = listOfProducts.getProducts();
-      	Boolean emptyListOfProducts = products.isEmpty();
+    	
     	 if(product == null) {
         	 model.addObject("err", "Nije pronađen proizovd sa ID brojem: " + sampleInputs.getPrdId());
- 	 		 model.addObject("productsList", products); 
- 	 		 model.addObject("emptyListOfProducts", emptyListOfProducts);
+ 	 		 model.addObject("productsList", pipelineProducts); 
     	 	}
-    	 else if(productAlreadyInList(product, products)){
+    	 else if(productAlreadyInList(product, pipelineProducts)){
         	 model.addObject("err", "Pronađen proizvod sa ID brojem: '" + sampleInputs.getPrdId() + "', ali već postoji u listi.");
- 	 		 model.addObject("productsList", products);    	 	
+ 	 		 model.addObject("productsList", pipelineProducts);    	 	
     	 	} else {
-    	 		newProducts.add(product);
-    	 		for(Product item: products) {
-    	 			newProducts.add(item);
+    	 		products.add(product);
+    	 		for(Product item: pipelineProducts) {
+    	 			products.add(item);
     	 		}
-    	 		model.addObject("productsList", newProducts);
+    	 		model.addObject("productsList", products);
     	 		model.addObject("msg", "Pronađen proizvod sa ID brojem: " + sampleInputs.getPrdId());		
-    	 		}
-          model.addObject("list", listOfProducts);
-          model.addObject("sampleInputs", sampleInputs);
-          model.setViewName("admin/add_products");
+    	 	}
+
+    	 model.addObject("emptyPipeline", emptyPipeline);
+         model.addObject("pipeline", pipeline);
+         model.addObject("sampleInputs", sampleInputs);
+         model.setViewName("admin/add_products");
      return model;
     }
 
-	private boolean productAlreadyInList(Product product, List<Product> products) {
-		for(Product check: products) {
+	// CHECKING IF THE PRODUCT IS IN THE PIPELINE
+	private boolean productAlreadyInList(Product product, List<Product> pipelineProducts) {
+		for(Product check: pipelineProducts) {
 			if(check.getId() == product.getId()) {
 				return true;
 			}
@@ -232,35 +246,42 @@ public class ListController {
 		return false;
 	}
     
+	
 	// SEARCH PRODUCT BY KEYWORD
 	
 	@RequestMapping(value= {"home/productsearchkeyword2"}, method=RequestMethod.POST)
     public ModelAndView productSearchKeyWord(@Valid SampleInputs sampleInputs) {
      ModelAndView model = new ModelAndView();
      String keyWord = sampleInputs.getKeyWord();
-   	ListOfProducts listOfProducts = listOfProductsRepository.findById(sampleInputs.getListId()).get();
+   		Pipeline pipeline = pipelineRepository.findById(sampleInputs.getPipelineId()).get();
          List<Product> foundProducts = productRepository.findByNameContaining(keyWord);
-         List<Product> products = listOfProducts.getProducts();
+         List<Product> pipelineProducts = pipeline.getProducts(); 		 
+         //model.addObject("emptyListOfProducts", products.isEmpty());
+
          if(foundProducts.isEmpty()) {
          	  model.addObject("err", "Nije pronađen proizvod koji sadrži ključnu riječ: " + keyWord);
-              model.addObject("productsList", products);
-         	} else {
+              model.addObject("productsList", pipelineProducts);
+         	} 
+         else {
          		List<Product> selectionProducts = new ArrayList<>();
-         		foundProducts.removeAll(products);
+         		foundProducts.removeAll(pipelineProducts);
          		if(foundProducts.isEmpty()) {
              		model.addObject("msg", "Lista elemenata koji sadrže ključnu riječ: '" + keyWord + "' se već nalaze u proizvodu.");
-         			} else {
+                    model.addObject("productsList", pipelineProducts);
+         		} else {
              		model.addObject("msg", "Lista elemenata koji sadrže ključnu riječ: " + keyWord);
+             			
              			for(Product item: foundProducts) {
              				selectionProducts.add(item);
              				}
-         				}
-    	 		for(Product item: products) {
-    	 			selectionProducts.add(item);
-    	 			}
-      			model.addObject("productsList", selectionProducts);         		
-         		}
-        model.addObject("list", listOfProducts);
+
+             			for(Product item: pipelineProducts) {
+             				selectionProducts.add(item);
+             				}
+             		model.addObject("productsList", selectionProducts); 
+ 				}
+         	}
+        model.addObject("pipeline", pipeline);
         model.addObject("sampleInputs", sampleInputs);         
   			model.setViewName("admin/add_products");
          	return model;

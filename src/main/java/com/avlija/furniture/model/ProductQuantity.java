@@ -11,7 +11,7 @@ import javax.validation.constraints.NotNull;
 public class ProductQuantity {
 
 	@EmbeddedId
-	private ListProduct listProduct;
+	private PipelineProduct pipelineProduct;
 	
 	@NotNull
 	private int quantity;
@@ -25,25 +25,25 @@ public class ProductQuantity {
 	public ProductQuantity() {
 	}
 
-	public ProductQuantity(ListProduct listProduct, @NotNull int quantity, String comment, String buyer) {
-		this.listProduct = listProduct;
+	public ProductQuantity(PipelineProduct pipelineProduct, @NotNull int quantity, String comment, String buyer) {
+		this.pipelineProduct = pipelineProduct;
 		this.quantity = quantity;
 		this.comment = comment;
 		this.buyer = buyer;
 	}
 
 	/**
-	 * @return the listProduct
+	 * @return the pipelineProduct
 	 */
-	public ListProduct getListProduct() {
-		return listProduct;
+	public PipelineProduct getPipelineProduct() {
+		return pipelineProduct;
 	}
 
 	/**
-	 * @param listProduct the listProduct to set
+	 * @param pipelineProduct the pipelineProduct to set
 	 */
-	public void setListProduct(ListProduct listProduct) {
-		this.listProduct = listProduct;
+	public void setPipelineProduct(PipelineProduct pipelineProduct) {
+		this.pipelineProduct = pipelineProduct;
 	}
 
 	/**

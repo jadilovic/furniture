@@ -1,27 +1,18 @@
 package com.avlija.furniture.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.*;
 
 
-@Data
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
 @Entity
 @Table(name = "unit_measures")
 public class UnitMeasure {
    
 	@Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "element_id")
+    @Column(name = "id")
     private int id;
 	
 	@Column(name = "name")
@@ -29,7 +20,7 @@ public class UnitMeasure {
 	
     
     @OneToMany(mappedBy="unitMeasure", cascade = CascadeType.ALL)
-    Set<Element> products = new HashSet<Element>();
+    Set<Element> elements = new HashSet<Element>();
 
 
 	/**
@@ -65,19 +56,20 @@ public class UnitMeasure {
 
 
 	/**
-	 * @return the products
+	 * @return the elements
 	 */
-	public Set<Element> getProducts() {
-		return products;
+	public Set<Element> getElements() {
+		return elements;
 	}
 
 
 	/**
-	 * @param products the products to set
+	 * @param elements the elements to set
 	 */
-	public void setProducts(Set<Element> products) {
-		this.products = products;
+	public void setElements(Set<Element> elements) {
+		this.elements = elements;
 	}
+
 
 
 }

@@ -31,18 +31,18 @@
             </tr>
         </thead>
         <tbody>
-            <tr scope="row" th:each="list, productStat : ${listOfProductsLists}">
-                <td th:text="${list.id}">ID</td>
-                <td th:text="${list.name}">Naziv</td>               
-                <td th:object="${list}">
-                	<a class="btn btn-warning" th:href="@{'/home/listprofile/' + *{id}}">Info</a>
+            <tr scope="row" th:each="pipeline, productStat : ${pipelines}">
+                <td th:text="${pipeline.id}">ID</td>
+                <td th:text="${pipeline.name}">Naziv</td>               
+                <td th:object="${pipeline}">
+                	<a class="btn btn-warning" th:href="@{'/home/pipelineprofile/' + *{id}}">Info</a>
                 </td>       
             </tr>
         </tbody>
     </table>
   </div>  
   		<div class="p-2" align="center">
-    	 <a th:href="@{/home/listsearch}" class="btn-info btn-lg" role="button" aria-pressed="true">Nova Pretraga Listi Proizvoda</a>
+    	 <a th:href="@{/home/pipelinesearch}" class="btn-info btn-lg" role="button" aria-pressed="true">Nova Pretraga Listi Proizvoda</a>
   		</div>
  <div th:replace="fragments/footer :: footer"/></div>
  

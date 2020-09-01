@@ -2,7 +2,9 @@ package com.avlija.furniture.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.*;
 
@@ -33,6 +35,9 @@ public class Product implements Serializable{
             inverseJoinColumns = @JoinColumn(name = "element_id")
             )
     private List <Element> elements = new ArrayList<>();
+    
+    @ManyToMany(mappedBy = "products", fetch = FetchType.LAZY)
+    private Set<Pipeline> pipelines = new HashSet<>();
     
     public Product() {
     	
@@ -91,6 +96,20 @@ public class Product implements Serializable{
 	 */
 	public void setProductSize(String productSize) {
 		this.productSize = productSize;
+	}
+
+	/**
+	 * @return the pipelines
+	 */
+	public Set<Pipeline> getPipelines() {
+		return pipelines;
+	}
+
+	/**
+	 * @param pipelines the pipelines to set
+	 */
+	public void setPipelines(Set<Pipeline> pipelines) {
+		this.pipelines = pipelines;
 	}
 
 

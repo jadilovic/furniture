@@ -7,8 +7,8 @@ import java.util.List;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "listsofproducts")
-public class ListOfProducts implements Serializable{
+@Table(name = "pipelines")
+public class Pipeline implements Serializable{
    
 	/**
 	 * 
@@ -25,15 +25,15 @@ public class ListOfProducts implements Serializable{
 	
     @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     @JoinTable(
-            name = "lists_products",
-            joinColumns = @JoinColumn(name = "listOfProducts_id"),
+            name = "pipelines_products",
+            joinColumns = @JoinColumn(name = "pipeline_id"),
             inverseJoinColumns = @JoinColumn(name = "product_id")
             )
     private List <Product> products = new ArrayList<>();
     
-    public ListOfProducts() {
-    	
-    }
+    public Pipeline() {
+		// TODO Auto-generated constructor stub
+	}
 
 	/**
 	 * @return the id

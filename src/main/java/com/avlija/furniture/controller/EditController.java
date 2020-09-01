@@ -1,13 +1,9 @@
 package com.avlija.furniture.controller;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-
 import javax.validation.Valid;
 
-import com.avlija.furniture.form.SampleInputs;
 import com.avlija.furniture.model.Element;
 import com.avlija.furniture.model.ElementQuantity;
 import com.avlija.furniture.model.Product;
@@ -97,21 +93,5 @@ public class EditController {
    	  	model.addObject("element", oldElement);
      return model;
     }
-    
-    
-    private List<ElementQuantity> getElementQuantityList(List<Element> elementList, Product product) {
-   	 List<ElementQuantity> elementQuantitiyList = new ArrayList<ElementQuantity>();
-   	 for(Element element: elementList) {
-   		 ElementQuantity elementQuantity;
-   		 try {
-   			 elementQuantity = elementQuantityRepository.findById(new ProductElement(product.getId(), element.getId())).get();
-   		 } catch(Exception e) {
-   			 elementQuantity = new ElementQuantity(new ProductElement(product.getId(), element.getId()), 0);
-   			 // productQuantityRepository.save(productQuantity);
-   		 }
-   		 elementQuantitiyList.add(elementQuantity);
-   	 }
-   	return elementQuantitiyList;
-   }
     
 }
