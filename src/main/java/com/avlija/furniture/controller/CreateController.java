@@ -175,7 +175,7 @@ public class CreateController {
      	}
      	createdProduct.setElements(elements);
    	  	productRepository.save(createdProduct);
-   	  	Set<ElementQuantity> elementsQuantityList = getElementQuantityList(elements, createdProduct);
+   	  	List<ElementQuantity> elementsQuantityList = getElementQuantityList(elements, createdProduct);
    	  model.addObject("msg", "Izvršena dopuna - izmjena elemenata");
    	  model.setViewName("admin/create_product2");
      model.addObject("product", createdProduct);
@@ -218,7 +218,7 @@ public class CreateController {
         elementQuantity.setQuantity(sampleInputs.getQuantity());
         elementQuantityRepository.save(elementQuantity);
    	  	
-        Set<ElementQuantity> elementsQuantityList = getElementQuantityList(elements, createdProduct);
+        List<ElementQuantity> elementsQuantityList = getElementQuantityList(elements, createdProduct);
    	  model.addObject("msg", "Izvršena dopuna - izmjena količine elemenata: " + element.getName());
    	  model.setViewName("admin/create_product2");
      model.addObject("product", createdProduct);
@@ -227,8 +227,8 @@ public class CreateController {
      return model;
     }
     
-    private Set<ElementQuantity> getElementQuantityList(Set<Element> elementList, Product product) {
-   	 Set<ElementQuantity> elementQuantitiyList = new HashSet<ElementQuantity>();
+    private List<ElementQuantity> getElementQuantityList(Set<Element> elementList, Product product) {
+   	 List<ElementQuantity> elementQuantityList = new ArrayList<ElementQuantity>();
    	 for(Element element: elementList) {
    		 ElementQuantity elementQuantity;
    		 try {
@@ -237,14 +237,10 @@ public class CreateController {
    			 elementQuantity = new ElementQuantity(new ProductElement(product.getId(), element.getId()), 0);
    			 // productQuantityRepository.save(productQuantity);
    		 }
-   		 elementQuantitiyList.add(elementQuantity);
+   		 elementQuantityList.add(elementQuantity);
    	 }
 
-   	Set<ElementQuantity> sortedElementQuantityList = new TreeSet<>();
-    for (ElementQuantity i : elementQuantitiyList) 
-        sortedElementQuantityList 
-            .add(i);
-   	return sortedElementQuantityList;
+   	return elementQuantityList;
    }
 
     

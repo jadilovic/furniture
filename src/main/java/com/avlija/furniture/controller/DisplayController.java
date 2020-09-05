@@ -83,7 +83,7 @@ public class DisplayController {
      Product product = productRepository.findById(id).get();
      Set <Element> elements = new HashSet<Element>();
      elements = product.getElements();
-   	  	Set<ElementQuantity> elementsQuantityList = getElementQuantityList(elements, product);
+   	  List<ElementQuantity> elementsQuantityList = getElementQuantityList(elements, product);
    	  model.addObject("msg", "Informacije o proizvodu");
    	  model.setViewName("admin/create_product2");
      model.addObject("product", product);
@@ -115,7 +115,7 @@ public class DisplayController {
         elements = createdProduct.getElements();
         int orderQuantity = order.getOrderQuant();
         
-        Set<ElementQuantity> elementsQuantityList = getElementQuantityList(elements, createdProduct);
+        List<ElementQuantity> elementsQuantityList = getElementQuantityList(elements, createdProduct);
         Set<Integer> totals = new HashSet<>();
         for(ElementQuantity elementQuantity: elementsQuantityList) {
         	int totalElementQuantity = orderQuantity * elementQuantity.getQuantity();
@@ -141,7 +141,7 @@ public class DisplayController {
          Product product = productRepository.findById(order.getProduct().getId()).get();
          Set <Element> elements = new HashSet<Element>();
          elements = product.getElements();
-       	  	Set<ElementQuantity> elementsQuantityList = getElementQuantityList(elements, product);
+       	  	List<ElementQuantity> elementsQuantityList = getElementQuantityList(elements, product);
             List<Integer> totals = new ArrayList<>();
             int orderQuantity = order.getOrderQuant();
             for(ElementQuantity elementQuantity: elementsQuantityList) {
@@ -229,8 +229,8 @@ public class DisplayController {
     	}
 
     // GET ELEMENT QUANTITY
-    private Set<ElementQuantity> getElementQuantityList(Set<Element> elementList, Product product) {
-   	 Set<ElementQuantity> elementQuantitiyList = new HashSet<ElementQuantity>();
+    private List<ElementQuantity> getElementQuantityList(Set<Element> elementList, Product product) {
+   	 List<ElementQuantity> elementQuantitiyList = new ArrayList<ElementQuantity>();
    	 for(Element element: elementList) {
    		 ElementQuantity elementQuantity;
    		 try {
