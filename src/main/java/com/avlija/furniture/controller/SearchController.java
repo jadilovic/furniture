@@ -1,7 +1,9 @@
 package com.avlija.furniture.controller;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.validation.Valid;
 
@@ -58,9 +60,9 @@ public class SearchController {
      int productId = sampleInputs.getId();
      try {
          Product product = productRepository.findById(productId).get();
-         List <Element> elements = new ArrayList<Element>();
+         Set <Element> elements = new HashSet<Element>();
          elements = product.getElements();
-       	  	List<ElementQuantity> elementsQuantityList = getElementQuantityList(elements, product);
+       	  	Set<ElementQuantity> elementsQuantityList = getElementQuantityList(elements, product);
        	  	model.addObject("msg", "Informacije o proizvodu");
        	  	model.setViewName("home/product_profile");
          model.addObject("product", product);
@@ -96,9 +98,9 @@ public class SearchController {
      String productName = sampleInputs.getName();
      try {
          Product product = productRepository.findByName(productName);
-         List <Element> elements = new ArrayList<Element>();
+         Set <Element> elements = new HashSet<Element>();
          elements = product.getElements();
-       	  	List<ElementQuantity> elementsQuantityList = getElementQuantityList(elements, product);
+       	  	Set<ElementQuantity> elementsQuantityList = getElementQuantityList(elements, product);
        	  	model.addObject("msg", "Informacije o proizvodu");
        	  	model.setViewName("home/product_profile");
          model.addObject("product", product);
@@ -114,10 +116,10 @@ public class SearchController {
     @RequestMapping(value= {"admin/searchelementsifra"}, method=RequestMethod.POST)
     public ModelAndView searchElemntBySifra(@Valid SampleInputs sampleInputs) {
      ModelAndView model = new ModelAndView();
-     List <Element> newElements = new ArrayList<Element>();
+     Set <Element> newElements = new HashSet<Element>();
     	 Element element = elementRepository.findBySifra(sampleInputs.getSifra());
       	Product product = productRepository.findById(sampleInputs.getId()).get();
-      	List<Element> elements = product.getElements();
+      	Set<Element> elements = product.getElements();
       	System.out.println("ELEMENTS: " + elements.isEmpty());
       	Boolean empty = elements.isEmpty();
     	 if(element == null) {
@@ -148,7 +150,7 @@ public class SearchController {
      String keyWord = sampleInputs.getKeyWord();
    	Product product = productRepository.findById(sampleInputs.getId()).get();
          List<Element> foundElements = elementRepository.findByNameContaining(keyWord);
-         List<Element> elements = product.getElements();
+         Set<Element> elements = product.getElements();
          if(foundElements.isEmpty()) {
          	  model.addObject("err", "Nije pronađen element koji sadrži ključnu riječ: " + keyWord);
               model.addObject("elementsList", elements);
@@ -208,8 +210,8 @@ public class SearchController {
          	return model;
     	}
     
-    private List<ElementQuantity> getElementQuantityList(List<Element> elementList, Product product) {
-   	 List<ElementQuantity> elementQuantitiyList = new ArrayList<ElementQuantity>();
+    private Set<ElementQuantity> getElementQuantityList(Set<Element> elementList, Product product) {
+   	 Set<ElementQuantity> elementQuantitiyList = new HashSet<ElementQuantity>();
    	 for(Element element: elementList) {
    		 ElementQuantity elementQuantity;
    		 try {
@@ -223,7 +225,7 @@ public class SearchController {
    	return elementQuantitiyList;
    }
     
-    private boolean elementAlreadyInProduct(Element element, List<Element> elements) {
+    private boolean elementAlreadyInProduct(Element element, Set<Element> elements) {
 		for(Element check: elements) {
 			if(check.getId() == element.getId()) {
 				return true;

@@ -4,7 +4,9 @@ import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.validation.Valid;
 
@@ -79,9 +81,9 @@ public class DisplayController {
     public ModelAndView productProfile(@PathVariable(name = "id") Integer id) {
      ModelAndView model = new ModelAndView();
      Product product = productRepository.findById(id).get();
-     List <Element> elements = new ArrayList<Element>();
+     Set <Element> elements = new HashSet<Element>();
      elements = product.getElements();
-   	  	List<ElementQuantity> elementsQuantityList = getElementQuantityList(elements, product);
+   	  	Set<ElementQuantity> elementsQuantityList = getElementQuantityList(elements, product);
    	  model.addObject("msg", "Informacije o proizvodu");
    	  model.setViewName("admin/create_product2");
      model.addObject("product", product);
@@ -107,14 +109,14 @@ public class DisplayController {
     @RequestMapping(value= {"home/orderprofile/{id}"}, method=RequestMethod.GET)
     	public ModelAndView orderProfile(@PathVariable(name = "id") Long id) {
      ModelAndView model = new ModelAndView();
-     List <Element> elements = new ArrayList<Element>();
+     Set <Element> elements = new HashSet<Element>();
      Order order = orderRepository.findById(id).get();
      	Product createdProduct = productRepository.findById(order.getProduct().getId()).get();
         elements = createdProduct.getElements();
         int orderQuantity = order.getOrderQuant();
         
-        List<ElementQuantity> elementsQuantityList = getElementQuantityList(elements, createdProduct);
-        List<Integer> totals = new ArrayList<>();
+        Set<ElementQuantity> elementsQuantityList = getElementQuantityList(elements, createdProduct);
+        Set<Integer> totals = new HashSet<>();
         for(ElementQuantity elementQuantity: elementsQuantityList) {
         	int totalElementQuantity = orderQuantity * elementQuantity.getQuantity();
         	totals.add(totalElementQuantity);
@@ -137,9 +139,9 @@ public class DisplayController {
      try {
     	 Order order = orderRepository.findById(orderId).get();
          Product product = productRepository.findById(order.getProduct().getId()).get();
-         List <Element> elements = new ArrayList<Element>();
+         Set <Element> elements = new HashSet<Element>();
          elements = product.getElements();
-       	  	List<ElementQuantity> elementsQuantityList = getElementQuantityList(elements, product);
+       	  	Set<ElementQuantity> elementsQuantityList = getElementQuantityList(elements, product);
             List<Integer> totals = new ArrayList<>();
             int orderQuantity = order.getOrderQuant();
             for(ElementQuantity elementQuantity: elementsQuantityList) {
@@ -227,8 +229,8 @@ public class DisplayController {
     	}
 
     // GET ELEMENT QUANTITY
-    private List<ElementQuantity> getElementQuantityList(List<Element> elementList, Product product) {
-   	 List<ElementQuantity> elementQuantitiyList = new ArrayList<ElementQuantity>();
+    private Set<ElementQuantity> getElementQuantityList(Set<Element> elementList, Product product) {
+   	 Set<ElementQuantity> elementQuantitiyList = new HashSet<ElementQuantity>();
    	 for(Element element: elementList) {
    		 ElementQuantity elementQuantity;
    		 try {

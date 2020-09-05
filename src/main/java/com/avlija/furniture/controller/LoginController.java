@@ -54,7 +54,9 @@ public class LoginController {
         	user.setCreated(new Date());
             userService.saveUser(user);
             modelAndView.addObject("successMessage", "User has been registered successfully");
-            modelAndView.addObject("user", new User());
+            User newUser = new User();
+            newUser.setRole("CLIENT");            
+            modelAndView.addObject("user", newUser);
             modelAndView.setViewName("registration");
 
         }

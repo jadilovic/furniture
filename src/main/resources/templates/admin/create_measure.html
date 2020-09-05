@@ -28,20 +28,20 @@
          </div>
          <div class="row">
              <div class="col-md-3 field-label-responsive">
-                 <label for="name">Naziv Jedinice Mjere</label>
+                 <label for="unitMeasureName">Naziv Jedinice Mjere</label>
              </div>
              <div class="col-md-6">
                  <div class="form-group">
                      <div class="input-group mb-2 mr-sm-2 mb-sm-0">
                          <div class="input-group-addon" style="width: 2.6rem"><i class="fa fa-user"></i></div>
-                         <input type="text" th:field="*{name}" class="form-control" id="name"
+                         <input type="text" th:field="*{unitMeasureName}" class="form-control" id="unitMeasureName"
                                 placeholder="Naziv jedinice mjere" required autofocus>
                      </div>
                  </div>
              </div>
              <div class="col-md-3">
                  <div class="form-control-feedback">
-                    <span class="text-danger align-middle" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">
+                    <span class="text-danger align-middle" th:if="${#fields.hasErrors('unitMeasureName')}" th:errors="*{unitMeasureName}">
                        </span>
                  </div>
              </div>

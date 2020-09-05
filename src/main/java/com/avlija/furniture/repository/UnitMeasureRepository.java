@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface UnitMeasureRepository extends JpaRepository<UnitMeasure, Integer> {
-    UnitMeasure findByName(String name);
+    UnitMeasure findByUnitMeasureName(String name);
 
 }

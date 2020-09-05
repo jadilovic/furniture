@@ -67,7 +67,7 @@
                 <td th:text="${element.quantity}">Stanje</td>
                 <td th:text="${element.name}">Naziv</td>
                 <td th:text="${element.elementSize}">Veličina</td>    
-                <td th:text="${element.getUnitMeasure().getName()}">Jedinica Mjere</td>   
+                <td th:text="${element.getUnitMeasure().getUnitMeasureName()}">Jedinica Mjere</td>   
                 <td th:object="${element}">
                 	<a class="btn btn-warning" th:href="@{'/home/elementprofile/' + *{id}}">Info</a>
                 </td>       

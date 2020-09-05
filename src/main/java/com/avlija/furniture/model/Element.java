@@ -3,6 +3,7 @@ package com.avlija.furniture.model;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.persistence.*;
 
@@ -37,7 +38,7 @@ public class Element implements Serializable {
     private int quantity;
 	
     @ManyToMany(mappedBy = "elements", fetch = FetchType.LAZY)
-    private Set<Product> products = new HashSet<>();
+    private Set<Product> products = new TreeSet<>();
 
     public Element() {
     	

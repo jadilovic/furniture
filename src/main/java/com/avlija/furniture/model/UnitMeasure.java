@@ -12,11 +12,11 @@ public class UnitMeasure {
    
 	@Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id")
-    private int id;
+    @Column(name = "unit_measure_id")
+    private int unitMeasureId;
 	
-	@Column(name = "name")
-    private String name;
+	@Column(name = "unit_measure_name")
+    private String unitMeasureName;
 	
     
     @OneToMany(mappedBy="unitMeasure", cascade = CascadeType.ALL)
@@ -24,34 +24,34 @@ public class UnitMeasure {
 
 
 	/**
-	 * @return the id
+	 * @return the unitMeasureId
 	 */
-	public int getId() {
-		return id;
+	public int getUnitMeasureId() {
+		return unitMeasureId;
 	}
 
 
 	/**
-	 * @param id the id to set
+	 * @param unitMeasureId the unitMeasureId to set
 	 */
-	public void setId(int id) {
-		this.id = id;
+	public void setUnitMeasureId(int unitMeasureId) {
+		this.unitMeasureId = unitMeasureId;
 	}
 
 
 	/**
-	 * @return the name
+	 * @return the unitMeasureName
 	 */
-	public String getName() {
-		return name;
+	public String getUnitMeasureName() {
+		return unitMeasureName;
 	}
 
 
 	/**
-	 * @param name the name to set
+	 * @param unitMeasureName the unitMeasureName to set
 	 */
-	public void setName(String name) {
-		this.name = name;
+	public void setUnitMeasureName(String unitMeasureName) {
+		this.unitMeasureName = unitMeasureName;
 	}
 
 

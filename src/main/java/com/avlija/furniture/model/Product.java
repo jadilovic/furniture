@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.persistence.*;
 
@@ -34,10 +35,10 @@ public class Product implements Serializable{
             joinColumns = @JoinColumn(name = "product_id"),
             inverseJoinColumns = @JoinColumn(name = "element_id")
             )
-    private List <Element> elements = new ArrayList<>();
+    private Set <Element> elements = new TreeSet<>();
     
     @ManyToMany(mappedBy = "products", fetch = FetchType.LAZY)
-    private Set<Pipeline> pipelines = new HashSet<>();
+    private Set<Pipeline> pipelines = new TreeSet<>();
     
     public Product() {
     	
@@ -73,14 +74,14 @@ public class Product implements Serializable{
 	/**
 	 * @return the elements
 	 */
-	public List <Element> getElements() {
+	public Set <Element> getElements() {
 		return elements;
 	}
 
 	/**
 	 * @param elements the elements to set
 	 */
-	public void setElements(List <Element> elements) {
+	public void setElements(Set <Element> elements) {
 		this.elements = elements;
 	}
 

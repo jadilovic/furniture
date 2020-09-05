@@ -1,7 +1,12 @@
 package com.avlija.furniture.controller;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+
 import javax.validation.Valid;
 
 import com.avlija.furniture.form.SampleInputs;
@@ -53,9 +58,9 @@ public class CreateController {
     @RequestMapping(value= {"admin/createmeasure"}, method=RequestMethod.POST)
     public ModelAndView createUnitMeasure(@Valid UnitMeasure unitMeasure, BindingResult bindingResult) {
      ModelAndView model = new ModelAndView();
-     UnitMeasure unitMeasureExists = unitMeasureRepository.findByName(unitMeasure.getName());
+     UnitMeasure unitMeasureExists = unitMeasureRepository.findByUnitMeasureName(unitMeasure.getUnitMeasureName());
      if(unitMeasureExists != null) {
-      bindingResult.rejectValue("name", "error.unitMeasure", "Ova jedinica mjere već postoji!");
+      bindingResult.rejectValue("unitMeasureName", "error.unitMeasure", "Ova jedinica mjere već postoji!");
      }
      if(bindingResult.hasErrors()) {
       model.setViewName("admin/create_measure");
@@ -95,7 +100,7 @@ public class CreateController {
          model.setViewName("admin/create_element");
      } else {
    	  	elementRepository.save(element);
-   	  	UnitMeasure unitMeasure = unitMeasureRepository.findById(element.getUnitMeasure().getId()).get();
+   	  	UnitMeasure unitMeasure = unitMeasureRepository.findById(element.getUnitMeasure().getUnitMeasureId()).get();
    	  	element.setUnitMeasure(unitMeasure);
         model.addObject("element", element);
    	  	model.addObject("msg", "Novi element je uspješno kreiran!");
@@ -157,7 +162,7 @@ public class CreateController {
     @RequestMapping(value= {"admin/addelement"}, method=RequestMethod.POST)
     public ModelAndView addElementToProduct(@Valid Product product) {
      ModelAndView model = new ModelAndView();
-     List <Element> elements = new ArrayList<Element>();
+     Set <Element> elements = new TreeSet<Element>();
      elements = product.getElements();
      	Product createdProduct = productRepository.findById(product.getId()).get();
      	for(Element element: elements) {
@@ -170,7 +175,7 @@ public class CreateController {
      	}
      	createdProduct.setElements(elements);
    	  	productRepository.save(createdProduct);
-   	  	List<ElementQuantity> elementsQuantityList = getElementQuantityList(elements, createdProduct);
+   	  	Set<ElementQuantity> elementsQuantityList = getElementQuantityList(elements, createdProduct);
    	  model.addObject("msg", "Izvršena dopuna - izmjena elemenata");
    	  model.setViewName("admin/create_product2");
      model.addObject("product", createdProduct);
@@ -181,7 +186,7 @@ public class CreateController {
 
 
 	@RequestMapping(value="admin/quantity/{productId}/{elementId}", method=RequestMethod.GET)
-    public ModelAndView getSpecificQuestions(@PathVariable String productId, @PathVariable String elementId) {
+    public ModelAndView getAddQuantityOfEachElementInProduct(@PathVariable String productId, @PathVariable String elementId) {
     	ModelAndView model = new ModelAndView();
     	int prdId = Integer.parseInt(productId);
     	int elmId = Integer.parseInt(elementId);
@@ -204,7 +209,7 @@ public class CreateController {
     @RequestMapping(value= {"admin/elementquantity"}, method=RequestMethod.POST)
     public ModelAndView addedElementQuantity(@Valid SampleInputs sampleInputs) {
      ModelAndView model = new ModelAndView();
-     List <Element> elements = new ArrayList<Element>();
+     Set <Element> elements = new TreeSet<Element>();
      	Product createdProduct = productRepository.findById(sampleInputs.getPrdId()).get();
         elements = createdProduct.getElements();
         Element element = elementRepository.findById(sampleInputs.getElmId()).get();
@@ -213,7 +218,7 @@ public class CreateController {
         elementQuantity.setQuantity(sampleInputs.getQuantity());
         elementQuantityRepository.save(elementQuantity);
    	  	
-        List<ElementQuantity> elementsQuantityList = getElementQuantityList(elements, createdProduct);
+        Set<ElementQuantity> elementsQuantityList = getElementQuantityList(elements, createdProduct);
    	  model.addObject("msg", "Izvršena dopuna - izmjena količine elemenata: " + element.getName());
    	  model.setViewName("admin/create_product2");
      model.addObject("product", createdProduct);
@@ -222,8 +227,8 @@ public class CreateController {
      return model;
     }
     
-    private List<ElementQuantity> getElementQuantityList(List<Element> elementList, Product product) {
-   	 List<ElementQuantity> elementQuantitiyList = new ArrayList<ElementQuantity>();
+    private Set<ElementQuantity> getElementQuantityList(Set<Element> elementList, Product product) {
+   	 Set<ElementQuantity> elementQuantitiyList = new HashSet<ElementQuantity>();
    	 for(Element element: elementList) {
    		 ElementQuantity elementQuantity;
    		 try {
@@ -234,7 +239,12 @@ public class CreateController {
    		 }
    		 elementQuantitiyList.add(elementQuantity);
    	 }
-   	return elementQuantitiyList;
+
+   	Set<ElementQuantity> sortedElementQuantityList = new TreeSet<>();
+    for (ElementQuantity i : elementQuantitiyList) 
+        sortedElementQuantityList 
+            .add(i);
+   	return sortedElementQuantityList;
    }
 
     

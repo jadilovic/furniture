@@ -2,7 +2,10 @@ package com.avlija.furniture.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.persistence.*;
 
@@ -29,7 +32,8 @@ public class Pipeline implements Serializable{
             joinColumns = @JoinColumn(name = "pipeline_id"),
             inverseJoinColumns = @JoinColumn(name = "product_id")
             )
-    private List <Product> products = new ArrayList<>();
+    private Set <Product> products = new TreeSet<>();
+   
     
     public Pipeline() {
 		// TODO Auto-generated constructor stub
@@ -66,16 +70,17 @@ public class Pipeline implements Serializable{
 	/**
 	 * @return the products
 	 */
-	public List<Product> getProducts() {
+	public Set<Product> getProducts() {
 		return products;
 	}
 
 	/**
 	 * @param products the products to set
 	 */
-	public void setProducts(List<Product> products) {
+	public void setProducts(Set<Product> products) {
 		this.products = products;
 	}
 
+	
 
 }

@@ -1,7 +1,10 @@
 package com.avlija.furniture.controller;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
 import javax.validation.Valid;
 
 import com.avlija.furniture.form.SampleInputs;
@@ -9,7 +12,6 @@ import com.avlija.furniture.model.Pipeline;
 import com.avlija.furniture.model.PipelineProduct;
 import com.avlija.furniture.model.Product;
 import com.avlija.furniture.model.ProductQuantity;
-import com.avlija.furniture.repository.ElementQuantityRepository;
 import com.avlija.furniture.repository.PipelineRepository;
 import com.avlija.furniture.repository.ProductQuantityRepository;
 import com.avlija.furniture.repository.ProductRepository;
@@ -33,8 +35,8 @@ public class PipelineController {
     @Autowired
     private ProductQuantityRepository productQuantityRepository;
     
-    @Autowired
-    private ElementQuantityRepository elementQuantityRepository;
+   // @Autowired
+   // private ElementQuantityRepository elementQuantityRepository;
 
 
     // CREATE PIPELINE OF PRODUCTS GET
@@ -107,11 +109,10 @@ public class PipelineController {
     
     // ADD PRODUCTS TO THE LIST
     
-    @RequestMapping(value= {"admin/addproduct/{id}"}, method=RequestMethod.GET)
+    @RequestMapping(value= {"admin/add/{id}"}, method=RequestMethod.GET)
     public ModelAndView addProductsToPipelineGET(@PathVariable(name = "id") Integer id) {
      ModelAndView model = new ModelAndView();
      Pipeline pipeline = pipelineRepository.findById(id).get();
-     Boolean emptyPipeline = pipeline.getProducts().isEmpty();
      
      SampleInputs sampleInputs = new SampleInputs();
   	System.out.println("PRODUCTS IN OBJECT:" + pipeline.getProducts());
@@ -119,7 +120,7 @@ public class PipelineController {
      model.addObject("sampleInputs", sampleInputs);
      model.addObject("pipeline", pipeline);
      model.addObject("productsList", pipeline.getProducts());
-     model.addObject("emptyPipeline", emptyPipeline);
+     model.addObject("emptyPipeline", pipeline.getProducts().isEmpty());
      model.setViewName("admin/add_products");
      
      return model;
@@ -131,7 +132,7 @@ public class PipelineController {
     @RequestMapping(value= {"admin/addproducts"}, method=RequestMethod.POST)
     public ModelAndView addProductsToPipelinePOST(@Valid Pipeline pipeline) {
      ModelAndView model = new ModelAndView();
-     List <Product> selectedProducts = new ArrayList<>();
+     Set <Product> selectedProducts = new HashSet<>();
      selectedProducts = pipeline.getProducts();
 
      Pipeline savedPipeline = pipelineRepository.findById(pipeline.getId()).get();
@@ -151,7 +152,7 @@ public class PipelineController {
      	savedPipeline.setProducts(selectedProducts);
    	  	pipelineRepository.save(savedPipeline);
    	  	
-   	  	List<ProductQuantity> productsQuantityList = getProductQuantityList(selectedProducts, savedPipeline);
+   	  	Set<ProductQuantity> productsQuantityList = getProductQuantityList(selectedProducts, savedPipeline);
      	System.out.println("PRODUCTS IN OBJECT:" + savedPipeline.getProducts());
      	System.out.println("PRODUCTS IN OBJECT FROM DATABASE:" + pipelineRepository.findById(pipeline.getId()).get().getProducts());
      	
@@ -164,8 +165,8 @@ public class PipelineController {
     }
 
 
-    private List<ProductQuantity> getProductQuantityList(List<Product> products, Pipeline pipeline) {
-      	 List<ProductQuantity> productQuantitiyList = new ArrayList<ProductQuantity>();
+    private Set<ProductQuantity> getProductQuantityList(Set <Product> products, Pipeline pipeline) {
+      	 Set <ProductQuantity> productQuantitiyList = new HashSet<ProductQuantity>();
        	 for(Product product: products) {
        		 ProductQuantity productQuantity;
        		 try {
@@ -199,7 +200,7 @@ public class PipelineController {
     public ModelAndView searchProductById(@Valid SampleInputs sampleInputs) {
      ModelAndView model = new ModelAndView();
      	
-     	List <Product> pipelineProducts = new ArrayList<Product>();
+     	Set <Product> pipelineProducts = new HashSet<Product>();
     	Pipeline pipeline = pipelineRepository.findById(sampleInputs.getPipelineId()).get();
       	pipelineProducts = pipeline.getProducts();
       	Boolean emptyPipeline = pipelineProducts.isEmpty();
@@ -237,7 +238,7 @@ public class PipelineController {
     }
 
 	// CHECKING IF THE PRODUCT IS IN THE PIPELINE
-	private boolean productAlreadyInList(Product product, List<Product> pipelineProducts) {
+	private boolean productAlreadyInList(Product product, Set<Product> pipelineProducts) {
 		for(Product check: pipelineProducts) {
 			if(check.getId() == product.getId()) {
 				return true;
@@ -255,7 +256,7 @@ public class PipelineController {
      String keyWord = sampleInputs.getKeyWord();
    		Pipeline pipeline = pipelineRepository.findById(sampleInputs.getPipelineId()).get();
          List<Product> foundProducts = productRepository.findByNameContaining(keyWord);
-         List<Product> pipelineProducts = pipeline.getProducts(); 		 
+         Set <Product> pipelineProducts = pipeline.getProducts(); 		 
          //model.addObject("emptyListOfProducts", products.isEmpty());
 
          if(foundProducts.isEmpty()) {

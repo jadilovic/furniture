@@ -2,7 +2,10 @@ package com.avlija.furniture.controller;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
 import javax.validation.Valid;
 
 import com.avlija.furniture.form.SampleInputs;
@@ -43,8 +46,8 @@ public class OrderController {
     public ModelAndView createOrder(@PathVariable(name = "id") Integer id) {
      ModelAndView model = new ModelAndView();
      Product product = productRepository.findById(id).get();
-     List<Element> elementsList = product.getElements();
-     List<ElementQuantity> elementsQuantityList = getElementQuantityList(elementsList, product);
+     Set<Element> elementsList = product.getElements();
+     Set<ElementQuantity> elementsQuantityList = getElementQuantityList(elementsList, product);
      SampleInputs sampleInputs = new SampleInputs();
      sampleInputs.setPrdId(id);
      sampleInputs.setQuantity(0);
@@ -59,11 +62,11 @@ public class OrderController {
     @RequestMapping(value= {"admin/createorder"}, method=RequestMethod.POST)
     public ModelAndView addedElementQuantity(@Valid SampleInputs sampleInputs) {
      ModelAndView model = new ModelAndView();
-     List <Element> elements = new ArrayList<Element>();
+     Set <Element> elements = new HashSet<Element>();
      	Product createdProduct = productRepository.findById(sampleInputs.getPrdId()).get();
         elements = createdProduct.getElements();
         int orderQuantity = sampleInputs.getQuantity();
-        List<ElementQuantity> elementsQuantityList = getElementQuantityList(elements, createdProduct);
+        Set<ElementQuantity> elementsQuantityList = getElementQuantityList(elements, createdProduct);
         List<Integer> totals = new ArrayList<>();
         for(ElementQuantity elementQuantity: elementsQuantityList) {
         	int totalElementQuantity = orderQuantity * elementQuantity.getQuantity();
@@ -82,14 +85,14 @@ public class OrderController {
     @RequestMapping(value= {"admin/confirmorder"}, method=RequestMethod.POST)
     public ModelAndView confirmOrder(@Valid SampleInputs sampleInputs) {
      ModelAndView model = new ModelAndView();
-     List <Element> elements = new ArrayList<Element>();
+     Set <Element> elements = new HashSet<Element>();
      	Product createdProduct = productRepository.findById(sampleInputs.getPrdId()).get();
         elements = createdProduct.getElements();
         int orderQuantity = sampleInputs.getQuantity();
         Order order = new Order(new Date(), orderQuantity, createdProduct);
         orderRepository.save(order);
         
-        List<ElementQuantity> elementsQuantityList = getElementQuantityList(elements, createdProduct);
+        Set<ElementQuantity> elementsQuantityList = getElementQuantityList(elements, createdProduct);
         List<Integer> totals = new ArrayList<>();
         for(ElementQuantity elementQuantity: elementsQuantityList) {
         	int totalElementQuantity = orderQuantity * elementQuantity.getQuantity();
@@ -111,8 +114,8 @@ public class OrderController {
     }
 
     
-    private List<ElementQuantity> getElementQuantityList(List<Element> elementList, Product product) {
-   	 List<ElementQuantity> elementQuantitiyList = new ArrayList<ElementQuantity>();
+    private Set<ElementQuantity> getElementQuantityList(Set<Element> elementList, Product product) {
+   	 Set<ElementQuantity> elementQuantitiyList = new HashSet<ElementQuantity>();
    	 for(Element element: elementList) {
    		 ElementQuantity elementQuantity;
    		 try {

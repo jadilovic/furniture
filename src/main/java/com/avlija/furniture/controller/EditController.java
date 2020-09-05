@@ -63,7 +63,7 @@ public class EditController {
          model.setViewName("admin/edit_element");
          } else {
         	 oldElement = element;
-        	 oldElement.setUnitMeasure(unitMeasureRepository.findById(element.getUnitMeasure().getId()).get());
+        	 oldElement.setUnitMeasure(unitMeasureRepository.findById(element.getUnitMeasure().getUnitMeasureId()).get());
    	  		elementRepository.save(oldElement);
    	  		model.addObject("msg", element.getName() + " je uspješno izmjenjen!");
    	  		model.setViewName("home/element_profile");
