@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.validation.Valid;
 
@@ -35,9 +36,6 @@ public class PipelineController {
     @Autowired
     private ProductQuantityRepository productQuantityRepository;
     
-   // @Autowired
-   // private ElementQuantityRepository elementQuantityRepository;
-
 
     // CREATE PIPELINE OF PRODUCTS GET
     
@@ -53,6 +51,7 @@ public class PipelineController {
     
     
     // CREATE PIPELINE POST
+    
     @RequestMapping(value= {"admin/createpipeline"}, method=RequestMethod.POST)
     public ModelAndView createPipeline(@Valid Pipeline pipeline, BindingResult bindingResult) {
      ModelAndView model = new ModelAndView();
@@ -93,6 +92,7 @@ public class PipelineController {
      return model;
     }
     
+    
     // PIPELINE PROFILE
     
     @RequestMapping(value= {"home/pipelineprofile/{id}"}, method=RequestMethod.GET)
@@ -107,7 +107,7 @@ public class PipelineController {
     }
     
     
-    // ADD PRODUCTS TO THE LIST
+    // ADD PRODUCTS TO THE PIPELINE
     
     @RequestMapping(value= {"admin/add/{id}"}, method=RequestMethod.GET)
     public ModelAndView addProductsToPipelineGET(@PathVariable(name = "id") Integer id) {
@@ -127,7 +127,7 @@ public class PipelineController {
     }
     
     
-    // ADDING PRODUCTS TO THE PRODUCTS LIST
+    // ADDING PRODUCTS TO THE PIPELINE
     
     @RequestMapping(value= {"admin/addproducts"}, method=RequestMethod.POST)
     public ModelAndView addProductsToPipelinePOST(@Valid Pipeline pipeline) {
@@ -136,9 +136,6 @@ public class PipelineController {
      selectedProducts = pipeline.getProducts();
 
      Pipeline savedPipeline = pipelineRepository.findById(pipeline.getId()).get();
-
-     	System.out.println("SELECTED PRODUCTS IN OBJECT:" + selectedProducts);
-     	System.out.println("EXISTING PRODUCTS IN OBJECT:" + savedPipeline.getProducts());
 
      	for(Product product: selectedProducts) {
      		PipelineProduct pipelineProduct = new PipelineProduct(pipeline.getId(), product.getId());
@@ -152,10 +149,8 @@ public class PipelineController {
      	savedPipeline.setProducts(selectedProducts);
    	  	pipelineRepository.save(savedPipeline);
    	  	
-   	  	Set<ProductQuantity> productsQuantityList = getProductQuantityList(selectedProducts, savedPipeline);
-     	System.out.println("PRODUCTS IN OBJECT:" + savedPipeline.getProducts());
-     	System.out.println("PRODUCTS IN OBJECT FROM DATABASE:" + pipelineRepository.findById(pipeline.getId()).get().getProducts());
-     	
+   	  	List<ProductQuantity> productsQuantityList = getProductQuantityList(selectedProducts, savedPipeline);
+
    	  model.addObject("msg", "Izvršena dopuna - izmjena proizvoda");
    	  model.setViewName("admin/create_pipeline2");
      model.addObject("pipeline", savedPipeline);
@@ -164,37 +159,8 @@ public class PipelineController {
      return model;
     }
 
-
-    private Set<ProductQuantity> getProductQuantityList(Set <Product> products, Pipeline pipeline) {
-      	 Set <ProductQuantity> productQuantitiyList = new HashSet<ProductQuantity>();
-       	 for(Product product: products) {
-       		 ProductQuantity productQuantity;
-       		 try {
-       			 productQuantity = productQuantityRepository.findById(new PipelineProduct(pipeline.getId(), product.getId())).get();
-       		 } catch(Exception e) {
-       			 productQuantity = new ProductQuantity(new PipelineProduct(pipeline.getId(), product.getId()), 0, null, null);
-       			 // productQuantityRepository.save(productQuantity);
-       		 }
-       		 productQuantitiyList.add(productQuantity);
-       	 }
-       	return productQuantitiyList;
-	}
-
-	private boolean productQuantityExists(PipelineProduct pipelineProduct) {
-    	try {
-    		ProductQuantity productQuantity = productQuantityRepository.findById(pipelineProduct).get();
-    		if(productQuantity == null) {
-    			return false;
-    		} else {
-    			return true;
-    		}
-    	} catch (Exception e) {
-    		return false;
-    	}
-	}
 	
-	
-	   // SEARCH PRODUCT BY ID TO BE ADDED TO THE LIST
+	   // SEARCH PRODUCT BY ID TO BE ADDED TO THE PIPELINE
 
 	@RequestMapping(value= {"home/searchproductid"}, method=RequestMethod.POST)
     public ModelAndView searchProductById(@Valid SampleInputs sampleInputs) {
@@ -237,7 +203,9 @@ public class PipelineController {
      return model;
     }
 
+	
 	// CHECKING IF THE PRODUCT IS IN THE PIPELINE
+	
 	private boolean productAlreadyInList(Product product, Set<Product> pipelineProducts) {
 		for(Product check: pipelineProducts) {
 			if(check.getId() == product.getId()) {
@@ -289,70 +257,82 @@ public class PipelineController {
     	}
     
 	
+	// ADD PRODUCT QUANTITY IN THE PIPELINE
 	
-    /**
-	@RequestMapping(value="admin/quantity/{productId}/{elementId}", method=RequestMethod.GET)
-    public ModelAndView getSpecificQuestions(@PathVariable String productId, @PathVariable String elementId) {
+	@RequestMapping(value="admin/productquantity/{pipelineId}/{productId}", method=RequestMethod.GET)
+    public ModelAndView addProductQuantityInThePipeline(@PathVariable String pipelineId, @PathVariable String productId) {
     	ModelAndView model = new ModelAndView();
+    	int pplId = Integer.parseInt(pipelineId);
     	int prdId = Integer.parseInt(productId);
-    	int elmId = Integer.parseInt(elementId);
-    	ProductElement productElement = new ProductElement(prdId, elmId);
-    	ElementQuantity elementQuantity = elementQuantityRepository.findById(productElement).get();
+    	PipelineProduct pipelineProduct = new PipelineProduct(pplId, prdId);
+    	ProductQuantity productQuantity = productQuantityRepository.findById(pipelineProduct).get();
+    	Pipeline pipeline = pipelineRepository.findById(pplId).get();    	
     	Product product = productRepository.findById(prdId).get();
-    	Element element = elementRepository.findById(elmId).get();
     	SampleInputs sampleInputs = new SampleInputs();
-    	sampleInputs.setElmId(elmId);
+    	sampleInputs.setPipelineId(pplId);
     	sampleInputs.setPrdId(prdId);
-    	sampleInputs.setQuantity(elementQuantity.getQuantity());
-    	model.setViewName("admin/element_add_quantity");
+    	sampleInputs.setQuantity(productQuantity.getQuantity());
+    	sampleInputs.setPrdComment(productQuantity.getComment());
+    	sampleInputs.setPrdBuyer(productQuantity.getBuyer());
+    	model.setViewName("admin/product_add_quantity");
         model.addObject("sampleInputs", sampleInputs);
-        model.addObject("element", element);
-        model.addObject("elementQuantity", elementQuantity);        
-        model.addObject("msg", "Dodaj potrebnu količinu elementa u proizvodu: " + product.getName());
+        model.addObject("product", product);
+        model.addObject("productQuantity", productQuantity);        
+        model.addObject("msg", "Dodaj potrebnu količinu proizvoda u listu: " + pipeline.getName());
         return model;
     }
     
-    @RequestMapping(value= {"admin/elementquantity"}, method=RequestMethod.POST)
-    public ModelAndView addedElementQuantity(@Valid SampleInputs sampleInputs) {
+
+	// ADD PRODUCT QUANTITY IN THE PIPELINE POST
+
+    @RequestMapping(value= {"admin/productquantity"}, method=RequestMethod.POST)
+    public ModelAndView addProductQuantity(@Valid SampleInputs sampleInputs) {
      ModelAndView model = new ModelAndView();
-     List <Element> elements = new ArrayList<Element>();
-     	Product createdProduct = productRepository.findById(sampleInputs.getPrdId()).get();
-        elements = createdProduct.getElements();
-        Element element = elementRepository.findById(sampleInputs.getElmId()).get();
-        ProductElement productElement = new ProductElement(sampleInputs.getPrdId(), sampleInputs.getElmId());
-        ElementQuantity elementQuantity = elementQuantityRepository.findById(productElement).get();
-        elementQuantity.setQuantity(sampleInputs.getQuantity());
-        elementQuantityRepository.save(elementQuantity);
+     Set <Product> products = new TreeSet<>();
+     	Pipeline createdPipeline = pipelineRepository.findById(sampleInputs.getPipelineId()).get();
+        products = createdPipeline.getProducts();
+        Product product = productRepository.findById(sampleInputs.getPrdId()).get();
+        PipelineProduct pipelineProduct = new PipelineProduct(sampleInputs.getPipelineId(), sampleInputs.getPrdId());
+        ProductQuantity productQuantity = productQuantityRepository.findById(pipelineProduct).get();
+        productQuantity.setQuantity(sampleInputs.getQuantity());
+        productQuantity.setComment(sampleInputs.getPrdComment());
+        productQuantity.setBuyer(sampleInputs.getPrdBuyer());
+        productQuantityRepository.save(productQuantity);
    	  	
-        List<ElementQuantity> elementsQuantityList = getElementQuantityList(elements, createdProduct);
-   	  model.addObject("msg", "Izvršena dopuna - izmjena količine elemenata: " + element.getName());
-   	  model.setViewName("admin/create_product2");
-     model.addObject("product", createdProduct);
-     model.addObject("elementsList", elements);
-     model.addObject("elementsQuantityList", elementsQuantityList);
+        List<ProductQuantity> productQuantityList = getProductQuantityList(products, createdPipeline);
+   	  model.addObject("msg", "Izvršena dopuna - izmjena količine proizvoda: " + product.getName());
+   	  model.setViewName("admin/create_pipeline2");
+     model.addObject("pipeline", createdPipeline);
+     model.addObject("productsList", products);
+     model.addObject("productsQuantityList", productQuantityList);
      return model;
     }
     
-    private List<ElementQuantity> getElementQuantityList(List<Element> elementList, Product product) {
-   	 List<ElementQuantity> elementQuantitiyList = new ArrayList<ElementQuantity>();
-   	 for(Element element: elementList) {
-   		 ElementQuantity elementQuantity;
-   		 try {
-   			 elementQuantity = elementQuantityRepository.findById(new ProductElement(product.getId(), element.getId())).get();
-   		 } catch(Exception e) {
-   			 elementQuantity = new ElementQuantity(new ProductElement(product.getId(), element.getId()), 0);
-   			 // productQuantityRepository.save(productQuantity);
-   		 }
-   		 elementQuantitiyList.add(elementQuantity);
-   	 }
-   	return elementQuantitiyList;
-   }
 
+    // CREATE PRODUCT QUANTITY LIST FOR THE PIPELINE
     
-    private boolean elementQuantityExists(ProductElement productElement) {
+    private List<ProductQuantity> getProductQuantityList(Set <Product> products, Pipeline pipeline) {
+      	 List <ProductQuantity> productQuantitiyList = new ArrayList<ProductQuantity>();
+       	 for(Product product: products) {
+       		 ProductQuantity productQuantity;
+       		 try {
+       			 productQuantity = productQuantityRepository.findById(new PipelineProduct(pipeline.getId(), product.getId())).get();
+       		 } catch(Exception e) {
+       			 productQuantity = new ProductQuantity(new PipelineProduct(pipeline.getId(), product.getId()), 0, null, null);
+       			 // productQuantityRepository.save(productQuantity);
+       		 }
+       		 productQuantitiyList.add(productQuantity);
+       	 }
+       	return productQuantitiyList;
+	}
+    
+    
+    // FIND OUT IF THE PRODUCT QUANTITY EXISTS
+
+	private boolean productQuantityExists(PipelineProduct pipelineProduct) {
     	try {
-    		ElementQuantity elementQuantity = elementQuantityRepository.findById(productElement).get();
-    		if(elementQuantity == null) {
+    		ProductQuantity productQuantity = productQuantityRepository.findById(pipelineProduct).get();
+    		if(productQuantity == null) {
     			return false;
     		} else {
     			return true;
@@ -361,5 +341,5 @@ public class PipelineController {
     		return false;
     	}
 	}
-    **/
+	
 }

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+ xmlns:th="http://www.thymeleaf.org">
+<head>
+ <title>Product Profile - Add Quantity</title>
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+ <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+ <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+ <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+ <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.0.0/css/font-awesome.min.css">
+</head>
+<body>
+
+<div th:replace="fragments/header :: header"/></div>
+
+ <div class="container">
+ 
+       <div class="row">
+         <div class="col-md-3"></div>
+          <div class="col-md-6">
+              <div class="alert alert-success" role="alert" th:if="${msg}" th:utext="${msg}"></div>
+         </div>
+       </div>
+ 
+  <table th:object="${product}" class="table table-striped">
+  <thead>
+    <tr>
+      <th scope="col">Proizvod</th>
+      <th scope="col">Specifikacije</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">ID Broj:</th>
+      <td><span th:text="*{id}"></span></td>
+    </tr>
+    <tr>
+      <th scope="row">Naziv:</th>
+      <td><span th:text="*{name}"></span></td>
+    </tr>
+        <tr>
+      <th scope="row">Veličina:</th>
+      <td><span th:text="*{productSize}"></span></td>
+    </tr>
+  </tbody>
+</table>
+
+      	<form th:action="@{/admin/productquantity}" th:object="${sampleInputs}" method="post">
+      	   	<input type="hidden" th:field="*{pipelineId}" readonly="readonly"/>
+      	   	<input type="hidden" th:field="*{prdId}" readonly="readonly"/>
+
+         <div class="row">
+             <div class="col-md-3 field-label-responsive">
+                 <label for="quantity"><b>Količina proizvoda potrebna za listu:</b></label>
+             </div>
+             <div class="col-md-6">
+                 <div class="form-group">
+                     <div class="input-group mb-2 mr-sm-2 mb-sm-0">
+                         <div class="input-group-addon" style="width: 2.6rem"><i class="fa fa-sort-numeric-asc"></i></div>
+        				<input min="1" step="1" type="number" th:field="*{quantity}" placeholder="količina" required autofocus/>
+                     </div>
+                 </div>
+             </div>
+         </div>  
+
+         <div class="row">
+             <div class="col-md-3 field-label-responsive">
+                 <label for="prdComment"><b>Komentar u vezi proizvoda:</b></label>
+             </div>
+             <div class="col-md-6">
+                 <div class="form-group">
+                     <div class="input-group mb-2 mr-sm-2 mb-sm-0">
+                         <div class="input-group-addon" style="width: 2.6rem"><i class="fa fa-comment-o"></i></div>
+                         <input type="text" th:field="*{prdComment}" class="form-control" id="prdComment" required autofocus>
+                     </div>
+                 </div>
+             </div>
+         </div>    	
+         
+         <div class="row">
+             <div class="col-md-3 field-label-responsive">
+                 <label for="prdBuyer"><b>Kupac proizvoda:</b></label>
+             </div>
+             <div class="col-md-6">
+                 <div class="form-group">
+                     <div class="input-group mb-2 mr-sm-2 mb-sm-0">
+                         <div class="input-group-addon" style="width: 2.6rem"><i class="fa fa-user-md"></i></div>
+                         <input type="text" th:field="*{prdBuyer}" class="form-control" id="prdBuyer" required autofocus>
+                     </div>
+                 </div>
+             </div>
+         </div>  	
+    		
+    	 <div class="row">
+             <div class="col-md-3"></div>
+             <div class="col-md-6">
+    			<input class="btn btn-success btn-block" type="submit" value="Dodaj"/>
+    		</div>
+    	 </div>
+		</form>
+ </div>
+ 
+ <div th:replace="fragments/footer :: footer"/></div>
+ 
+</body>
+</html>

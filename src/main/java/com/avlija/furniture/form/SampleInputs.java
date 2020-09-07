@@ -30,6 +30,8 @@ public class SampleInputs {
     private String token;
     private String confirmPassword;
     private String keyWord;
+    private String prdComment;
+    private String prdBuyer;
     
     private List <Element> selectedElements;
     private List<Product> selectedProducts;
@@ -293,6 +295,34 @@ public class SampleInputs {
 
 	public void setPipelineId(int pipelineId) {
 		this.pipelineId = pipelineId;
+	}
+
+	/**
+	 * @return the prdComment
+	 */
+	public String getPrdComment() {
+		return prdComment;
+	}
+
+	/**
+	 * @param prdComment the prdComment to set
+	 */
+	public void setPrdComment(String prdComment) {
+		this.prdComment = prdComment;
+	}
+
+	/**
+	 * @return the prdBuyer
+	 */
+	public String getPrdBuyer() {
+		return prdBuyer;
+	}
+
+	/**
+	 * @param prdBuyer the prdBuyer to set
+	 */
+	public void setPrdBuyer(String prdBuyer) {
+		this.prdBuyer = prdBuyer;
 	}
 	
 	
