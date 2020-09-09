@@ -148,23 +148,24 @@ public class DisplayController {
      Long orderId = sampleInputs.getId().longValue();
      try {
     	 Order order = orderRepository.findById(orderId).get();
-         Product product = productRepository.findById(order.getProduct().getId()).get();
-         Set <Element> elements = new HashSet<Element>();
-         elements = product.getElements();
-       	  	List<ElementQuantity> elementsQuantityList = getElementQuantityList(elements, product);
-            List<Integer> totals = new ArrayList<>();
-            int orderQuantity = order.getOrderQuant();
-            for(ElementQuantity elementQuantity: elementsQuantityList) {
-            	int totalElementQuantity = orderQuantity * elementQuantity.getQuantity();
-            	totals.add(totalElementQuantity);
-            	}    
+         Pipeline pipeline = order.getPipeline();
+         Set <Product> products = new TreeSet<>();
+         products = pipeline.getProducts();
+         List<ProductQuantity> productsQuantityList = getProductQuantityList(products, order.getPipeline());
+
+       	  //	List<ElementQuantity> elementsQuantityList = getElementQuantityList(elements, product);
+          //  List<Integer> totals = new ArrayList<>();
+          //  int orderQuantity = order.getOrderQuant();
+          //  for(ElementQuantity elementQuantity: elementsQuantityList) {
+          //  	int totalElementQuantity = orderQuantity * elementQuantity.getQuantity();
+          //  	totals.add(totalElementQuantity);
+          //  	}    
        	  	model.addObject("msg", "Profil Radnog Naloga");
        	  	model.setViewName("admin/order_profile");
-       	  	model.addObject("product", product);
-       	  	model.addObject("elementsList", elements);
-       	  	model.addObject("elementsQuantityList", elementsQuantityList);
-       	  	model.addObject("totals", totals);
-       	  	model.addObject("order", order); 
+       	  	model.addObject("order", order);
+       	  	model.addObject("productsList", products);
+       	  	model.addObject("productsQuantityList", productsQuantityList);
+       	  //	model.addObject("totals", totals);
      } catch(Exception e) {
       	  model.addObject("err", "Nije pronađen radni nalog sa ID brojem: " + sampleInputs.getId());
           List<Order> ordersList = orderRepository.findAll(Sort.by("created").descending());
@@ -176,7 +177,7 @@ public class DisplayController {
      return model;
     }
     
-    
+    /**
     @RequestMapping(value= {"home/ordersearchprdid"}, method=RequestMethod.POST)
     public ModelAndView productSearchKeyWord(@Valid SampleInputs sampleInputs) {
      ModelAndView model = new ModelAndView();
@@ -200,6 +201,7 @@ public class DisplayController {
      model.setViewName("home/list_orders");
          	return model;
     	}
+    */
     
     @RequestMapping(value = "home/searchorderdate", method = RequestMethod.POST)
     public ModelAndView searchByDate(@ModelAttribute("command") SampleInputs sampleInputs) throws ParseException {

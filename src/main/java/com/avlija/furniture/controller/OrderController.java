@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.validation.Valid;
 
@@ -62,7 +63,6 @@ public class OrderController {
      List<ProductQuantity> productsQuantityList = getProductQuantityList(productsList, pipeline);
      SampleInputs sampleInputs = new SampleInputs();
      sampleInputs.setPipelineId(id);
-     sampleInputs.setQuantity(0);
      model.addObject("productsQuantityList", productsQuantityList);
      model.addObject("pipeline", pipeline);
      model.addObject("productsList", productsList);
@@ -74,60 +74,67 @@ public class OrderController {
     @RequestMapping(value= {"admin/createorder"}, method=RequestMethod.POST)
     public ModelAndView addedElementQuantity(@Valid SampleInputs sampleInputs) {
      ModelAndView model = new ModelAndView();
-     Set <Element> elements = new HashSet<Element>();
-     	Product createdProduct = productRepository.findById(sampleInputs.getPrdId()).get();
-        elements = createdProduct.getElements();
-        int orderQuantity = sampleInputs.getQuantity();
-        Set<ElementQuantity> elementsQuantityList = getElementQuantityList(elements, createdProduct);
-        List<Integer> totals = new ArrayList<>();
-        for(ElementQuantity elementQuantity: elementsQuantityList) {
-        	int totalElementQuantity = orderQuantity * elementQuantity.getQuantity();
-        	totals.add(totalElementQuantity);
-        }
+     Set <Product> products = new TreeSet<>();
+     	Pipeline createdPipeline = pipelineRepository.findById(sampleInputs.getPipelineId()).get();
+        products = createdPipeline.getProducts();
+        List<ProductQuantity> productsQuantityList = getProductQuantityList(products, createdPipeline);
+        Order order = new Order(new Date(), sampleInputs.getWorkPosition(), createdPipeline, sampleInputs.getOrderComment(), sampleInputs.getOrderPackaging(), sampleInputs.getOrderPrep());
+       orderRepository.save(order);
+       sampleInputs.setOrderId(order.getId());
+        // List<Integer> totals = new ArrayList<>();
+       // for(ElementQuantity elementQuantity: elementsQuantityList) {
+       // 	int totalElementQuantity = orderQuantity * elementQuantity.getQuantity();
+       // 	totals.add(totalElementQuantity);
+       // }
         
    	  model.addObject("msg", "Kreirani radni nalog spreman za potvrdu");
    	  model.setViewName("admin/confirm_order");
-     model.addObject("product", createdProduct);
-     model.addObject("elementsList", elements);
-     model.addObject("elementsQuantityList", elementsQuantityList);
-     model.addObject("totals", totals);
+     model.addObject("order", order);
+     model.addObject("products", products);
+     model.addObject("productsQuantityList", productsQuantityList);
+     model.addObject("sampleInputs", sampleInputs);
+     //model.addObject("totals", totals);
      return model;
     }
     
     @RequestMapping(value= {"admin/confirmorder"}, method=RequestMethod.POST)
     public ModelAndView confirmOrder(@Valid SampleInputs sampleInputs) {
      ModelAndView model = new ModelAndView();
-     Set <Element> elements = new HashSet<Element>();
-     	Product createdProduct = productRepository.findById(sampleInputs.getPrdId()).get();
-        elements = createdProduct.getElements();
-        int orderQuantity = sampleInputs.getQuantity();
-        Order order = new Order(new Date(), orderQuantity, createdProduct);
-        orderRepository.save(order);
-        
-        Set<ElementQuantity> elementsQuantityList = getElementQuantityList(elements, createdProduct);
+     Set <Product> products = new TreeSet<>();
+     Order order = orderRepository.findById(sampleInputs.getOrderId()).get();
+     	Pipeline createdPipeline = order.getPipeline();
+        products = createdPipeline.getProducts();
+        List<ProductQuantity> productsQuantityList = getProductQuantityList(products, createdPipeline);
         List<Integer> totals = new ArrayList<>();
-        for(ElementQuantity elementQuantity: elementsQuantityList) {
-        	int totalElementQuantity = orderQuantity * elementQuantity.getQuantity();
-        	totals.add(totalElementQuantity);
-        	Element element = elementRepository.findById(elementQuantity.getProductElement().getElementId()).get();
-        		int newElementQuantity = element.getQuantity() - totalElementQuantity;
-        		element.setQuantity(newElementQuantity);
-        		elementRepository.save(element);
-        }
+
+        for(Product product: products) {
+        	PipelineProduct pipelineProduct = new PipelineProduct(createdPipeline.getId(), product.getId());
+        	ProductQuantity productQuantity = productQuantityRepository.findById(pipelineProduct).get();
+        	Set<Element> elements = product.getElements();
+            List<ElementQuantity> elementsQuantityList = getElementQuantityList(elements, product);
+            	for(ElementQuantity elementQuantity: elementsQuantityList) {
+            		int totalElementQuantity = productQuantity.getQuantity() * elementQuantity.getQuantity();
+            		totals.add(totalElementQuantity);
+            		Element element = elementRepository.findById(elementQuantity.getProductElement().getElementId()).get();
+            		int newElementQuantity = element.getQuantity() - totalElementQuantity;
+            		element.setQuantity(newElementQuantity);
+            		elementRepository.save(element);
+            	}
+        	}
         
    	  	model.addObject("msg", "Potvrđen radni nalog");
    	  	model.setViewName("admin/order_profile");
-   	  	model.addObject("product", createdProduct);
-   	  	model.addObject("elementsList", elements);
-   	  	model.addObject("elementsQuantityList", elementsQuantityList);
+   	  	model.addObject("order", order);
+   	  	model.addObject("productsList", products);
+   	  	model.addObject("productsQuantityList", productsQuantityList);
    	  	model.addObject("totals", totals);
    	  	model.addObject("order", order);   
      return model;
     }
 
     
-    private Set<ElementQuantity> getElementQuantityList(Set<Element> elementList, Product product) {
-   	 Set<ElementQuantity> elementQuantitiyList = new HashSet<ElementQuantity>();
+    private List<ElementQuantity> getElementQuantityList(Set<Element> elementList, Product product) {
+   	 List<ElementQuantity> elementQuantitiyList = new ArrayList<ElementQuantity>();
    	 for(Element element: elementList) {
    		 ElementQuantity elementQuantity;
    		 try {

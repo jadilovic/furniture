@@ -32,6 +32,11 @@ public class SampleInputs {
     private String keyWord;
     private String prdComment;
     private String prdBuyer;
+    private String workPosition;
+    private String orderComment;
+    private String orderPackaging;
+    private String orderPrep;
+    private Long orderId;
     
     private List <Element> selectedElements;
     private List<Product> selectedProducts;
@@ -323,6 +328,76 @@ public class SampleInputs {
 	 */
 	public void setPrdBuyer(String prdBuyer) {
 		this.prdBuyer = prdBuyer;
+	}
+
+	/**
+	 * @return the workPosition
+	 */
+	public String getWorkPosition() {
+		return workPosition;
+	}
+
+	/**
+	 * @param workPosition the workPosition to set
+	 */
+	public void setWorkPosition(String workPosition) {
+		this.workPosition = workPosition;
+	}
+
+	/**
+	 * @return the orderComment
+	 */
+	public String getOrderComment() {
+		return orderComment;
+	}
+
+	/**
+	 * @param orderComment the orderComment to set
+	 */
+	public void setOrderComment(String orderComment) {
+		this.orderComment = orderComment;
+	}
+
+	/**
+	 * @return the orderPackaging
+	 */
+	public String getOrderPackaging() {
+		return orderPackaging;
+	}
+
+	/**
+	 * @param orderPackaging the orderPackaging to set
+	 */
+	public void setOrderPackaging(String orderPackaging) {
+		this.orderPackaging = orderPackaging;
+	}
+
+	/**
+	 * @return the orderPrep
+	 */
+	public String getOrderPrep() {
+		return orderPrep;
+	}
+
+	/**
+	 * @param orderPrep the orderPrep to set
+	 */
+	public void setOrderPrep(String orderPrep) {
+		this.orderPrep = orderPrep;
+	}
+
+	/**
+	 * @return the orderId
+	 */
+	public Long getOrderId() {
+		return orderId;
+	}
+
+	/**
+	 * @param orderId the orderId to set
+	 */
+	public void setOrderId(Long orderId) {
+		this.orderId = orderId;
 	}
 	
 	
