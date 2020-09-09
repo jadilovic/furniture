@@ -52,19 +52,27 @@
   <table class="table table-striped">
   <thead>
     <tr>
-      <th scope="col">ID----naziv--proizvoda</th>
+      <th scope="col">Redni br.</th>    
+      <th scope="col">ID - Naziv Proizvoda</th>
+      <th scope="col">Dimenzije</th>      
       <th scope="col">Količina</th>
-      <th scope="col">Dopuna - Izmjena količine</th>
+      <th scope="col">Napomena</th>      
+      <th scope="col">Kupac</th>
+      <th scope="col">Izmjena</th>
     </tr>
   </thead>
   <tbody>
     <tr th:each="product, productStat : ${productsList}">
+    	<td><span th:text="${productStat.count} + '.'"></span></td>
         <th scope="row"><span th:text="${product.getId()} + ' - ' + ${product.getName()}"></span></th>
+    	<td><span th:text="${product.productSize}"></span></td>        
         <td>
         	<span th:text="*{productsQuantityList[__${productStat .index}__].quantity}">Stanje</span>
         </td>
+        <td><span th:text="${productsQuantityList[__${productStat .index}__].comment}"></span></td>        
+        <td><span th:text="${productsQuantityList[__${productStat .index}__].buyer}"></span></td>        
         <td>
-           	<a class="btn btn-info btn-block" th:href="@{'/admin/productquantity/' + ${pipeline.getId()} + '/' + ${product.getId()}}">Izmjeni Količinu</a>
+           	<a class="btn btn-info btn-block" th:href="@{'/admin/productquantity/' + ${pipeline.getId()} + '/' + ${product.getId()}}">Izmjeni</a>
         </td>
     </tr>
   </tbody>

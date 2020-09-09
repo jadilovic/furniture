@@ -12,11 +12,16 @@ import com.avlija.furniture.form.SampleInputs;
 import com.avlija.furniture.model.Element;
 import com.avlija.furniture.model.ElementQuantity;
 import com.avlija.furniture.model.Order;
+import com.avlija.furniture.model.Pipeline;
+import com.avlija.furniture.model.PipelineProduct;
 import com.avlija.furniture.model.Product;
 import com.avlija.furniture.model.ProductElement;
+import com.avlija.furniture.model.ProductQuantity;
 import com.avlija.furniture.repository.ElementQuantityRepository;
 import com.avlija.furniture.repository.ElementRepository;
 import com.avlija.furniture.repository.OrderRepository;
+import com.avlija.furniture.repository.PipelineRepository;
+import com.avlija.furniture.repository.ProductQuantityRepository;
 import com.avlija.furniture.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -39,21 +44,28 @@ public class OrderController {
     
     @Autowired
     private ElementQuantityRepository elementQuantityRepository;
+ 
+    @Autowired
+    private PipelineRepository pipelineRepository;
+
+    @Autowired
+    private ProductQuantityRepository productQuantityRepository;
+    
     
     // CREATE ORDER
     
     @RequestMapping(value= {"admin/createorder/{id}"}, method=RequestMethod.GET)
     public ModelAndView createOrder(@PathVariable(name = "id") Integer id) {
      ModelAndView model = new ModelAndView();
-     Product product = productRepository.findById(id).get();
-     Set<Element> elementsList = product.getElements();
-     Set<ElementQuantity> elementsQuantityList = getElementQuantityList(elementsList, product);
+     Pipeline pipeline = pipelineRepository.findById(id).get();
+     Set<Product> productsList = pipeline.getProducts();
+     List<ProductQuantity> productsQuantityList = getProductQuantityList(productsList, pipeline);
      SampleInputs sampleInputs = new SampleInputs();
-     sampleInputs.setPrdId(id);
+     sampleInputs.setPipelineId(id);
      sampleInputs.setQuantity(0);
-     model.addObject("elementsQuantityList", elementsQuantityList);
-     model.addObject("product", product);
-     model.addObject("elementsList", elementsList);
+     model.addObject("productsQuantityList", productsQuantityList);
+     model.addObject("pipeline", pipeline);
+     model.addObject("productsList", productsList);
      model.addObject("sampleInputs", sampleInputs);
      model.setViewName("admin/create_order");
      return model;
@@ -129,4 +141,23 @@ public class OrderController {
    	return elementQuantitiyList;
    }
 
+
+    // CREATE PRODUCT QUANTITY LIST FOR THE PIPELINE
+    
+    private List<ProductQuantity> getProductQuantityList(Set <Product> products, Pipeline pipeline) {
+      	 List <ProductQuantity> productQuantitiyList = new ArrayList<ProductQuantity>();
+       	 for(Product product: products) {
+       		 ProductQuantity productQuantity;
+       		 try {
+       			 productQuantity = productQuantityRepository.findById(new PipelineProduct(pipeline.getId(), product.getId())).get();
+       		 } catch(Exception e) {
+       			 productQuantity = new ProductQuantity(new PipelineProduct(pipeline.getId(), product.getId()), 0, null, null);
+       			 // productQuantityRepository.save(productQuantity);
+       		 }
+       		 productQuantitiyList.add(productQuantity);
+       	 }
+       	return productQuantitiyList;
+	}
+    
+    
 }

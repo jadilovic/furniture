@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.validation.Valid;
 
@@ -14,11 +15,16 @@ import com.avlija.furniture.form.SampleInputs;
 import com.avlija.furniture.model.Element;
 import com.avlija.furniture.model.ElementQuantity;
 import com.avlija.furniture.model.Order;
+import com.avlija.furniture.model.Pipeline;
+import com.avlija.furniture.model.PipelineProduct;
 import com.avlija.furniture.model.Product;
 import com.avlija.furniture.model.ProductElement;
+import com.avlija.furniture.model.ProductQuantity;
 import com.avlija.furniture.repository.ElementQuantityRepository;
 import com.avlija.furniture.repository.ElementRepository;
 import com.avlija.furniture.repository.OrderRepository;
+import com.avlija.furniture.repository.PipelineRepository;
+import com.avlija.furniture.repository.ProductQuantityRepository;
 import com.avlija.furniture.repository.ProductRepository;
 import com.avlija.furniture.service.UserService;
 import com.avlija.furniture.form.LocalDateAttributeConverter;
@@ -50,6 +56,12 @@ public class DisplayController {
     
     @Autowired
     private ElementQuantityRepository elementQuantityRepository;
+    
+    @Autowired
+    private PipelineRepository pipelineRepository;
+
+    @Autowired
+    private ProductQuantityRepository productQuantityRepository;
     
     // DISPLAY ALL ELEMENTS
     
@@ -109,25 +121,23 @@ public class DisplayController {
     @RequestMapping(value= {"home/orderprofile/{id}"}, method=RequestMethod.GET)
     	public ModelAndView orderProfile(@PathVariable(name = "id") Long id) {
      ModelAndView model = new ModelAndView();
-     Set <Element> elements = new HashSet<Element>();
+     Set <Product> products = new TreeSet<>();
      Order order = orderRepository.findById(id).get();
-     	Product createdProduct = productRepository.findById(order.getProduct().getId()).get();
-        elements = createdProduct.getElements();
-        int orderQuantity = order.getOrderQuant();
+     products = order.getPipeline().getProducts();
         
-        List<ElementQuantity> elementsQuantityList = getElementQuantityList(elements, createdProduct);
-        Set<Integer> totals = new HashSet<>();
-        for(ElementQuantity elementQuantity: elementsQuantityList) {
-        	int totalElementQuantity = orderQuantity * elementQuantity.getQuantity();
-        	totals.add(totalElementQuantity);
-        }
+        List<ProductQuantity> productsQuantityList = getProductQuantityList(products, order.getPipeline());
+       // Set<Integer> totals = new HashSet<>();
+       // for(ProductQuantity productQuantity: productsQuantityList) {
+       // 	int totalElementQuantity = orderQuantity * elementQuantity.getQuantity();
+      //  	totals.add(totalElementQuantity);
+      // }
         
    	  	model.addObject("msg", "Profil Radnog Naloga");
    	  	model.setViewName("admin/order_profile");
-   	  	model.addObject("product", createdProduct);
-   	  	model.addObject("elementsList", elements);
-   	  	model.addObject("elementsQuantityList", elementsQuantityList);
-   	  	model.addObject("totals", totals);
+   	  	model.addObject("productsList", products);
+   	  	//model.addObject("elementsList", elements);
+   	  	model.addObject("productsQuantityList", productsQuantityList);
+   	  	//model.addObject("totals", totals);
    	  	model.addObject("order", order);   
      return model;
     }
@@ -228,7 +238,9 @@ public class DisplayController {
    		return ordersOnDate;
     	}
 
+    
     // GET ELEMENT QUANTITY
+    
     private List<ElementQuantity> getElementQuantityList(Set<Element> elementList, Product product) {
    	 List<ElementQuantity> elementQuantitiyList = new ArrayList<ElementQuantity>();
    	 for(Element element: elementList) {
@@ -243,4 +255,38 @@ public class DisplayController {
    	 }
    	return elementQuantitiyList;
    }
+    
+
+    // CREATE PRODUCT QUANTITY LIST FOR THE PIPELINE
+    
+    private List<ProductQuantity> getProductQuantityList(Set <Product> products, Pipeline pipeline) {
+      	 List <ProductQuantity> productQuantitiyList = new ArrayList<ProductQuantity>();
+       	 for(Product product: products) {
+       		 ProductQuantity productQuantity;
+       		 try {
+       			 productQuantity = productQuantityRepository.findById(new PipelineProduct(pipeline.getId(), product.getId())).get();
+       		 } catch(Exception e) {
+       			 productQuantity = new ProductQuantity(new PipelineProduct(pipeline.getId(), product.getId()), 0, null, null);
+       			 // productQuantityRepository.save(productQuantity);
+       		 }
+       		 productQuantitiyList.add(productQuantity);
+       	 }
+       	return productQuantitiyList;
+	}
+    
+    
+    // FIND OUT IF THE PRODUCT QUANTITY EXISTS
+
+	private boolean productQuantityExists(PipelineProduct pipelineProduct) {
+    	try {
+    		ProductQuantity productQuantity = productQuantityRepository.findById(pipelineProduct).get();
+    		if(productQuantity == null) {
+    			return false;
+    		} else {
+    			return true;
+    		}
+    	} catch (Exception e) {
+    		return false;
+    	}
+	}
 }

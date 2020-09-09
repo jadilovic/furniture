@@ -18,31 +18,36 @@ public class Order implements Serializable{
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 	
+	@Column(name = "date_created")
     private Date created;
     
-    private int orderQuant;
-
-  // private double totalValue;
-    
-  //  private String transType;
+	@Column(name = "work_position")
+    private String workPosition;
     
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "product_id")
-    private Product product;
+    @JoinColumn(name = "pipeline_id", nullable = false)
+    private Pipeline pipeline;
   
-    /*
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
-    */
+    @Column(name = "order_comment")
+    private String orderComment;
+    
+    @Column(name = "order_packaging")
+    private String orderPackaging;
+    
+    @Column(name = "order_prep")
+    private String orderPrep;
     
     public Order() {
     }
 
-	public Order(Date created, int orderQuant, Product product) {
+	public Order(Date created, String workPosition, Pipeline pipeline, String orderComment, String orderPackaging,
+			String orderPrep) {
 		this.created = created;
-		this.orderQuant = orderQuant;
-		this.product = product;
+		this.workPosition = workPosition;
+		this.pipeline = pipeline;
+		this.orderComment = orderComment;
+		this.orderPackaging = orderPackaging;
+		this.orderPrep = orderPrep;
 	}
 
 	/**
@@ -74,31 +79,74 @@ public class Order implements Serializable{
 	}
 
 	/**
-	 * @return the orderQuant
+	 * @return the workPosition
 	 */
-	public int getOrderQuant() {
-		return orderQuant;
+	public String getWorkPosition() {
+		return workPosition;
 	}
 
 	/**
-	 * @param orderQuant the orderQuant to set
+	 * @param workPosition the workPosition to set
 	 */
-	public void setOrderQuant(int orderQuant) {
-		this.orderQuant = orderQuant;
+	public void setWorkPosition(String workPosition) {
+		this.workPosition = workPosition;
 	}
 
 	/**
-	 * @return the product
+	 * @return the pipeline
 	 */
-	public Product getProduct() {
-		return product;
+	public Pipeline getPipeline() {
+		return pipeline;
 	}
 
 	/**
-	 * @param product the product to set
+	 * @param pipeline the pipeline to set
 	 */
-	public void setProduct(Product product) {
-		this.product = product;
+	public void setPipeline(Pipeline pipeline) {
+		this.pipeline = pipeline;
+	}
+
+	/**
+	 * @return the orderComment
+	 */
+	public String getOrderComment() {
+		return orderComment;
+	}
+
+	/**
+	 * @param orderComment the orderComment to set
+	 */
+	public void setOrderComment(String orderComment) {
+		this.orderComment = orderComment;
+	}
+
+	/**
+	 * @return the orderPackaging
+	 */
+	public String getOrderPackaging() {
+		return orderPackaging;
+	}
+
+	/**
+	 * @param orderPackaging the orderPackaging to set
+	 */
+	public void setOrderPackaging(String orderPackaging) {
+		this.orderPackaging = orderPackaging;
+	}
+
+	/**
+	 * @return the orderPrep
+	 */
+	public String getOrderPrep() {
+		return orderPrep;
+	}
+
+	/**
+	 * @param orderPrep the orderPrep to set
+	 */
+	public void setOrderPrep(String orderPrep) {
+		this.orderPrep = orderPrep;
 	}
     
+	
 }

@@ -38,63 +38,67 @@
       <td><span th:text="*{id}"></span></td>
     </tr>
     <tr>
+      <th scope="row">ID Liste Proizvoda:</th>
+      <td><span th:text="${order.getPipeline().getId()}"></span></td>
+    </tr>
+    <tr>
       <th scope="row">Datum:</th>
       <td><span th:text="${#dates.format(order.created, 'dd-MM-yyyy HH:mm')}"></span></td>
     </tr>
     <tr>
-      <th scope="row">Količina priozvoda:</th>
-      <td><span th:text="*{orderQuant}"></span></td>
+      <th scope="row">Radna Pozicija:</th>
+      <td><span th:text="*{workPosition}"></span></td>
     </tr>
    </tbody>
 </table>
+
+  <table class="table table-striped">
+  <thead>
+    <tr>
+      <th scope="col">Redni br.</th>    
+      <th scope="col">ID - Naziv Proizvoda</th>
+      <th scope="col">Dimenzije</th>      
+      <th scope="col">Količina</th>
+      <th scope="col">Napomena</th>      
+      <th scope="col">Kupac</th>
+      <th scope="col">Izmjena</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr th:each="product, productStat : ${productsList}">
+    	<td><span th:text="${productStat.count} + '.'"></span></td>
+        <th scope="row"><span th:text="${product.getId()} + ' - ' + ${product.getName()}"></span></th>
+    	<td><span th:text="${product.productSize}"></span></td>        
+        <td>
+        	<span th:text="*{productsQuantityList[__${productStat .index}__].quantity}">Stanje</span>
+        </td>
+        <td><span th:text="${productsQuantityList[__${productStat .index}__].comment}"></span></td>        
+        <td><span th:text="${productsQuantityList[__${productStat .index}__].buyer}"></span></td>        
+        <td>
+           	<a class="btn btn-info btn-block" th:href="@{'/admin/productquantity/' + ${pipeline.getId()} + '/' + ${product.getId()}}">Izmjeni</a>
+        </td>
+    </tr>
+  </tbody>
+</table>
+
  
-  <table th:object="${product}" class="table table-striped">
+  <table th:object="${order}" class="table table-striped">
   <tbody>
     <tr>
-      <th scope="row">ID Proizvoda:</th>
-      <td><span th:text="*{id}"></span></td>
+      <th scope="row">Napomena:</th>
+      <td><span th:text="*{orderComment}"></span></td>
     </tr>
     <tr>
-      <th scope="row">Naziv:</th>
-      <td><span th:text="*{name}"></span></td>
+      <th scope="row">Pakovanje:</th>
+      <td><span th:text="*{orderPackaging}"></span></td>
     </tr>
     <tr>
-      <th scope="row">Elementi u proizvodu:</th>
-        <td>
-        </td>
+      <th scope="row">Priprema:</th>
+        <td><span th:text="*{orderPrep}"></span></td>
      </tr>
    </tbody>
 </table>
 
-
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th scope="col">Šifra</th>
-                <th scope="col">Naziv</th>
-                <th scope="col">Količina po proizvodu</th>
-                <th scope="col">Ukupno količina</th>                                
-                <th scope="col">Stanje na skladištu</th>
-                <th scope="col">Veličina</th>                
-                <th scope="col">Jedinica Mjere</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr scope="row" th:each="element, elementStat : ${elementsList}">
-                <td th:text="${element.sifra}">Sifra</td>
-                <td th:text="${element.name}">Naziv</td>
-                <td>
-        			<span th:text="*{elementsQuantityList[__${elementStat .index}__].quantity}">Količina za proizvod</span>
-        		</td>
-        		<td>
-        			<span th:text="*{totals[__${elementStat .index}__]}">Ukupno količina radni nalog</span>
-        		</td>        		
-                <td th:text="${element.quantity}">Stanje</td>
-                <td th:text="${element.elementSize}">Veličina</td>                
-                <td th:text="${element.getUnitMeasure().getName()}">Jedinica Mjere</td>   
-            </tr>
-        </tbody>
-    </table>
   </div>      
  </div>
  

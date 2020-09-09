@@ -33,6 +33,10 @@ public class Pipeline implements Serializable{
             inverseJoinColumns = @JoinColumn(name = "product_id")
             )
     private Set <Product> products = new TreeSet<>();
+    
+    @OneToMany(mappedBy = "pipeline", fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL)
+    private Set<Order> orders = new TreeSet<>();
    
     
     public Pipeline() {
@@ -79,6 +83,20 @@ public class Pipeline implements Serializable{
 	 */
 	public void setProducts(Set<Product> products) {
 		this.products = products;
+	}
+
+	/**
+	 * @return the orders
+	 */
+	public Set<Order> getOrders() {
+		return orders;
+	}
+
+	/**
+	 * @param orders the orders to set
+	 */
+	public void setOrders(Set<Order> orders) {
+		this.orders = orders;
 	}
 
 	
