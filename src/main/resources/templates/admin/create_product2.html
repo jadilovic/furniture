@@ -25,12 +25,6 @@
       </div>
 
   <table th:object="${product}" class="table table-striped">
-  <thead>
-    <tr>
-      <th scope="col"></th>
-      <th scope="col">Dodaj elemente u proizvod</th>
-    </tr>
-  </thead>
   <tbody>
     <tr>
       <th scope="row">ID Proizvoda:</th>
@@ -58,6 +52,7 @@
     <tr>
       <th scope="col">Šifra----naziv--elementa</th>
       <th scope="col">Količina</th>
+      <th scope="col">Stanje</th>      
       <th scope="col">Dopuna - Izmjena količine</th>
     </tr>
   </thead>
@@ -65,7 +60,10 @@
     <tr th:each="element, elementStat : ${elementsList}">
         <th scope="row"><span th:text="${element.getSifra()} + ' - ' + ${element.getName()}"></span></th>
         <td>
-        	<span th:text="*{elementsQuantityList[__${elementStat .index}__].quantity}">Stanje</span>
+        	<span th:text="*{elementsQuantityList[__${elementStat .index}__].quantity}">Količina</span>
+        </td>
+        <td>
+        	<span th:text="${element.getQuantity()}">Stanje</span>
         </td>
         <td>
            	<a class="btn btn-info btn-block" th:href="@{'/admin/quantity/' + ${product.getId()} + '/' + ${element.getId()}}">Izmjeni Količinu</a>

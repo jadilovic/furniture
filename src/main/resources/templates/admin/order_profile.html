@@ -61,7 +61,6 @@
       <th scope="col">Količina</th>
       <th scope="col">Napomena</th>      
       <th scope="col">Kupac</th>
-      <th scope="col">Izmjena</th>
     </tr>
   </thead>
   <tbody>
@@ -74,9 +73,6 @@
         </td>
         <td><span th:text="${productsQuantityList[__${productStat .index}__].comment}"></span></td>        
         <td><span th:text="${productsQuantityList[__${productStat .index}__].buyer}"></span></td>        
-        <td>
-           	<a class="btn btn-info btn-block" th:href="@{'/admin/productquantity/' + ${pipeline.getId()} + '/' + ${product.getId()}}">Izmjeni</a>
-        </td>
     </tr>
   </tbody>
 </table>

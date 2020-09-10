@@ -90,7 +90,7 @@ public class OrderController {
    	  model.addObject("msg", "Kreirani radni nalog spreman za potvrdu");
    	  model.setViewName("admin/confirm_order");
      model.addObject("order", order);
-     model.addObject("products", products);
+     model.addObject("productsList", products);
      model.addObject("productsQuantityList", productsQuantityList);
      model.addObject("sampleInputs", sampleInputs);
      //model.addObject("totals", totals);

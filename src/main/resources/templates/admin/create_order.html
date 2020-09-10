@@ -47,8 +47,9 @@
    </tbody>
 </table>
 
+<!--  
   <div class="container table-responsive" align="center">
-
+-->
   <table class="table table-striped">
   <thead>
     <tr>
@@ -58,23 +59,26 @@
       <th scope="col">Količina</th>
       <th scope="col">Napomena</th>      
       <th scope="col">Kupac</th>
-      <th scope="col">Izmjena</th>
+      <th scope="col">Stanje Elemenata</th>
     </tr>
   </thead>
   <tbody>
     <tr th:each="product, productStat : ${productsList}">
-    	<td><span th:text="${productStat.count} + '.'"></span>Redni broj</td>
+    	<td><span th:text="${productStat.count} + '.'"></span></td>
         <th scope="row"><span th:text="${product.getId()} + ' - ' + ${product.getName()}">ID i naziv</span></th>
     	<td><span th:text="${product.productSize}">Dimenzije</span></td>        
         <td>
         	<span th:text="*{productsQuantityList[__${productStat .index}__].quantity}">Količina</span>
         </td>
         <td><span th:text="${productsQuantityList[__${productStat .index}__].comment}">Komentar</span></td>        
-        <td><span th:text="${productsQuantityList[__${productStat .index}__].buyer}">Kupac</span></td>        
+        <td><span th:text="${productsQuantityList[__${productStat .index}__].buyer}">Kupac</span></td> 
+        <td>
+           	<a class="btn btn-info btn-block" th:href="@{'/home/productprofile/' + ${product.getId()}}">Provjeri Stanje</a>
+        </td>       
     </tr>
   </tbody>
 </table>
-  </div>  
+
 
      <form th:action="@{/admin/createorder}" th:object="${sampleInputs}" method="post">
       	 <input type="hidden" th:field="*{pipelineId}" readonly="readonly"/>
@@ -143,8 +147,11 @@
     				
     				</div>
 				</form>
+		
+		  </div>  		
+				<!--  
               </div>
- 
+ 				-->
  <div th:replace="fragments/footer :: footer"/></div>
  
 </body>

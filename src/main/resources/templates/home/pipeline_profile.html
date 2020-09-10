@@ -27,7 +27,7 @@
   <table th:object="${pipeline}" class="table table-striped">
   <tbody>
     <tr>
-      <th scope="row">ID Proizvoda:</th>
+      <th scope="row">ID Liste:</th>
       <td><span th:text="*{id}"></span></td>
     </tr>
     <tr>
@@ -54,10 +54,10 @@
             <tr scope="row" th:each="product, productStat : ${productsList}">
                 <td th:text="${product.id}">ID</td>
                 <td th:text="${product.name}">Naziv</td>
-                <td th:text="${product.productSize}">Naziv</td>                
-                <td>
-        			<span th:text="*{elementsQuantityList[__${elementStat .index}__].quantity}">Količina za proizvod</span>
-        		</td>
+                <td th:text="${product.productSize}">Mjera</td>                
+                <td th:object="${product}">
+                	<a class="btn btn-warning" th:href="@{'/home/productprofile/' + *{id}}">Info</a>
+                </td>   
             </tr>
         </tbody>
     </table>
@@ -77,13 +77,13 @@
          <div class="col-md-3"></div>
           <div class="col-md-6">
               <div class="alert alert-primary" role="alert">Izmjena Specifikacija Liste
-              <a class="btn btn-danger btn-block" th:href="@{'/admin/addproducts/' + *{id}}">Izmjeni</a>
+              <a class="btn btn-danger btn-block" th:href="@{'/admin/add/' + *{id}}">Izmjeni</a>
               </div>
          </div>
        </div>
        
    		<div class="p-2" align="center">
-    	 <a th:href="@{/home/pipelinesearch}" class="btn-info btn-lg" role="button" aria-pressed="true">Nova Pretraga Listi Proizvoda</a>
+    	 <a th:href="@{/home/allpipelines}" class="btn-info btn-lg" role="button" aria-pressed="true">Pregled Listi Proizvoda</a>
   		</div>
   		
  <div th:replace="fragments/footer :: footer"/></div>
