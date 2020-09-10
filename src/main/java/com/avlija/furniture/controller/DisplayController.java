@@ -97,7 +97,7 @@ public class DisplayController {
      elements = product.getElements();
    	  List<ElementQuantity> elementsQuantityList = getElementQuantityList(elements, product);
    	  model.addObject("msg", "Informacije o proizvodu");
-   	  model.setViewName("admin/create_product2");
+   	  model.setViewName("admin/product_profile");
      model.addObject("product", product);
      model.addObject("elementsList", elements);
      model.addObject("elementsQuantityList", elementsQuantityList);
@@ -177,22 +177,24 @@ public class DisplayController {
      return model;
     }
     
-    /**
-    @RequestMapping(value= {"home/ordersearchprdid"}, method=RequestMethod.POST)
-    public ModelAndView productSearchKeyWord(@Valid SampleInputs sampleInputs) {
+ 
+    // SEARCH ORDER BY PIPELINE ID
+    
+    @RequestMapping(value= {"home/ordersearchpipelineid"}, method=RequestMethod.POST)
+    public ModelAndView orderSearchByPipelineId(@Valid SampleInputs sampleInputs) {
      ModelAndView model = new ModelAndView();
-     int productId = sampleInputs.getId();
+     int pipelineId = sampleInputs.getId();
      try {
-         Product product = productRepository.findById(productId).get();
-         List<Order> ordersList = orderRepository.findByProduct(product, Sort.by("created").descending());
+         Pipeline pipeline = pipelineRepository.findById(pipelineId).get();
+         List<Order> ordersList = orderRepository.findByPipeline(pipeline, Sort.by("created").descending());
          if(ordersList.isEmpty()) {
-         	  model.addObject("err", "Nije pronađen radni nalog koji sadrži ID proizvoda: " + productId);
+         	  model.addObject("err", "Nije pronađen radni nalog koji sadrži ID liste proizvoda: " + pipelineId);
          	} else {
-         		model.addObject("message", "Lista radnih naloga sa ID proizvodom: " + productId);
+         		model.addObject("message", "Lista radnih naloga sa ID proizvodom: " + pipelineId);
          		model.addObject("ordersList", ordersList);
          		}
      } catch (Exception e) {
-     	  model.addObject("err", "Nije pronađen proizvod sa ID brojem: " + sampleInputs.getId());
+     	  model.addObject("err", "Nije pronađena lista proizvoda sa ID brojem: " + sampleInputs.getId());
           List<Order> ordersList = orderRepository.findAll(Sort.by("created").descending());
           model.addObject("message", "Lista radnih naloga");     
           model.addObject("sampleInputs", new SampleInputs());
@@ -201,7 +203,9 @@ public class DisplayController {
      model.setViewName("home/list_orders");
          	return model;
     	}
-    */
+ 
+    
+    // SEARCH ORDER BY DATE
     
     @RequestMapping(value = "home/searchorderdate", method = RequestMethod.POST)
     public ModelAndView searchByDate(@ModelAttribute("command") SampleInputs sampleInputs) throws ParseException {

@@ -39,11 +39,11 @@
     </div>
     <div class="card mb-1 shadow-sm">
       <div class="card-header">
-        <p class="my-0 font-weight-normal"><b>ID Proizvoda Radnog Naloga</b></p>
+        <p class="my-0 font-weight-normal"><b>ID Broj Liste Proizvoda</b></p>
       </div>
       <div class="card-body">
-		<form th:action="@{/home/ordersearchprdid}" th:object="${sampleInputs}" method="post">
-        		<input type="number" th:field="*{id}" placeholder="ID broj proizvoda" required autofocus/>
+		<form th:action="@{/home/ordersearchpipelineid}" th:object="${sampleInputs}" method="post">
+        		<input type="number" th:field="*{id}" placeholder="ID broj liste proizvoda" required autofocus/>
         		<div class="p-3">
       				<input class="btn btn-warning btn-block" type="submit" value="Traži"/>      		
         		</div>
@@ -77,17 +77,17 @@
             <tr>
                 <th scope="col">ID Broj</th>
                 <th scope="col">Datum</th>
-                <th scope="col">Količina</th>
-                <th scope="col">Proizvod</th>                                
-                <th scope="col">Info</th>
+                <th scope="col">Radna Pozicija</th>
+                <th scope="col">ID Liste</th>  
+                <th scope="col">Detalji</th>                                
             </tr>
         </thead>
         <tbody>
             <tr scope="row" th:each="order, orderStat : ${ordersList}">
                 <td th:text="${order.id}">ID</td>
                 <td th:text="${#dates.format(order.created, 'dd-MM-yyyy HH:mm')}">Date</td>
-                <td th:text="${order.orderQuant}">Quant</td>
-                <td th:text="${order.getProduct().getName()}">Product</td>                
+                <td th:text="${order.workPosition}">Radna Pozicija</td>
+                <td th:text="${order.getPipeline().getId()}">ID Liste</td>                
                 <td th:object="${order}">
                 	<a class="btn btn-warning" th:href="@{'/home/orderprofile/' + *{id}}">Info</a>
                 </td>       
