@@ -25,6 +25,8 @@
 		<h5>Forma Registracije</h5>
 	</div>
 	
+	<h5><span class="text-success" th:utext="${successMessage}"></span></h5>
+	
     <div class="row">
         <div class="col-md-6 col-md-offset-3">
             <form autocomplete="off" th:action="@{/registration}"
@@ -86,8 +88,6 @@
                         <button type="submit" class="btn btn-primary btn-block">Registracija Korisnika</button>
                     </div>
                 </div>
-
-                <h2><span class="text-success" th:utext="${successMessage}"></span></h2>
 
             </form>
         </div>

@@ -86,6 +86,8 @@ public class PipelineController {
     public ModelAndView allPipelines() {
      ModelAndView model = new ModelAndView();
      List<Pipeline> pipelines = pipelineRepository.findAll();
+     SampleInputs sampleInputs = new SampleInputs();
+     model.addObject("sampleInputs", sampleInputs);
      model.addObject("pipelines", pipelines);
      model.setViewName("home/list_of_pipelines");
      

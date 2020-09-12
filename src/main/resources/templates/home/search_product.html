@@ -31,12 +31,18 @@
   		
 <div class="pricing-header mx-auto text-center">
 <div class="p-3">
-  <h4>Pretraga Proizvoda</h4>
-</div>
-  <p>Pretraga porizvoda po ID broju, ključnoj riječi i nazivu.</p>
-</div>
 
-  
+           <div class="row">
+             <div class="col-md-3"></div>
+             <div class="col-md-6">
+                <div class="form-group">
+           		<a th:href="@{/home/allproducts}" class="btn-secondary btn-lg btn-block" role="button" aria-pressed="true">Pregled Postojećih Proizvoda</a>
+             	</div>
+             </div>
+         </div>
+
+  <h5>Pretraga Proizvoda</h5>
+
   <div class="container">
   <div class="card-deck mb-3 text-center">
     <div class="card mb-4 shadow-sm">
@@ -79,6 +85,7 @@
       </div>
     </div>
   </div>
+ 
  </div>
  
       <div th:include="fragments/footer :: footer"/></div>

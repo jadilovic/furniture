@@ -53,7 +53,7 @@ public class LoginController {
         } else {
         	user.setCreated(new Date());
             userService.saveUser(user);
-            modelAndView.addObject("successMessage", "User has been registered successfully");
+            modelAndView.addObject("successMessage", "Korisnik '" + user.getName() + "' je uspješno registrovan");
             User newUser = new User();
             newUser.setRole("CLIENT");            
             modelAndView.addObject("user", newUser);
