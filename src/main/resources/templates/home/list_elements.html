@@ -2,7 +2,7 @@
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml"
  xmlns:th="http://www.thymeleaf.org">
 <head>
- <title>Lista elemenata</title>
+ <title>Pretraga elemenata</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
@@ -14,11 +14,11 @@
 <div th:replace="fragments/header :: header"/></div>
 
    <div class="container">
-   
-   <div class="text-center p-1">
+
+   <h5>Pretraga elemenata:</h5> 
+
       <p><b th:if="${msg}" th:text="${msg}" class="alert alert-success" role="alert"></b></p> 
       <p><b th:if="${err}" th:text="${err}" class="alert alert-danger" role="alert"></b></p>     
-   </div>
    
   <div class="card-deck mb-1 text-center">
     <div class="card mb-1 shadow-sm">
@@ -42,10 +42,6 @@
       </div>
     </div>
   </div>
- </div>
- 
- <div align="center">
-   <h5>Lista elemenata:</h5> 
  </div>
 
   <div class="container table-responsive" align="center">

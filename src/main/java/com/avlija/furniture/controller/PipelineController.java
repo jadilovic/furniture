@@ -9,6 +9,8 @@ import java.util.TreeSet;
 import javax.validation.Valid;
 
 import com.avlija.furniture.form.SampleInputs;
+import com.avlija.furniture.model.Element;
+import com.avlija.furniture.model.ElementQuantity;
 import com.avlija.furniture.model.Pipeline;
 import com.avlija.furniture.model.PipelineProduct;
 import com.avlija.furniture.model.Product;
@@ -309,6 +311,48 @@ public class PipelineController {
      model.addObject("productsQuantityList", productQuantityList);
      return model;
     }
+    
+    //SEARCH PIPELINE BY ID
+    
+    @RequestMapping(value= {"home/pipelinesearchid"}, method=RequestMethod.POST)
+    public ModelAndView pipelineSearchId(@Valid SampleInputs sampleInputs) {
+     ModelAndView model = new ModelAndView();
+     int pipelineId = sampleInputs.getPipelineId();
+     try {
+         Pipeline pipeline = pipelineRepository.findById(pipelineId).get();
+         model.addObject("pipeline", pipeline);
+         model.addObject("productsList", pipeline.getProducts());
+         model.setViewName("home/pipeline_profile");
+     } catch(Exception e) {
+      	  model.addObject("err", "Nije pronađena lista sa ID brojem: " + pipelineId);
+          List<Pipeline> pipelines = pipelineRepository.findAll();
+          model.addObject("sampleInputs", sampleInputs);
+          model.addObject("pipelines", pipelines);      	  
+       	  model.setViewName("home/list_of_pipelines");
+     }
+     return model;
+    }
+    
+    
+    // SEARCH PIPELINES BY KEYWORD
+    
+    @RequestMapping(value= {"home/pipelinesearchkeyword"}, method=RequestMethod.POST)
+    public ModelAndView pipelineSearchKeyWord(@Valid SampleInputs sampleInputs) {
+     ModelAndView model = new ModelAndView();
+     String keyWord = sampleInputs.getKeyWord();
+         List<Pipeline> pipelinesList = pipelineRepository.findByNameContaining(keyWord);
+         if(pipelinesList.isEmpty()) {
+         	  model.addObject("err", "Nije pronađena lista koji sadrži ključnu riječ: " + keyWord);
+              List<Pipeline> pipelines = pipelineRepository.findAll();
+              model.addObject("pipelines", pipelines);      	  
+         	} else {
+         		model.addObject("msg", "Lista proizvoda koja sadrže ključnu riječ: " + keyWord);
+                model.addObject("pipelines", pipelinesList);      	  
+         		}
+         model.addObject("sampleInputs", sampleInputs);
+      	 model.setViewName("home/list_of_pipelines");
+        return model;
+    	}
     
 
     // CREATE PRODUCT QUANTITY LIST FOR THE PIPELINE
