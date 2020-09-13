@@ -97,7 +97,7 @@ public class DisplayController {
      elements = product.getElements();
    	  List<ElementQuantity> elementsQuantityList = getElementQuantityList(elements, product);
    	  model.addObject("msg", "Informacije o proizvodu");
-   	  model.setViewName("admin/product_profile");
+   	  model.setViewName("home/product_profile");
      model.addObject("product", product);
      model.addObject("elementsList", elements);
      model.addObject("elementsQuantityList", elementsQuantityList);
