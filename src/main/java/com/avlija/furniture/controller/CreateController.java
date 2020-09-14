@@ -145,6 +145,28 @@ public class CreateController {
      return model;
     }
     
+    
+    // CHANGE SPECIFICATIONS IN THE EXISTING PRODUCT
+    
+    @RequestMapping(value= {"admin/changeproduct/{id}"}, method=RequestMethod.GET)
+    public ModelAndView changeProduct(@PathVariable(name = "id") Integer id) {
+     ModelAndView model = new ModelAndView();
+     Product product = productRepository.findById(id).get();
+	 List<ElementQuantity> elementsQuantityList = getElementQuantityList(product.getElements(), product);
+     SampleInputs sampleInputs = new SampleInputs();
+     sampleInputs.setId(id);
+     model.addObject("product", product);
+     model.addObject("sampleInputs", sampleInputs);
+     model.addObject("elementsList", product.getElements());
+     model.addObject("elementsQuantityList", elementsQuantityList);
+     model.setViewName("admin/create_product2");
+     
+     return model;
+    }
+    
+    
+    // ADD ELEMENT TO THE PRODUCT
+    
     @RequestMapping(value= {"admin/addelement/{id}"}, method=RequestMethod.GET)
     public ModelAndView addElement(@PathVariable(name = "id") Integer id) {
      ModelAndView model = new ModelAndView();

@@ -65,7 +65,7 @@
     			</tr>
   			</thead>
   			<tbody>
-    			<tr th:unless="${emptyPipeline}" th:each="item : ${productsList}">
+    			<tr th:unless="${emptyProducts}" th:each="item : ${productsList}">
       			<th scope="row"><span th:text="${itemStat.count}"></span></th>
       			<td>
       				<input type="checkbox" th:field="*{products}" th:value="${item.id}" />

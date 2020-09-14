@@ -19,6 +19,7 @@ import com.avlija.furniture.repository.PipelineRepository;
 import com.avlija.furniture.repository.ProductQuantityRepository;
 import com.avlija.furniture.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -87,7 +88,7 @@ public class PipelineController {
     @RequestMapping(value= {"home/allpipelines"}, method=RequestMethod.GET)
     public ModelAndView allPipelines() {
      ModelAndView model = new ModelAndView();
-     List<Pipeline> pipelines = pipelineRepository.findAll();
+     List<Pipeline> pipelines = pipelineRepository.findAll(Sort.by("id").descending());
      SampleInputs sampleInputs = new SampleInputs();
      model.addObject("sampleInputs", sampleInputs);
      model.addObject("pipelines", pipelines);
@@ -124,7 +125,7 @@ public class PipelineController {
      model.addObject("sampleInputs", sampleInputs);
      model.addObject("pipeline", pipeline);
      model.addObject("productsList", pipeline.getProducts());
-     model.addObject("emptyPipeline", pipeline.getProducts().isEmpty());
+     model.addObject("emptyProducts", pipeline.getProducts().isEmpty());
      model.setViewName("admin/add_products");
      
      return model;
@@ -155,7 +156,7 @@ public class PipelineController {
    	  	
    	  	List<ProductQuantity> productsQuantityList = getProductQuantityList(selectedProducts, savedPipeline);
 
-   	  model.addObject("msg", "Izvršena dopuna - izmjena proizvoda");
+   	  model.addObject("msg", "Izvršena dopuna - izmjena liste");
    	  model.setViewName("admin/create_pipeline2");
      model.addObject("pipeline", savedPipeline);
      model.addObject("productsList", savedPipeline.getProducts());
@@ -172,8 +173,7 @@ public class PipelineController {
      	
      	Set <Product> pipelineProducts = new HashSet<Product>();
     	Pipeline pipeline = pipelineRepository.findById(sampleInputs.getPipelineId()).get();
-      	pipelineProducts = pipeline.getProducts();
-      	Boolean emptyPipeline = pipelineProducts.isEmpty();
+    	pipelineProducts = pipeline.getProducts();
       	
      	List <Product> products = new ArrayList<Product>();
       	
@@ -191,16 +191,18 @@ public class PipelineController {
     	 else if(productAlreadyInList(product, pipelineProducts)){
         	 model.addObject("err", "Pronađen proizvod sa ID brojem: '" + sampleInputs.getPrdId() + "', ali već postoji u listi.");
  	 		 model.addObject("productsList", pipelineProducts);    	 	
-    	 	} else {
-    	 		products.add(product);
-    	 		for(Product item: pipelineProducts) {
-    	 			products.add(item);
+    	 } else {
+    	 	products.add(product);
+    	 	for(Product item: pipelineProducts) {
+    	 		products.add(item);
     	 		}
-    	 		model.addObject("productsList", products);
-    	 		model.addObject("msg", "Pronađen proizvod sa ID brojem: " + sampleInputs.getPrdId());		
+    	 	model.addObject("productsList", products);
+    	 	model.addObject("msg", "Pronađen proizvod sa ID brojem: " + product.getId());		
     	 	}
 
-    	 model.addObject("emptyPipeline", emptyPipeline);
+       	 Boolean emptyProducts = products.isEmpty();
+       	 
+    	 model.addObject("emptyProducts", emptyProducts);
          model.addObject("pipeline", pipeline);
          model.addObject("sampleInputs", sampleInputs);
          model.setViewName("admin/add_products");
