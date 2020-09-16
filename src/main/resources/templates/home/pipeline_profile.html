@@ -49,14 +49,19 @@
             <tr>
                 <th scope="col">ID Broj</th>
                 <th scope="col">Naziv Proizvoda</th>                
-                <th scope="col">Mjera Proizvoda</th>
+                <th scope="col">Potrebna Količina</th>
+                <th scope="col">Dimenzije</th>           
+                <th scope="col">Info</th>
             </tr>
         </thead>
         <tbody>
             <tr scope="row" th:each="product, productStat : ${productsList}">
                 <td th:text="${product.id}">ID</td>
                 <td th:text="${product.name}">Naziv</td>
-                <td th:text="${product.productSize}">Mjera</td>                
+                 <td>
+        			<span th:text="*{productsQuantityList[__${productStat .index}__].quantity}">Kolicina</span>
+        		 </td>
+                <td th:text="${product.productSize}">Dimenzije</td>                
                 <td th:object="${product}">
                 	<a class="btn btn-warning" th:href="@{'/home/productprofile/' + *{id}}">Info</a>
                 </td>   
@@ -79,7 +84,7 @@
          <div class="col-md-3"></div>
           <div class="col-md-6">
               <div class="alert alert-primary" role="alert">Izmjena Specifikacija Liste
-              <a class="btn btn-danger btn-block" th:href="@{'/admin/add/' + *{id}}">Izmjeni</a>
+              <a class="btn btn-danger btn-block" th:href="@{'/admin/changepipeline/' + *{id}}">Izmjeni</a>
               </div>
          </div>
        </div>

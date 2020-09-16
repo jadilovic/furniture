@@ -104,6 +104,9 @@ public class PipelineController {
     public ModelAndView listProfile(@PathVariable(name = "id") Integer id) {
      ModelAndView model = new ModelAndView();
      Pipeline pipeline = pipelineRepository.findById(id).get();
+	 List<ProductQuantity> productsQuantityList = getProductQuantityList(pipeline.getProducts(), pipeline);
+
+	 model.addObject("productsQuantityList", productsQuantityList);
      model.addObject("pipeline", pipeline);
      model.addObject("productsList", pipeline.getProducts());
      model.setViewName("home/pipeline_profile");
@@ -131,6 +134,23 @@ public class PipelineController {
      return model;
     }
     
+    
+    // CHANGE PIPELINE
+    
+    @RequestMapping(value= {"admin/changepipeline/{id}"}, method=RequestMethod.GET)
+    public ModelAndView changePipeline(@PathVariable(name = "id") Integer id) {
+     ModelAndView model = new ModelAndView();
+     Pipeline pipeline = pipelineRepository.findById(id).get();
+     
+	 List<ProductQuantity> productsQuantityList = getProductQuantityList(pipeline.getProducts(), pipeline);
+
+	  model.addObject("msg", "Izmjene specifikacija liste proizvoda");
+	  model.setViewName("admin/create_pipeline2");
+	  model.addObject("pipeline", pipeline);
+	  model.addObject("productsList", pipeline.getProducts());
+	  model.addObject("productsQuantityList", productsQuantityList);
+	  return model;
+    }
     
     // ADDING PRODUCTS TO THE PIPELINE
     
@@ -322,6 +342,9 @@ public class PipelineController {
      int pipelineId = sampleInputs.getPipelineId();
      try {
          Pipeline pipeline = pipelineRepository.findById(pipelineId).get();
+    	 List<ProductQuantity> productsQuantityList = getProductQuantityList(pipeline.getProducts(), pipeline);
+
+    	 model.addObject("productsQuantityList", productsQuantityList);
          model.addObject("pipeline", pipeline);
          model.addObject("productsList", pipeline.getProducts());
          model.setViewName("home/pipeline_profile");

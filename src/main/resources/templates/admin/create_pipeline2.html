@@ -67,7 +67,7 @@
         <th scope="row"><span th:text="${product.getId()} + ' - ' + ${product.getName()}"></span></th>
     	<td><span th:text="${product.productSize}"></span></td>        
         <td>
-        	<span th:text="*{productsQuantityList[__${productStat .index}__].quantity}">Stanje</span>
+        	<span th:text="*{productsQuantityList[__${productStat .index}__].quantity}">Kolicina</span>
         </td>
         <td><span th:text="${productsQuantityList[__${productStat .index}__].comment}"></span></td>        
         <td><span th:text="${productsQuantityList[__${productStat .index}__].buyer}"></span></td>        
