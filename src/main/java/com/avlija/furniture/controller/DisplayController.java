@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import com.avlija.furniture.form.SampleInputs;
@@ -31,8 +32,11 @@ import com.avlija.furniture.form.LocalDateAttributeConverter;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -66,14 +70,26 @@ public class DisplayController {
     // DISPLAY ALL ELEMENTS
     
     @RequestMapping(value= {"home/allelements"}, method=RequestMethod.GET)
-    public ModelAndView allElements() {
-     ModelAndView model = new ModelAndView();
-     List<Element> elementsList = elementRepository.findAll();
-     model.addObject("sampleInputs", new SampleInputs());
-     model.addObject("elementsList", elementsList);
-     model.setViewName("home/list_elements");
+    public String customersPage(HttpServletRequest request, Model model) {
+              
+         int page = 0; //default page number is 0
+         int size = 10; //default page size is 10
+         
+         if (request.getParameter("page") != null && !request.getParameter("page").isEmpty()) {
+             page = Integer.parseInt(request.getParameter("page")) - 1;
+         }
+
+         if (request.getParameter("size") != null && !request.getParameter("size").isEmpty()) {
+             size = Integer.parseInt(request.getParameter("size"));
+         }
+
+         Page <Element> elementsList = null;
+         elementsList = elementRepository.findAll(PageRequest.of(page, size, Sort.by("id").descending()));
+ 
+     model.addAttribute("sampleInputs", new SampleInputs());
+     model.addAttribute("elementsList", elementsList);
      
-     return model;
+     return "home/list_elements";
     }
     
     

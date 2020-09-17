@@ -15,10 +15,7 @@
 
    <div class="container">
 
-<div>
-   <h5>Pretraga elemenata:</h5> 
-</div>
-
+   	<p><h5>Pretraga elemenata:</h5><p>
       <p><b th:if="${msg}" th:text="${msg}" class="alert alert-success" role="alert"></b></p> 
       <p><b th:if="${err}" th:text="${err}" class="alert alert-danger" role="alert"></b></p>     
    
@@ -74,8 +71,44 @@
     </table>
   </div>  
   
-   		<div class="p-2" align="center">
+    		    <!-- transactions pagination -->
+<nav aria-label="Pagination" th:if="${elementsList.totalPages gt 0}">
+    <ul class="pagination justify-content-center font-weight-medium">
+        <li class="page-item" th:classappend="${elementsList.number eq 0} ? 'disabled'">
+            <a class="page-link svg-icon"
+               th:href="@{/home/allelements?page={id}(id=${elementsList.number lt 2 ? 1 : elementsList.number})}"
+               aria-label="Previous"
+               title="Previous Page" rel="tooltip">
+                <span aria-hidden="true" data-feather="chevrons-left" width="20" height="20"></span>
+            </a>
+        </li>
+        <li class="page-item" th:classappend="${i eq elementsList.number + 1} ? 'active'"
+            th:each="i : ${#numbers.sequence( elementsList.number + 1, elementsList.totalPages > 10 + elementsList.number ? elementsList.number + 10 : elementsList.totalPages, 1)}">
+            <a class="page-link" th:href="@{/home/allelements?page={id}(id=${i})}" th:text="${i}"
+               th:title="${'Page '+ i}"
+               rel="tooltip"></a>
+        </li>
+        <li class="page-item disabled" th:if="${elementsList.number + 10 < elementsList.totalPages}">
+            <a class="page-link svg-icon" href="#">
+                <span data-feather="more-horizontal" width="20" height="20"></span>
+            </a>
+        </li>
+        <li class="page-item" th:classappend="${elementsList.number + 1 eq elementsList.totalPages} ? 'disabled'">
+            <a class="page-link svg-icon" th:href="@{/home/allelements?page={id}(id=${elementsList.number + 2})}"
+               aria-label="Next"
+               title="Next Page" rel="tooltip">
+                <span aria-hidden="true" data-feather="chevrons-right" width="20" height="20"></span>
+            </a>
+        </li>
+    </ul>
+</nav>
+  
+   		<div class="p-3" align="center">
     	 <a th:href="@{/home/allelements}" class="btn-info btn-lg" role="button" aria-pressed="true">Nova Pretraga Elemenata</a>
+  		</div>
+  		
+  		<div class="p-3" align="center">
+    	 <a th:href="@{/admin/createelement}" class="btn-success btn-lg" role="button" aria-pressed="true">Kreiraj Novi Element</a>
   		</div>
  
  <div th:replace="fragments/footer :: footer"/></div>

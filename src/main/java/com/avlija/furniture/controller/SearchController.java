@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import com.avlija.furniture.form.SampleInputs;
@@ -19,6 +20,9 @@ import com.avlija.furniture.repository.ProductRepository;
 import com.avlija.furniture.service.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -178,14 +182,25 @@ public class SearchController {
     
     
     @RequestMapping(value= {"home/searchelement"}, method=RequestMethod.POST)
-    public ModelAndView searchElementSifra(@Valid SampleInputs sampleInputs) {
+    public ModelAndView searchElementSifra(@Valid SampleInputs sampleInputs, HttpServletRequest request) {
      ModelAndView model = new ModelAndView();
-     List <Element> elements = new ArrayList<Element>();
-    	 Element element = elementRepository.findBySifra(sampleInputs.getSifra());
-    	 if(element == null) {
+     
+     int page = 0; //default page number is 0
+     int size = 10; //default page size is 10
+
+     if (request.getParameter("page") != null && !request.getParameter("page").isEmpty()) {
+    	 page = Integer.parseInt(request.getParameter("page")) - 1;
+     	}
+
+     if (request.getParameter("size") != null && !request.getParameter("size").isEmpty()) {
+    	 size = Integer.parseInt(request.getParameter("size"));
+     	}
+     
+     Page <Element> elements = null;
+    	 elements = elementRepository.findBySifra(sampleInputs.getSifra(), PageRequest.of(page, size, Sort.by("id").descending()));
+    	 if(elements.isEmpty()) {
         	 model.addObject("err", "Nije pronađen element sa šifrom: " + sampleInputs.getSifra());
     	 	} else {
-    	 		elements.add(element);
            	 model.addObject("msg", "Pronađen element sa šifrom: " + sampleInputs.getSifra());		
     	 		}
 	 		model.addObject("elementsList", elements);    	 
@@ -194,11 +209,26 @@ public class SearchController {
      return model;
     }
     
+    
     @RequestMapping(value= {"home/searchelements"}, method=RequestMethod.POST)
-    public ModelAndView elementsSearchKeyWord(@Valid SampleInputs sampleInputs) {
+    public ModelAndView elementsSearchKeyWord(@Valid SampleInputs sampleInputs, HttpServletRequest request) {
      ModelAndView model = new ModelAndView();
      String keyWord = sampleInputs.getKeyWord();
-         List<Element> elementsList = elementRepository.findByNameContaining(keyWord);
+     
+     int page = 0; //default page number is 0
+     int size = 10; //default page size is 10
+
+     if (request.getParameter("page") != null && !request.getParameter("page").isEmpty()) {
+    	 page = Integer.parseInt(request.getParameter("page")) - 1;
+     	}
+
+     if (request.getParameter("size") != null && !request.getParameter("size").isEmpty()) {
+    	 size = Integer.parseInt(request.getParameter("size"));
+     	}
+
+     	Page <Element> elementsList = null;
+     	elementsList = elementRepository.findByNameContaining(keyWord, PageRequest.of(page, size, Sort.by("id").descending()));
+     
          if(elementsList.isEmpty()) {
          	  model.addObject("err", "Nije pronađen element koji sadrži ključnu riječ: " + keyWord);
          	} else {
