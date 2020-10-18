@@ -23,8 +23,6 @@
               <div class="alert alert-success" role="alert" th:if="${msg}" th:utext="${msg}"></div>
          </div>
        </div>
-   
-  <div class="container table-responsive" align="center">
  
   <table th:object="${pipeline}" class="table table-striped">
   <tbody>
@@ -43,7 +41,9 @@
      </tr>
    </tbody>
 </table>
-
+    </div>
+    
+  <div class="container table-responsive" align="center">
     <table class="table table-striped">
         <thead>
             <tr>
@@ -69,7 +69,6 @@
         </tbody>
     </table>
   </div>      
- </div>
   	
   	   <div th:if="${!productsList.isEmpty()}" class="row" th:object="${pipeline}">
          <div class="col-md-3"></div>

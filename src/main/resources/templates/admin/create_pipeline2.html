@@ -81,10 +81,14 @@
 </table>
 </div>
 
+ <div class="container">
+
     <div class="alert alert-success" role="alert" th:if="${productsList.isEmpty()}"><p>Nema dodanih proizvoda</p></div>
   	
   	<div th:if="${!productsList.isEmpty()}">
   	  	<a class="btn btn-warning btn-block" th:href="@{'/admin/createorder/' + ${pipeline.id}}">Kreiraj Radni Nalog</a>
+  	</div>
+  	
   	</div>
 
       <div th:include="fragments/footer :: footer"/></div>
