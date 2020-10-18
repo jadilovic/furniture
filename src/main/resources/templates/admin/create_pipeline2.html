@@ -48,7 +48,9 @@
     </tr>
   </tbody>
 </table>
+ </div>
 
+  <div class="container table-responsive" align="center">
   <table class="table table-striped">
   <thead>
     <tr>
@@ -77,14 +79,14 @@
     </tr>
   </tbody>
 </table>
+</div>
+
     <div class="alert alert-success" role="alert" th:if="${productsList.isEmpty()}"><p>Nema dodanih proizvoda</p></div>
   	
   	<div th:if="${!productsList.isEmpty()}">
   	  	<a class="btn btn-warning btn-block" th:href="@{'/admin/createorder/' + ${pipeline.id}}">Kreiraj Radni Nalog</a>
   	</div>
- 
- </div>
- 
+
       <div th:include="fragments/footer :: footer"/></div>
  
 </body>
