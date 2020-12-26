@@ -2,10 +2,18 @@
 	  xmlns:th="http://www.thymeleaf.org"
   		xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 <head>
+<style>
+.footer_fix {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+}
+</style>
 </head>
 <body>
 
-<div th:fragment="footer">
+<div th:fragment="footer" class="footer_fix">
     <div class="container">
         <footer>
         <!-- this is footer -->

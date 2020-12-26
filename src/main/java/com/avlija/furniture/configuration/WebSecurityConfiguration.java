@@ -43,12 +43,20 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+    	
+        String[] staticResources  =  {
+                "/css/**",
+                "/images/**",
+                "/fonts/**",
+                "/scripts/**",
+            };
 
         http.
                 authorizeRequests()
+                .antMatchers(staticResources).permitAll()
                 .antMatchers("/").permitAll()
                 .antMatchers("/login").permitAll()
-                .antMatchers("/registration").permitAll()
+                .antMatchers("/forgot").permitAll()
                 .antMatchers("/home/**").hasAnyAuthority("ADMIN", "CLIENT")
                 .antMatchers("/admin/**").hasAuthority("ADMIN").anyRequest()
                 .authenticated().and().csrf().disable().formLogin()

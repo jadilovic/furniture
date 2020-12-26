@@ -55,6 +55,9 @@ public class User {
     @Column(name = "created")
     private Date created;
     
+	@Column(name = "reset_token")
+	private String resetToken;
+    
     @ManyToMany(cascade = CascadeType.MERGE)
     @JoinTable(name = "user_role",
     			joinColumns = @JoinColumn(name = "user_id"),
@@ -184,4 +187,18 @@ public class User {
 	public void setCreated(Date created) {
 		this.created = created;
 	}
+	/**
+	 * @return the resetToken
+	 */
+	public String getResetToken() {
+		return resetToken;
+	}
+	/**
+	 * @param resetToken the resetToken to set
+	 */
+	public void setResetToken(String resetToken) {
+		this.resetToken = resetToken;
+	}
+	
+	
 }

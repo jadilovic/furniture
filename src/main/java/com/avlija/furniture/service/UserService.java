@@ -60,4 +60,13 @@ public class UserService {
 		return userRepository.findAll();
 	}
 
+	// PasswordController
+	public void resetUpdate(User user) {
+		  userRepository.save(user);
+	}
+	
+	public
+	User findUserByResetToken(String resetToken) {
+		return userRepository.findByResetToken(resetToken);
+	}
 }
