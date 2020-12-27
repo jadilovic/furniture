@@ -80,7 +80,7 @@ public class PasswordController {
 			// Add success message to view
 			modelAndView.addObject("message", "Link za izmjenu lozinke je poslan na " + sampleInputs.getEmail()
 										+ ".\n Otvorite vaš e-mail i kliknite na link.");
-			modelAndView.setViewName("user/login");
+			modelAndView.setViewName("/login");
 		}
 		return modelAndView;
 
@@ -139,7 +139,7 @@ public class PasswordController {
 
 			modelAndView.addObject("message", "Uspješno ste izmjenili vašu lozinku. Sad se možete prijaviti na YAP web aplikaciju.");
 
-			modelAndView.setViewName("user/login");
+			modelAndView.setViewName("login");
 			return modelAndView;
 		}
 		return modelAndView;

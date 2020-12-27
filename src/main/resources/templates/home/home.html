@@ -14,8 +14,11 @@
 <div th:include="fragments/header :: header"/></div>
  
  <div class="container">
+ <!-- 
  <div class="p-3 bg-light" align="center">
-   <h5>Pozdrav <span th:utext="${userName}"></span>, ovo je vaša početna stranica za upravljanje proizvodnjom.</h5>
+  -->
+  <div class="alert alert-success" align="center" role="alert">
+   <b>Pozdrav <span th:utext="${userName}"></span>, ovo je vaša početna stranica za upravljanje proizvodnjom.</b>
  </div>
 
     <a th:href="@{/home/productsearch}" class="btn-warning btn-lg btn-block" role="button" aria-pressed="true">

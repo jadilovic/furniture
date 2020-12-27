@@ -20,11 +20,15 @@
  <div class="p-3" align="center">
    <img class="resize" alt="no image" th:src="@{/images/hidra-logo-novo.png}">
  </div>
-
+    
     <form th:action="@{/login}" method="POST">
     	
     	<div align="center">
     	    <h5>Welcome to Furniture Mng App</h5><br/>
+    	</div>
+    	
+    	<div class="alert alert-success" align="center" role="alert" th:if="${message}">
+			<span th:utext="${message}"></span>
     	</div>
 
         <input type="text" id="user_name" name="user_name" placeholder="Korisničko ime"
