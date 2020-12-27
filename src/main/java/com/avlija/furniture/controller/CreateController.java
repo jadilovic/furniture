@@ -19,6 +19,7 @@ import com.avlija.furniture.repository.ElementQuantityRepository;
 import com.avlija.furniture.repository.ElementRepository;
 import com.avlija.furniture.repository.ProductRepository;
 import com.avlija.furniture.repository.UnitMeasureRepository;
+import com.avlija.furniture.service.ElementSifraSorter;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -171,11 +172,13 @@ public class CreateController {
     public ModelAndView addElement(@PathVariable(name = "id") Integer id) {
      ModelAndView model = new ModelAndView();
      Product product = productRepository.findById(id).get();
+     Set <Element> elements = new TreeSet<Element>();
+     elements = product.getElements();
      SampleInputs sampleInputs = new SampleInputs();
      sampleInputs.setId(id);
      model.addObject("product", product);
      model.addObject("sampleInputs", sampleInputs);
-     model.addObject("elementsList", product.getElements());
+     model.addObject("elementsList", elements);
      model.setViewName("admin/add_elements");
      
      return model;
@@ -184,7 +187,7 @@ public class CreateController {
     @RequestMapping(value= {"admin/addelement"}, method=RequestMethod.POST)
     public ModelAndView addElementToProduct(@Valid Product product) {
      ModelAndView model = new ModelAndView();
-     Set <Element> elements = new TreeSet<Element>();
+     Set <Element> elements = new TreeSet<Element>(new ElementSifraSorter());
      elements = product.getElements();
      	Product createdProduct = productRepository.findById(product.getId()).get();
      	for(Element element: elements) {
@@ -195,13 +198,18 @@ public class CreateController {
      		ElementQuantity elementQuantity = new ElementQuantity(productElement, 0);
      		elementQuantityRepository.save(elementQuantity);
      	}
+     	//elements = new TreeSet<Element>(new ElementSifraSorter());
      	createdProduct.setElements(elements);
    	  	productRepository.save(createdProduct);
-   	  	List<ElementQuantity> elementsQuantityList = getElementQuantityList(elements, createdProduct);
+   	  	TreeSet<Element> sortedElements = new TreeSet<Element>(new ElementSifraSorter());
+   	  	for(Element element: elements) {
+   	  		sortedElements.add(element);
+   	  	}
+   	  	List<ElementQuantity> elementsQuantityList = getElementQuantityList(sortedElements, createdProduct);
    	  model.addObject("msg", "Izvršena dopuna - izmjena elemenata");
    	  model.setViewName("admin/create_product2");
      model.addObject("product", createdProduct);
-     model.addObject("elementsList", elements);
+     model.addObject("elementsList", sortedElements);
      model.addObject("elementsQuantityList", elementsQuantityList);
      return model;
     }
