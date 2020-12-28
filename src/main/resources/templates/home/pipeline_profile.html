@@ -35,6 +35,10 @@
       <td><span th:text="*{name}"></span></td>
     </tr>   
     <tr>
+      <th scope="row">Status:</th>
+      <td class="btn " th:classappend="*{active} == 0 ? btn-danger : btn-success" th:text="*{active} == 0 ? 'Dodan u radni nalog' : 'U pripremi'"></td>
+    </tr> 
+    <tr>
       <th scope="row">Proizvodi u listi:</th>
         <td>
         </td>
@@ -68,8 +72,17 @@
             </tr>
         </tbody>
     </table>
-  </div>      
-  	
+  </div>   
+     
+  	  <div th:if="${!productsList.isEmpty()}" class="row" th:object="${pipeline}">
+         <div class="col-md-3"></div>
+          <div class="col-md-6">
+              <div class="alert alert-success" role="alert">Kreiraj Kopiju Urneka Lise
+  	  				<a class="btn btn-warning btn-block" th:href="@{'/admin/copypipeline/' + *{id}}">Kreiraj Kopiju</a>
+              </div>
+         </div>
+       </div>
+       
   	   <div th:if="${!productsList.isEmpty()}" class="row" th:object="${pipeline}">
          <div class="col-md-3"></div>
           <div class="col-md-6">

@@ -75,10 +75,9 @@ public class OrderController {
     public ModelAndView addedElementQuantity(@Valid SampleInputs sampleInputs) {
      ModelAndView model = new ModelAndView();
      Set <Product> products = new TreeSet<>();
-     	Pipeline createdPipeline = pipelineRepository.findById(sampleInputs.getPipelineId()).get();
-        products = createdPipeline.getProducts();
-        List<ProductQuantity> productsQuantityList = getProductQuantityList(products, createdPipeline);
-        Order order = new Order(new Date(), sampleInputs.getWorkPosition(), createdPipeline, sampleInputs.getOrderComment(), sampleInputs.getOrderPackaging(), sampleInputs.getOrderPrep());
+     	Pipeline templatePipeline = pipelineRepository.findById(sampleInputs.getPipelineId()).get();
+        List<ProductQuantity> productsQuantityList = getProductQuantityList(products, templatePipeline);
+        Order order = new Order(new Date(), sampleInputs.getWorkPosition(), templatePipeline, sampleInputs.getOrderComment(), sampleInputs.getOrderPackaging(), sampleInputs.getOrderPrep());
        orderRepository.save(order);
        sampleInputs.setOrderId(order.getId());
         // List<Integer> totals = new ArrayList<>();
@@ -102,13 +101,15 @@ public class OrderController {
      ModelAndView model = new ModelAndView();
      Set <Product> products = new TreeSet<>();
      Order order = orderRepository.findById(sampleInputs.getOrderId()).get();
-     	Pipeline createdPipeline = order.getPipeline();
-        products = createdPipeline.getProducts();
-        List<ProductQuantity> productsQuantityList = getProductQuantityList(products, createdPipeline);
+     	Pipeline orderPipeline = order.getPipeline();
+        products = orderPipeline.getProducts();
+        orderPipeline.setActive(0);
+        pipelineRepository.save(orderPipeline);
+        List<ProductQuantity> productsQuantityList = getProductQuantityList(products, orderPipeline);
         List<Integer> totals = new ArrayList<>();
 
         for(Product product: products) {
-        	PipelineProduct pipelineProduct = new PipelineProduct(createdPipeline.getId(), product.getId());
+        	PipelineProduct pipelineProduct = new PipelineProduct(orderPipeline.getId(), product.getId());
         	ProductQuantity productQuantity = productQuantityRepository.findById(pipelineProduct).get();
         	Set<Element> elements = product.getElements();
             List<ElementQuantity> elementsQuantityList = getElementQuantityList(elements, product);

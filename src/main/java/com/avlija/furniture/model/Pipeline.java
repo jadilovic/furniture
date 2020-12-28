@@ -26,6 +26,9 @@ public class Pipeline implements Serializable{
 	@Column(name = "name")
     private String name;
 	
+    @Column(name = "active")
+    private int active;
+	
     @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     @JoinTable(
             name = "pipelines_products",
@@ -69,6 +72,20 @@ public class Pipeline implements Serializable{
 	 */
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	/**
+	 * @return the active
+	 */
+	public int getActive() {
+		return active;
+	}
+
+	/**
+	 * @param active the active to set
+	 */
+	public void setActive(int active) {
+		this.active = active;
 	}
 
 	/**

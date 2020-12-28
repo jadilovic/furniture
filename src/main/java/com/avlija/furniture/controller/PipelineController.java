@@ -68,6 +68,8 @@ public class PipelineController {
           model.addObject("pipeline", newPipeline);
       	  model.setViewName("admin/create_pipeline");
      } else {
+       // Active Pipeline means that it has not been added to the Order - products are still being added
+    	 pipeline.setActive(1);
    	  	pipelineRepository.save(pipeline);
       
    	  Pipeline createdPipeline = pipelineRepository.findByName(pipeline.getName());
@@ -113,7 +115,6 @@ public class PipelineController {
      
      return model;
     }
-    
     
     // ADD PRODUCTS TO THE PIPELINE
     
