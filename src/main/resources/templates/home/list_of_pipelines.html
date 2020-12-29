@@ -55,14 +55,18 @@
         <thead>
             <tr>
                 <th scope="col">ID Broj</th>
-                <th scope="col">Naziv</th>              
+                <th scope="col">Naziv</th>      
+                <th scope="col">Status</th>        
                 <th scope="col">Info</th>
             </tr>
         </thead>
         <tbody>
             <tr scope="row" th:each="pipeline, productStat : ${pipelines}">
                 <td th:text="${pipeline.id}">ID</td>
-                <td th:text="${pipeline.name}">Naziv</td>               
+                <td th:text="${pipeline.name}">Naziv</td>  
+                <td th:object="${pipeline}">
+                	<a th:href="@{'/home/orderpipeline/' + *{id}}" class="text-white btn " th:classappend="${pipeline.active} == 0 ? btn-danger : btn-success" th:text="${pipeline.active} == 0 ? 'U radnom nalogu' : 'U pripremi'"></a>
+                </td>          
                 <td th:object="${pipeline}">
                 	<a class="btn btn-warning" th:href="@{'/home/pipelineprofile/' + *{id}}">Info</a>
                 </td>       

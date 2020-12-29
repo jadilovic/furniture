@@ -21,4 +21,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
 	@Query("SELECT n FROM Order n ORDER BY n.created DESC")
 	List<Order> findAllByCreatedDesc();
+	
+	Order findByPipeline(Pipeline pipeline);
 }

@@ -158,6 +158,32 @@ public class DisplayController {
      return model;
     }
     
+    // DISPLAY ORDER BY PIPELINE
+    @RequestMapping(value= {"home/orderpipeline/{id}"}, method=RequestMethod.GET)
+	public ModelAndView orderProfileByPipeline(@PathVariable(name = "id") Integer id) {
+ ModelAndView model = new ModelAndView();
+ Set <Product> products = new TreeSet<>();
+ Pipeline pipeline = pipelineRepository.findById(id).get();
+ try {
+	 Order order = orderRepository.findByPipeline(pipeline);
+	 products = order.getPipeline().getProducts();
+	 List<ProductQuantity> productsQuantityList = getProductQuantityList(products, order.getPipeline());
+	 model.addObject("msg", "Profil Radnog Naloga");
+	 model.setViewName("admin/order_profile");
+	 model.addObject("productsList", products);
+	 model.addObject("productsQuantityList", productsQuantityList);
+	 model.addObject("order", order);   
+ } catch(Exception e) {
+     model.addObject("err", "Radni nalog za odabranu listu proizovda još nije kreiran");     
+     List<Pipeline> pipelines = pipelineRepository.findAll(Sort.by("id").descending());
+     SampleInputs sampleInputs = new SampleInputs();
+     model.addObject("sampleInputs", sampleInputs);
+     model.addObject("pipelines", pipelines);
+     model.setViewName("home/list_of_pipelines");
+ }
+ return model;
+}
+    
     @RequestMapping(value= {"home/ordersearchid"}, method=RequestMethod.POST)
     public ModelAndView orderSearchId(@Valid SampleInputs sampleInputs) {
      ModelAndView model = new ModelAndView();

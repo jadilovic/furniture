@@ -36,7 +36,9 @@
     </tr>   
     <tr>
       <th scope="row">Status:</th>
-      <td class="btn " th:classappend="*{active} == 0 ? btn-danger : btn-success" th:text="*{active} == 0 ? 'Dodan u radni nalog' : 'U pripremi'"></td>
+      <td>
+      	 <a class="text-white btn " th:classappend="*{active} == 0 ? btn-danger : btn-success" th:text="*{active} == 0 ? 'Dodan u radni nalog' : 'U pripremi'"></a>
+      </td>
     </tr> 
     <tr>
       <th scope="row">Proizvodi u listi:</th>
