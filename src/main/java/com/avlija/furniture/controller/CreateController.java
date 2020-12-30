@@ -172,7 +172,7 @@ public class CreateController {
     public ModelAndView addElement(@PathVariable(name = "id") Integer id) {
      ModelAndView model = new ModelAndView();
      Product product = productRepository.findById(id).get();
-     Set <Element> elements = new TreeSet<Element>();
+     Set <Element> elements = new TreeSet<Element>(new ElementSifraSorter());
      elements = product.getElements();
      SampleInputs sampleInputs = new SampleInputs();
      sampleInputs.setId(id);

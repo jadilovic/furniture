@@ -46,6 +46,17 @@ public class Pipeline implements Serializable{
 		// TODO Auto-generated constructor stub
 	}
 
+	public Pipeline(int id, String name, int active, Set<Product> products, Set<Order> orders) {
+		super();
+		this.id = id;
+		this.name = name;
+		this.active = active;
+		this.products = products;
+		this.orders = orders;
+	}
+
+
+
 	/**
 	 * @return the id
 	 */

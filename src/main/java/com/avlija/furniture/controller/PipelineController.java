@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import com.avlija.furniture.form.SampleInputs;
@@ -19,8 +20,11 @@ import com.avlija.furniture.repository.PipelineRepository;
 import com.avlija.furniture.repository.ProductQuantityRepository;
 import com.avlija.furniture.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,6 +43,7 @@ public class PipelineController {
     @Autowired
     private ProductQuantityRepository productQuantityRepository;
     
+    private static SampleInputs sampleInputs;
 
     // CREATE PIPELINE OF PRODUCTS GET
     
@@ -88,15 +93,26 @@ public class PipelineController {
     // DISPLAY ALL PIPELINES
     
     @RequestMapping(value= {"home/allpipelines"}, method=RequestMethod.GET)
-    public ModelAndView allPipelines() {
-     ModelAndView model = new ModelAndView();
-     List<Pipeline> pipelines = pipelineRepository.findAll(Sort.by("id").descending());
-     SampleInputs sampleInputs = new SampleInputs();
-     model.addObject("sampleInputs", sampleInputs);
-     model.addObject("pipelines", pipelines);
-     model.setViewName("home/list_of_pipelines");
+    public String allPipelines(HttpServletRequest request, Model model) {
+    	
+        int page = 0; //default page number is 0
+        int size = 10; //default page size is 10
+        
+        if (request.getParameter("page") != null && !request.getParameter("page").isEmpty()) {
+            page = Integer.parseInt(request.getParameter("page")) - 1;
+        }
+
+        if (request.getParameter("size") != null && !request.getParameter("size").isEmpty()) {
+            size = Integer.parseInt(request.getParameter("size"));
+        }
+    	
+     Page <Pipeline> pipelines = null;
+     pipelines = pipelineRepository.findAll(PageRequest.of(page, size, Sort.by("id").descending()));
      
-     return model;
+     model.addAttribute("sampleInputs", new SampleInputs());
+     model.addAttribute("pipelines", pipelines);
+     
+     return "home/list_all_pipelines";
     }
     
     
@@ -351,7 +367,8 @@ public class PipelineController {
          model.setViewName("home/pipeline_profile");
      } catch(Exception e) {
       	  model.addObject("err", "Nije pronađena lista sa ID brojem: " + pipelineId);
-          List<Pipeline> pipelines = pipelineRepository.findAll();
+          //List<Pipeline> pipelines = pipelineRepository.findAll(Sort.by("id").descending());
+          List<Pipeline> pipelines = pipelineRepository.findFirst10ByActive(1, Sort.by("id").descending());
           model.addObject("sampleInputs", sampleInputs);
           model.addObject("pipelines", pipelines);      	  
        	  model.setViewName("home/list_of_pipelines");
@@ -369,7 +386,8 @@ public class PipelineController {
          List<Pipeline> pipelinesList = pipelineRepository.findByNameContaining(keyWord);
          if(pipelinesList.isEmpty()) {
          	  model.addObject("err", "Nije pronađena lista koji sadrži ključnu riječ: " + keyWord);
-              List<Pipeline> pipelines = pipelineRepository.findAll();
+              // List<Pipeline> pipelines = pipelineRepository.findAll(Sort.by("id").descending());
+              List<Pipeline> pipelines = pipelineRepository.findFirst10ByActive(1, Sort.by("id").descending());
               model.addObject("pipelines", pipelines);      	  
          	} else {
          		model.addObject("msg", "Lista proizvoda koja sadrže ključnu riječ: " + keyWord);
