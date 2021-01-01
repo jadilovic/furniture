@@ -19,6 +19,8 @@ import com.avlija.furniture.model.ProductQuantity;
 import com.avlija.furniture.repository.PipelineRepository;
 import com.avlija.furniture.repository.ProductQuantityRepository;
 import com.avlija.furniture.repository.ProductRepository;
+import com.avlija.furniture.service.ProductIdComp;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -123,10 +125,10 @@ public class PipelineController {
      ModelAndView model = new ModelAndView();
      Pipeline pipeline = pipelineRepository.findById(id).get();
 	 List<ProductQuantity> productsQuantityList = getProductQuantityList(pipeline.getProducts(), pipeline);
-
+	 Set<Product> productsList = sortByProductId(pipeline.getProducts());
 	 model.addObject("productsQuantityList", productsQuantityList);
      model.addObject("pipeline", pipeline);
-     model.addObject("productsList", pipeline.getProducts());
+     model.addObject("productsList", productsList);
      model.setViewName("home/pipeline_profile");
      
      return model;
@@ -138,13 +140,14 @@ public class PipelineController {
     public ModelAndView addProductsToPipelineGET(@PathVariable(name = "id") Integer id) {
      ModelAndView model = new ModelAndView();
      Pipeline pipeline = pipelineRepository.findById(id).get();
+     Set<Product> products = sortByProductId(pipeline.getProducts());
      
      SampleInputs sampleInputs = new SampleInputs();
   	System.out.println("PRODUCTS IN OBJECT:" + pipeline.getProducts());
      sampleInputs.setPipelineId(id);
      model.addObject("sampleInputs", sampleInputs);
      model.addObject("pipeline", pipeline);
-     model.addObject("productsList", pipeline.getProducts());
+     model.addObject("productsList", products);
      model.addObject("emptyProducts", pipeline.getProducts().isEmpty());
      model.setViewName("admin/add_products");
      
@@ -153,18 +156,17 @@ public class PipelineController {
     
     
     // CHANGE PIPELINE
-    
-    @RequestMapping(value= {"admin/changepipeline/{id}"}, method=RequestMethod.GET)
+	@RequestMapping(value= {"admin/changepipeline/{id}"}, method=RequestMethod.GET)
     public ModelAndView changePipeline(@PathVariable(name = "id") Integer id) {
      ModelAndView model = new ModelAndView();
      Pipeline pipeline = pipelineRepository.findById(id).get();
      
 	 List<ProductQuantity> productsQuantityList = getProductQuantityList(pipeline.getProducts(), pipeline);
-
+	 Set<Product> productsList = sortByProductId(pipeline.getProducts());
 	  model.addObject("msg", "Izmjene specifikacija liste proizvoda");
 	  model.setViewName("admin/create_pipeline2");
 	  model.addObject("pipeline", pipeline);
-	  model.addObject("productsList", pipeline.getProducts());
+	  model.addObject("productsList", productsList);
 	  model.addObject("productsQuantityList", productsQuantityList);
 	  return model;
     }
@@ -174,8 +176,7 @@ public class PipelineController {
     @RequestMapping(value= {"admin/addproducts"}, method=RequestMethod.POST)
     public ModelAndView addProductsToPipelinePOST(@Valid Pipeline pipeline) {
      ModelAndView model = new ModelAndView();
-     Set <Product> selectedProducts = new HashSet<>();
-     selectedProducts = pipeline.getProducts();
+     Set <Product> selectedProducts = sortByProductId(pipeline.getProducts());
 
      Pipeline savedPipeline = pipelineRepository.findById(pipeline.getId()).get();
 
@@ -398,9 +399,16 @@ public class PipelineController {
         return model;
     	}
     
-
-    // CREATE PRODUCT QUANTITY LIST FOR THE PIPELINE
+    // SORTING PRODUCTS IN THE PIPELINE BY PRODUCT ID
+    private Set<Product> sortByProductId(Set<Product> products) {
+		Set<Product> sortedProducts = new TreeSet<>(new ProductIdComp());
+	     for(Product product: products) {
+	    	 sortedProducts.add(product);
+	     	}
+		return sortedProducts;
+	}
     
+    // CREATE PRODUCT QUANTITY LIST FOR THE PIPELINE
     private List<ProductQuantity> getProductQuantityList(Set <Product> products, Pipeline pipeline) {
       	 List <ProductQuantity> productQuantitiyList = new ArrayList<ProductQuantity>();
        	 for(Product product: products) {
