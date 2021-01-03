@@ -208,8 +208,10 @@ public class PipelineController {
      ModelAndView model = new ModelAndView();
      	
     	Pipeline pipeline = pipelineRepository.findById(sampleInputs.getPipelineId()).get();
-    	Set <Product> pipelineProducts = sortByProductId(pipeline.getProducts());      	
-     	Set <Product> products = new TreeSet<Product>(new ProductIdComp());
+    	Set <Product> pipelineProducts = sortByProductId(pipeline.getProducts());   
+    	
+    	Boolean emptyProducts;
+     	List <Product> products = new ArrayList<>();
       	
       	Product product;
     	try {
@@ -221,21 +223,22 @@ public class PipelineController {
     	 if(product == null) {
         	 model.addObject("err", "Nije pronađen proizovd sa ID brojem: " + sampleInputs.getPrdId());
  	 		 model.addObject("productsList", pipelineProducts); 
+ 	 		 emptyProducts = pipelineProducts.isEmpty();
     	 	}
     	 else if(productAlreadyInList(product, pipelineProducts)){
         	 model.addObject("err", "Pronađen proizvod sa ID brojem: '" + sampleInputs.getPrdId() + "', ali već postoji u listi.");
- 	 		 model.addObject("productsList", pipelineProducts);    	 	
+ 	 		 model.addObject("productsList", pipelineProducts);    	 
+ 	 		 emptyProducts = pipelineProducts.isEmpty();
     	 } else {
     	 	products.add(product);
     	 	for(Product item: pipelineProducts) {
     	 		products.add(item);
     	 		}
     	 	model.addObject("productsList", products);
-    	 	model.addObject("msg", "Pronađen proizvod sa ID brojem: " + product.getId());		
-    	 	}
+    	 	model.addObject("msg", "Pronađen proizvod sa ID brojem: " + product.getId());
+    	 	emptyProducts = products.isEmpty();
+    	 }
 
-       	 Boolean emptyProducts = products.isEmpty();
-       	 
     	 model.addObject("emptyProducts", emptyProducts);
          model.addObject("pipeline", pipeline);
          model.addObject("sampleInputs", sampleInputs);
