@@ -45,6 +45,12 @@ public class PipelineController {
     @Autowired
     private ProductQuantityRepository productQuantityRepository;
     
+    private static List<ProductQuantity> productsQuantityList;
+    
+    private static Set<Product> productsList;
+    
+    private static Pipeline savedPipeline;
+    
     // CREATE PIPELINE OF PRODUCTS GET
     
     @RequestMapping(value= {"admin/createpipeline"}, method=RequestMethod.GET)
@@ -175,7 +181,7 @@ public class PipelineController {
      ModelAndView model = new ModelAndView();
      Set <Product> selectedProducts = sortByProductId(pipeline.getProducts());
 
-     Pipeline savedPipeline = pipelineRepository.findById(pipeline.getId()).get();
+     savedPipeline = pipelineRepository.findById(pipeline.getId()).get();
 
      	for(Product product: selectedProducts) {
      		PipelineProduct pipelineProduct = new PipelineProduct(pipeline.getId(), product.getId());
@@ -190,8 +196,8 @@ public class PipelineController {
      	savedPipeline.setProducts(selectedProducts);
    	  	pipelineRepository.save(savedPipeline);
    	  	
-   	  	List<ProductQuantity> productsQuantityList = getProductQuantityList(selectedProducts, savedPipeline);
-   	  	Set<Product> productsList = sortByProductId(savedPipeline.getProducts());
+   	  	productsQuantityList = getProductQuantityList(selectedProducts, savedPipeline);
+   	  	productsList = sortByProductId(savedPipeline.getProducts());
    	  model.addObject("msg", "Izvršena dopuna - izmjena liste");
    	  model.setViewName("admin/create_pipeline2");
      model.addObject("pipeline", savedPipeline);
@@ -199,8 +205,19 @@ public class PipelineController {
      model.addObject("productsQuantityList", productsQuantityList);
      return model;
     }
-
-	
+    
+    // If browser back button is clicked display current list of products in the pipeline
+    @RequestMapping(value= {"/admin/addproducts"}, method=RequestMethod.GET)
+    public ModelAndView redirectBackToPipelineList() {
+   	  ModelAndView model = new ModelAndView();
+   	  model.addObject("msg", "Povratak na trenutnu listu proizvoda");
+   	  model.setViewName("admin/create_pipeline2");
+     model.addObject("pipeline", savedPipeline);
+     model.addObject("productsList", productsList);
+     model.addObject("productsQuantityList", productsQuantityList);
+   	  return model;
+    }
+    
 	   // SEARCH PRODUCT BY ID TO BE ADDED TO THE PIPELINE
 
 	@RequestMapping(value= {"home/searchproductid"}, method=RequestMethod.POST)
@@ -266,7 +283,7 @@ public class PipelineController {
      ModelAndView model = new ModelAndView();
      String keyWord = sampleInputs.getKeyWord();
    		Pipeline pipeline = pipelineRepository.findById(sampleInputs.getPipelineId()).get();
-         List<Product> foundProducts = productRepository.findByNameContaining(keyWord);
+         List <Product> foundProducts = productRepository.findByNameContaining(keyWord);
          Set <Product> pipelineProducts = sortByProductId(pipeline.getProducts()); 		 
          //model.addObject("emptyListOfProducts", products.isEmpty());
 
@@ -276,7 +293,11 @@ public class PipelineController {
          	} 
          else {
          		List<Product> selectionProducts = new ArrayList<>();
-         		foundProducts.removeAll(pipelineProducts);
+         		List<Product> checkList = new ArrayList<>();
+         		for(Product product: pipelineProducts) {
+         			checkList.add(product);
+         		}
+         		foundProducts.removeAll(checkList);
          		if(foundProducts.isEmpty()) {
              		model.addObject("msg", "Lista elemenata koji sadrže ključnu riječ: '" + keyWord + "' se već nalaze u proizvodu.");
                     model.addObject("productsList", pipelineProducts);
