@@ -79,6 +79,16 @@ public class SearchController {
      return model;
     }
     
+    // If browser back button is clicked display return to product search beginning
+    @RequestMapping(value= {"/home/productsearchid"}, method=RequestMethod.GET)
+    public ModelAndView redirectIdBackToProductSearch() {
+        ModelAndView model = new ModelAndView();
+        SampleInputs sampleInputs = new SampleInputs();
+        model.addObject("sampleInputs", sampleInputs);
+        model.setViewName("home/search_product");
+   	  return model;
+    }
+    
     @RequestMapping(value= {"home/productsearchkeyword"}, method=RequestMethod.POST)
     public ModelAndView productSearchKeyWord(@Valid SampleInputs sampleInputs) {
      ModelAndView model = new ModelAndView();
@@ -95,6 +105,15 @@ public class SearchController {
          	return model;
     	}
     
+    // If browser back button is clicked display return to product search beginning
+    @RequestMapping(value= {"/home/productsearchkeyword"}, method=RequestMethod.GET)
+    public ModelAndView redirectKeywordBackToProductSearch() {
+        ModelAndView model = new ModelAndView();
+        SampleInputs sampleInputs = new SampleInputs();
+        model.addObject("sampleInputs", sampleInputs);
+        model.setViewName("home/search_product");
+   	  return model;
+    }
     
     @RequestMapping(value= {"home/searchproductname"}, method=RequestMethod.POST)
     public ModelAndView productSearchName(@Valid SampleInputs sampleInputs) {
@@ -115,6 +134,16 @@ public class SearchController {
        	  model.setViewName("home/search_product");
      }
      return model;
+    }
+    
+    // If browser back button is clicked display return to product search beginning
+    @RequestMapping(value= {"/home/searchproductname"}, method=RequestMethod.GET)
+    public ModelAndView redirectProductNameBackToProductSearch() {
+        ModelAndView model = new ModelAndView();
+        SampleInputs sampleInputs = new SampleInputs();
+        model.addObject("sampleInputs", sampleInputs);
+        model.setViewName("home/search_product");
+   	  return model;
     }
     
     @RequestMapping(value= {"admin/searchelementsifra"}, method=RequestMethod.POST)

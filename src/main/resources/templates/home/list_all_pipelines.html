@@ -39,9 +39,9 @@
     <div class="card mb-4 shadow-sm">
       <div class="card-body">
 		<form th:action="@{/home/pipelinesearchkeyword}" th:object="${sampleInputs}" method="post">
-        		<input type="text" th:field="*{keyWord}" placeholder="Kljucna rijec" required autofocus/>
+        		<input type="text" th:field="*{keyWord}" placeholder="Ključna riječ" required autofocus/>
         		<div class="p-3">
-      				<input class="btn btn-warning btn-block" type="submit" value="Traži listu po kljucnoj rijeci"/>      		
+      				<input class="btn btn-warning btn-block" type="submit" value="Traži listu po ključnoj riječi"/>      		
         		</div>
 			</form>
       </div>
