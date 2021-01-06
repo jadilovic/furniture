@@ -125,8 +125,8 @@ public class DisplayController {
     @RequestMapping(value= {"home/allorders"}, method=RequestMethod.GET)
     public ModelAndView allOrders() {
      ModelAndView model = new ModelAndView();
-    List<Order> ordersList = orderRepository.findAll(Sort.by("created").descending());
-
+   // List<Order> ordersList = orderRepository.findAll(Sort.by("created").descending());
+     List<Order> ordersList = orderRepository.findFirst10ByOrderCompletedOrderByIdDesc(1);
      model.addObject("message", "Lista radnih naloga");     
      model.addObject("sampleInputs", new SampleInputs());
      model.addObject("ordersList", ordersList);

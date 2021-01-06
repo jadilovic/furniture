@@ -24,4 +24,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 	
 	Order findByPipeline(Pipeline pipeline);
 	
+	 List<Order> findFirst10ByOrderCompletedOrderByIdDesc(int completed);
+
 }

@@ -37,17 +37,21 @@ public class Order implements Serializable{
     @Column(name = "order_prep")
     private String orderPrep;
     
+    @Column(name = "order_completed")
+    private int orderCompleted;
+    
     public Order() {
     }
 
 	public Order(Date created, String workPosition, Pipeline pipeline, String orderComment, String orderPackaging,
-			String orderPrep) {
+			String orderPrep, int orderCompleted) {
 		this.created = created;
 		this.workPosition = workPosition;
 		this.pipeline = pipeline;
 		this.orderComment = orderComment;
 		this.orderPackaging = orderPackaging;
 		this.orderPrep = orderPrep;
+		this.orderCompleted = orderCompleted;
 	}
 
 	/**
@@ -146,6 +150,20 @@ public class Order implements Serializable{
 	 */
 	public void setOrderPrep(String orderPrep) {
 		this.orderPrep = orderPrep;
+	}
+
+	/**
+	 * @return the orderCompleted
+	 */
+	public int getOrderCompleted() {
+		return orderCompleted;
+	}
+
+	/**
+	 * @param orderCompleted the orderCompleted to set
+	 */
+	public void setOrderCompleted(int orderCompleted) {
+		this.orderCompleted = orderCompleted;
 	}
     
 	

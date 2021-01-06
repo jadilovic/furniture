@@ -77,7 +77,7 @@ public class OrderController {
      Set <Product> products = new TreeSet<>();
      	Pipeline templatePipeline = pipelineRepository.findById(sampleInputs.getPipelineId()).get();
         List<ProductQuantity> productsQuantityList = getProductQuantityList(products, templatePipeline);
-        Order order = new Order(new Date(), sampleInputs.getWorkPosition(), templatePipeline, sampleInputs.getOrderComment(), sampleInputs.getOrderPackaging(), sampleInputs.getOrderPrep());
+        Order order = new Order(new Date(), sampleInputs.getWorkPosition(), templatePipeline, sampleInputs.getOrderComment(), sampleInputs.getOrderPackaging(), sampleInputs.getOrderPrep(), 0);
        orderRepository.save(order);
        sampleInputs.setOrderId(order.getId());
         // List<Integer> totals = new ArrayList<>();
@@ -100,11 +100,16 @@ public class OrderController {
     public ModelAndView confirmOrder(@Valid SampleInputs sampleInputs) {
      ModelAndView model = new ModelAndView();
      Set <Product> products = new TreeSet<>();
-     Order order = orderRepository.findById(sampleInputs.getOrderId()).get();
+     	// ONCE ORDER IS CONFIRMED ORDER IS MARKED IN THE DATABASE
+     	Order order = orderRepository.findById(sampleInputs.getOrderId()).get();
+     	order.setOrderCompleted(1);
+     	orderRepository.save(order);
+     	// ALSO PIPELINE USED TO CREATE THE ORDER IS NO MORE ACTIVE
      	Pipeline orderPipeline = order.getPipeline();
         products = orderPipeline.getProducts();
         orderPipeline.setActive(0);
         pipelineRepository.save(orderPipeline);
+        
         List<ProductQuantity> productsQuantityList = getProductQuantityList(products, orderPipeline);
         List<Integer> totals = new ArrayList<>();
 
