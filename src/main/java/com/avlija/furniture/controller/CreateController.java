@@ -193,7 +193,7 @@ public class CreateController {
      	for(Element element: elements) {
      		ProductElement productElement = new ProductElement(createdProduct.getId(), element.getId());
      		if(elementQuantityExists(productElement)) {
-     			break;
+     			continue;
      		}
      		ElementQuantity elementQuantity = new ElementQuantity(productElement, 0);
      		elementQuantityRepository.save(elementQuantity);

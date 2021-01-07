@@ -24,6 +24,8 @@ import com.avlija.furniture.repository.OrderRepository;
 import com.avlija.furniture.repository.PipelineRepository;
 import com.avlija.furniture.repository.ProductQuantityRepository;
 import com.avlija.furniture.repository.ProductRepository;
+import com.avlija.furniture.service.ProductIdComp;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -59,7 +61,7 @@ public class OrderController {
     public ModelAndView createOrder(@PathVariable(name = "id") Integer id) {
      ModelAndView model = new ModelAndView();
      Pipeline pipeline = pipelineRepository.findById(id).get();
-     Set<Product> productsList = pipeline.getProducts();
+     Set<Product> productsList = sortByProductId(pipeline.getProducts());
      List<ProductQuantity> productsQuantityList = getProductQuantityList(productsList, pipeline);
      SampleInputs sampleInputs = new SampleInputs();
      sampleInputs.setPipelineId(id);
@@ -74,22 +76,21 @@ public class OrderController {
     @RequestMapping(value= {"admin/createorder"}, method=RequestMethod.POST)
     public ModelAndView addedElementQuantity(@Valid SampleInputs sampleInputs) {
      ModelAndView model = new ModelAndView();
-     Set <Product> products = new TreeSet<>();
+     Set <Product> productsList = new TreeSet<>();
      	Pipeline templatePipeline = pipelineRepository.findById(sampleInputs.getPipelineId()).get();
-        List<ProductQuantity> productsQuantityList = getProductQuantityList(products, templatePipeline);
-        Order order = new Order(new Date(), sampleInputs.getWorkPosition(), templatePipeline, sampleInputs.getOrderComment(), sampleInputs.getOrderPackaging(), sampleInputs.getOrderPrep(), 0);
-       orderRepository.save(order);
-       sampleInputs.setOrderId(order.getId());
-        // List<Integer> totals = new ArrayList<>();
-       // for(ElementQuantity elementQuantity: elementsQuantityList) {
-       // 	int totalElementQuantity = orderQuantity * elementQuantity.getQuantity();
-       // 	totals.add(totalElementQuantity);
-       // }
+        productsList = sortByProductId(templatePipeline.getProducts());
+        List<ProductQuantity> productsQuantityList = getProductQuantityList(productsList, templatePipeline);
+        // CREATING ORDER JUST FOR DISPLAY BEFORE CONFIRMATION
+        Order order = new Order(new Date(), sampleInputs.getWorkPosition(), templatePipeline, 
+        						sampleInputs.getOrderComment(), sampleInputs.getOrderPackaging(), 
+        						sampleInputs.getOrderPrep(), 0);
+       // orderRepository.save(order);
+       // sampleInputs.setOrderId(order.getId());
         
    	  model.addObject("msg", "Kreirani radni nalog spreman za potvrdu");
    	  model.setViewName("admin/confirm_order");
      model.addObject("order", order);
-     model.addObject("productsList", products);
+     model.addObject("productsList", productsList);
      model.addObject("productsQuantityList", productsQuantityList);
      model.addObject("sampleInputs", sampleInputs);
      //model.addObject("totals", totals);
@@ -101,15 +102,20 @@ public class OrderController {
      ModelAndView model = new ModelAndView();
      Set <Product> products = new TreeSet<>();
      	// ONCE ORDER IS CONFIRMED ORDER IS MARKED IN THE DATABASE
-     	Order order = orderRepository.findById(sampleInputs.getOrderId()).get();
-     	order.setOrderCompleted(1);
-     	orderRepository.save(order);
+     	// Order order = orderRepository.findById(sampleInputs.getOrderId()).get();
+     Pipeline orderPipeline = pipelineRepository.findById(sampleInputs.getPipelineId()).get();
+     Order createdOrder = new Order(new Date(), sampleInputs.getWorkPosition(), orderPipeline, 
+    		 				sampleInputs.getOrderComment(), sampleInputs.getOrderPackaging(), 
+    		 				sampleInputs.getOrderPrep(), 1);
+     	orderRepository.save(createdOrder);
      	// ALSO PIPELINE USED TO CREATE THE ORDER IS NO MORE ACTIVE
-     	Pipeline orderPipeline = order.getPipeline();
-        products = orderPipeline.getProducts();
+     	// Pipeline orderPipeline = order.getPipeline();
+        products = sortByProductId(orderPipeline.getProducts());
         orderPipeline.setActive(0);
         pipelineRepository.save(orderPipeline);
         
+        createdOrder = orderRepository.findByPipeline(orderPipeline);
+                
         List<ProductQuantity> productsQuantityList = getProductQuantityList(products, orderPipeline);
         List<Integer> totals = new ArrayList<>();
 
@@ -130,11 +136,10 @@ public class OrderController {
         
    	  	model.addObject("msg", "Potvrđen radni nalog");
    	  	model.setViewName("admin/order_profile");
-   	  	model.addObject("order", order);
+   	  	model.addObject("order", createdOrder);
    	  	model.addObject("productsList", products);
    	  	model.addObject("productsQuantityList", productsQuantityList);
    	  	model.addObject("totals", totals);
-   	  	model.addObject("order", order);   
      return model;
     }
 
@@ -172,5 +177,13 @@ public class OrderController {
        	return productQuantitiyList;
 	}
     
+    // SORTING PRODUCTS IN THE PIPELINE BY PRODUCT ID
+    private Set<Product> sortByProductId(Set<Product> products) {
+		Set<Product> sortedProducts = new TreeSet<>(new ProductIdComp());
+	     for(Product product: products) {
+	    	 sortedProducts.add(product);
+	     	}
+		return sortedProducts;
+	}
     
 }

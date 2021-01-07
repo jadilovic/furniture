@@ -31,10 +31,12 @@
  
  <table th:object="${order}" class="table table-striped">
   <tbody>
+  <!--
     <tr>
       <th scope="row">ID Radnog Naloga:</th>
       <td><span th:text="*{id}"></span></td>
     </tr>
+      -->
     <tr>
       <th scope="row">ID Liste Proizvoda:</th>
       <td><span th:text="${order.getPipeline().getId()}"></span></td>
@@ -101,7 +103,11 @@
           <div class="col-md-6">
               <div class="alert alert-primary" role="alert">
                  <form th:action="@{/admin/confirmorder}" th:object="${sampleInputs}" method="post">
-      	   			<input type="hidden" th:field="*{orderId}" readonly="readonly"/>
+                    <input type="hidden" th:field="*{pipelineId}" readonly="readonly"/>
+      	   			<input type="hidden" th:field="*{workPosition}" readonly="readonly"/>
+      	   			<input type="hidden" th:field="*{orderComment}" readonly="readonly"/>
+      	   			<input type="hidden" th:field="*{orderPackaging}" readonly="readonly"/>
+      	   			<input type="hidden" th:field="*{orderPrep}" readonly="readonly"/>
     				<div class="p-1">
     					<input class="btn btn-success btn-block" type="submit" value="Potvrdi Radni Nalog"/>
 					</div>
