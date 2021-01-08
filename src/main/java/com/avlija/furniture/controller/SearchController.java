@@ -26,6 +26,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -48,8 +49,10 @@ public class SearchController {
     @Autowired
     private ElementQuantityRepository elementQuantityRepository;
     
-    // SEARCH PRODUCTS
+    private static List<Element> elementsByKeyWord;
+    private static String keyWord;
     
+    // SEARCH PRODUCTS
     @RequestMapping(value= {"home/productsearch"}, method=RequestMethod.GET)
     public ModelAndView productSearch() {
      ModelAndView model = new ModelAndView();
@@ -237,8 +240,16 @@ public class SearchController {
           model.setViewName("home/list_elements");
      return model;
     }
-    
-    
+	 
+    // SEARCH ELEMENTS BY SIFRA
+	 @RequestMapping(value= {"home/searchelements"}, method=RequestMethod.POST)
+	 public String searchPostsBySifra(@Valid SampleInputs sampleInputs, HttpServletRequest request) {
+	     keyWord = sampleInputs.getKeyWord();
+	    elementsByKeyWord = elementRepository.findByNameContaining(keyWord);
+		 return "redirect:/home/searchelements";
+	 }
+  
+	 /*
     @RequestMapping(value= {"home/searchelements"}, method=RequestMethod.POST)
     public ModelAndView elementsSearchKeyWord(@Valid SampleInputs sampleInputs, HttpServletRequest request) {
      ModelAndView model = new ModelAndView();
@@ -268,6 +279,37 @@ public class SearchController {
   			model.setViewName("home/list_elements");
          	return model;
     	}
+    */
+    // DISPLAY SEARCH RESULTS OF ELEMENTS BY KEY WORD
+    @RequestMapping(value= {"home/searchelements"}, method=RequestMethod.GET)
+	 public ModelAndView displayPosts(HttpServletRequest request) {
+		 ModelAndView model = new ModelAndView();
+		 if(elementsByKeyWord.isEmpty()) {
+			 	model.addObject("err", "Nije pronađen element koji sadrži ključnu riječ: " + keyWord);
+		 } else {
+      			model.addObject("msg", "Lista elemenata koji sadrže ključnu riječ: " + keyWord);
+		 }
+		  	   
+		 int page = 0; //default page number is 0
+		 int size = 10; //default page size is 10
+		       
+		 if (request.getParameter("page") != null && !request.getParameter("page").isEmpty()) {
+		     page = Integer.parseInt(request.getParameter("page")) - 1;
+		  }
+
+		 if (request.getParameter("size") != null && !request.getParameter("size").isEmpty()) {
+		     size = Integer.parseInt(request.getParameter("size"));
+		  }
+
+		Page <Element> elementsList = null;
+		   elementsList = elementRepository.findByNameContaining(keyWord, PageRequest.of(page, size, Sort.by("id").descending()));
+
+        SampleInputs sampleInputs = new SampleInputs();
+   		model.addObject("sampleInputs", sampleInputs);
+	  	model.addObject("elementsList", elementsList);
+	  	model.setViewName("/home/list_elements_keyword");
+	  	return model;
+    }
     
     private Set<ElementQuantity> getElementQuantityList(Set<Element> elementList, Product product) {
    	 Set<ElementQuantity> elementQuantitiyList = new HashSet<ElementQuantity>();

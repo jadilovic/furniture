@@ -72,7 +72,7 @@ public class DisplayController {
     // DISPLAY ALL ELEMENTS
     
     @RequestMapping(value= {"home/allelements"}, method=RequestMethod.GET)
-    public String customersPage(HttpServletRequest request, Model model) {
+    public String allElements(HttpServletRequest request, Model model) {
               
          int page = 0; //default page number is 0
          int size = 10; //default page size is 10
