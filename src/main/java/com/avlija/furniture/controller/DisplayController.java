@@ -27,6 +27,8 @@ import com.avlija.furniture.repository.OrderRepository;
 import com.avlija.furniture.repository.PipelineRepository;
 import com.avlija.furniture.repository.ProductQuantityRepository;
 import com.avlija.furniture.repository.ProductRepository;
+import com.avlija.furniture.service.ElementNameSorter;
+import com.avlija.furniture.service.ProductIdComp;
 import com.avlija.furniture.service.UserService;
 import com.avlija.furniture.form.LocalDateAttributeConverter;
 
@@ -98,7 +100,7 @@ public class DisplayController {
     @RequestMapping(value= {"home/allproducts"}, method=RequestMethod.GET)
     public ModelAndView allProducts() {
      ModelAndView model = new ModelAndView();
-     List<Product> productsList = productRepository.findAll();
+     List<Product> productsList = productRepository.findAll(Sort.by("id").descending());
      model.addObject("productsList", productsList);
      model.setViewName("home/list_products");
      
@@ -109,8 +111,7 @@ public class DisplayController {
     public ModelAndView productProfile(@PathVariable(name = "id") Integer id) {
      ModelAndView model = new ModelAndView();
      Product product = productRepository.findById(id).get();
-     Set <Element> elements = new HashSet<Element>();
-     elements = product.getElements();
+     Set <Element> elements = sortElementsByName(product.getElements());
    	  List<ElementQuantity> elementsQuantityList = getElementQuantityList(elements, product);
    	  model.addObject("msg", "Informacije o proizvodu");
    	  model.setViewName("home/product_profile");
@@ -120,8 +121,7 @@ public class DisplayController {
      return model;
     }
     
-    // DISPLAY ALL ORDERS
-    
+    // SEARCH AND DISPLAY 10 LAST ORDERS
     @RequestMapping(value= {"home/allorders"}, method=RequestMethod.GET)
     public ModelAndView allOrders() {
      ModelAndView model = new ModelAndView();
@@ -135,26 +135,44 @@ public class DisplayController {
      return model;
     }
     
+    // DISPLAY ALL ORDERS
+    @RequestMapping(value= {"home/listallorders"}, method=RequestMethod.GET)
+    public String listAllOrdersPage(HttpServletRequest request, Model model) {
+        
+        int page = 0; //default page number is 0
+        int size = 10; //default page size is 10
+        
+        if (request.getParameter("page") != null && !request.getParameter("page").isEmpty()) {
+            page = Integer.parseInt(request.getParameter("page")) - 1;
+        }
+
+        if (request.getParameter("size") != null && !request.getParameter("size").isEmpty()) {
+            size = Integer.parseInt(request.getParameter("size"));
+        }
+
+        Page <Order> ordersList = null;
+        ordersList = orderRepository.findAll(PageRequest.of(page, size, Sort.by("id").descending()));
+
+     model.addAttribute("message", "Lista radnih naloga");
+     model.addAttribute("ordersList", ordersList);
+     
+     return "home/list_all_orders";
+    }
+    
+    // Order profile
     @RequestMapping(value= {"home/orderprofile/{id}"}, method=RequestMethod.GET)
     	public ModelAndView orderProfile(@PathVariable(name = "id") Long id) {
      ModelAndView model = new ModelAndView();
      Set <Product> products = new TreeSet<>();
      Order order = orderRepository.findById(id).get();
-     products = order.getPipeline().getProducts();
+     products = sortByProductId(order.getPipeline().getProducts());
         
         List<ProductQuantity> productsQuantityList = getProductQuantityList(products, order.getPipeline());
-       // Set<Integer> totals = new HashSet<>();
-       // for(ProductQuantity productQuantity: productsQuantityList) {
-       // 	int totalElementQuantity = orderQuantity * elementQuantity.getQuantity();
-      //  	totals.add(totalElementQuantity);
-      // }
         
    	  	model.addObject("msg", "Profil Radnog Naloga");
    	  	model.setViewName("admin/order_profile");
    	  	model.addObject("productsList", products);
-   	  	//model.addObject("elementsList", elements);
    	  	model.addObject("productsQuantityList", productsQuantityList);
-   	  	//model.addObject("totals", totals);
    	  	model.addObject("order", order);   
      return model;
     }
@@ -167,7 +185,7 @@ public class DisplayController {
  Pipeline pipeline = pipelineRepository.findById(id).get();
  try {
 	 Order order = orderRepository.findByPipeline(pipeline);
-	 products = order.getPipeline().getProducts();
+	 products = sortByProductId(order.getPipeline().getProducts());
 	 List<ProductQuantity> productsQuantityList = getProductQuantityList(products, order.getPipeline());
 	 model.addObject("msg", "Profil Radnog Naloga");
 	 model.setViewName("admin/order_profile");
@@ -192,17 +210,9 @@ public class DisplayController {
      try {
     	 Order order = orderRepository.findById(orderId).get();
          Pipeline pipeline = order.getPipeline();
-         Set <Product> products = new TreeSet<>();
-         products = pipeline.getProducts();
+         Set <Product> products = sortByProductId(pipeline.getProducts());
          List<ProductQuantity> productsQuantityList = getProductQuantityList(products, order.getPipeline());
 
-       	  //	List<ElementQuantity> elementsQuantityList = getElementQuantityList(elements, product);
-          //  List<Integer> totals = new ArrayList<>();
-          //  int orderQuantity = order.getOrderQuant();
-          //  for(ElementQuantity elementQuantity: elementsQuantityList) {
-          //  	int totalElementQuantity = orderQuantity * elementQuantity.getQuantity();
-          //  	totals.add(totalElementQuantity);
-          //  	}    
        	  	model.addObject("msg", "Profil Radnog Naloga");
        	  	model.setViewName("admin/order_profile");
        	  	model.addObject("order", order);
@@ -323,6 +333,23 @@ public class DisplayController {
        	return productQuantitiyList;
 	}
     
+    // SORTING PRODUCTS BY ELEMENT NAME
+	private Set<Element> sortElementsByName(Set<Element> elements) {
+		Set<Element> sortedElements = new TreeSet<>(new ElementNameSorter());
+   	  	for(Element element: elements) {
+   	  		sortedElements.add(element);
+   	  	}
+		return sortedElements;
+	}
+	   
+    // SORTING PRODUCTS IN THE PIPELINE BY PRODUCT ID
+    private Set<Product> sortByProductId(Set<Product> products) {
+		Set<Product> sortedProducts = new TreeSet<>(new ProductIdComp());
+	     for(Product product: products) {
+	    	 sortedProducts.add(product);
+	     	}
+		return sortedProducts;
+	}
     
     // FIND OUT IF THE PRODUCT QUANTITY EXISTS
 

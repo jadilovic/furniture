@@ -3,7 +3,7 @@ import java.util.Comparator;
 
 import com.avlija.furniture.model.Element;
  
-public class ElementSifraSorter implements Comparator<Element> 
+public class ElementNameSorter implements Comparator<Element> 
 {
     @Override
     public int compare(Element o1, Element o2) {

@@ -19,7 +19,7 @@ import com.avlija.furniture.repository.ElementQuantityRepository;
 import com.avlija.furniture.repository.ElementRepository;
 import com.avlija.furniture.repository.ProductRepository;
 import com.avlija.furniture.repository.UnitMeasureRepository;
-import com.avlija.furniture.service.ElementSifraSorter;
+import com.avlija.furniture.service.ElementNameSorter;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -153,12 +153,13 @@ public class CreateController {
     public ModelAndView changeProduct(@PathVariable(name = "id") Integer id) {
      ModelAndView model = new ModelAndView();
      Product product = productRepository.findById(id).get();
-	 List<ElementQuantity> elementsQuantityList = getElementQuantityList(product.getElements(), product);
+     Set<Element> sortedElements = sortElementsByName(product.getElements());
+	 List<ElementQuantity> elementsQuantityList = getElementQuantityList(sortedElements, product);
      SampleInputs sampleInputs = new SampleInputs();
      sampleInputs.setId(id);
      model.addObject("product", product);
      model.addObject("sampleInputs", sampleInputs);
-     model.addObject("elementsList", product.getElements());
+     model.addObject("elementsList", sortedElements);
      model.addObject("elementsQuantityList", elementsQuantityList);
      model.setViewName("admin/create_product2");
      
@@ -172,8 +173,7 @@ public class CreateController {
     public ModelAndView addElement(@PathVariable(name = "id") Integer id) {
      ModelAndView model = new ModelAndView();
      Product product = productRepository.findById(id).get();
-     Set <Element> elements = new TreeSet<Element>(new ElementSifraSorter());
-     elements = product.getElements();
+     Set <Element> elements = sortElementsByName(product.getElements());
      SampleInputs sampleInputs = new SampleInputs();
      sampleInputs.setId(id);
      model.addObject("product", product);
@@ -187,8 +187,7 @@ public class CreateController {
     @RequestMapping(value= {"admin/addelement"}, method=RequestMethod.POST)
     public ModelAndView addElementToProduct(@Valid Product product) {
      ModelAndView model = new ModelAndView();
-     Set <Element> elements = new TreeSet<Element>(new ElementSifraSorter());
-     elements = product.getElements();
+     Set <Element> elements = sortElementsByName(product.getElements());
      	Product createdProduct = productRepository.findById(product.getId()).get();
      	for(Element element: elements) {
      		ProductElement productElement = new ProductElement(createdProduct.getId(), element.getId());
@@ -198,23 +197,18 @@ public class CreateController {
      		ElementQuantity elementQuantity = new ElementQuantity(productElement, 0);
      		elementQuantityRepository.save(elementQuantity);
      	}
-     	//elements = new TreeSet<Element>(new ElementSifraSorter());
      	createdProduct.setElements(elements);
    	  	productRepository.save(createdProduct);
-   	  	TreeSet<Element> sortedElements = new TreeSet<Element>(new ElementSifraSorter());
-   	  	for(Element element: elements) {
-   	  		sortedElements.add(element);
-   	  	}
-   	  	List<ElementQuantity> elementsQuantityList = getElementQuantityList(sortedElements, createdProduct);
+   	  	List<ElementQuantity> elementsQuantityList = getElementQuantityList(elements, createdProduct);
    	  model.addObject("msg", "Izvršena dopuna - izmjena elemenata");
    	  model.setViewName("admin/create_product2");
      model.addObject("product", createdProduct);
-     model.addObject("elementsList", sortedElements);
+     model.addObject("elementsList", elements);
      model.addObject("elementsQuantityList", elementsQuantityList);
      return model;
     }
 
-
+    
 	@RequestMapping(value="admin/quantity/{productId}/{elementId}", method=RequestMethod.GET)
     public ModelAndView getAddQuantityOfEachElementInProduct(@PathVariable String productId, @PathVariable String elementId) {
     	ModelAndView model = new ModelAndView();
@@ -239,9 +233,8 @@ public class CreateController {
     @RequestMapping(value= {"admin/elementquantity"}, method=RequestMethod.POST)
     public ModelAndView addedElementQuantity(@Valid SampleInputs sampleInputs) {
      ModelAndView model = new ModelAndView();
-     Set <Element> elements = new TreeSet<Element>();
      	Product createdProduct = productRepository.findById(sampleInputs.getPrdId()).get();
-        elements = createdProduct.getElements();
+        Set <Element> elements = sortElementsByName(createdProduct.getElements());      
         Element element = elementRepository.findById(sampleInputs.getElmId()).get();
         ProductElement productElement = new ProductElement(sampleInputs.getPrdId(), sampleInputs.getElmId());
         ElementQuantity elementQuantity = elementQuantityRepository.findById(productElement).get();
@@ -287,4 +280,12 @@ public class CreateController {
     	}
 	}
     
+	private Set<Element> sortElementsByName(Set<Element> elements) {
+		Set<Element> sortedElements = new TreeSet<>(new ElementNameSorter());
+   	  	for(Element element: elements) {
+   	  		sortedElements.add(element);
+   	  	}
+		return sortedElements;
+	}
+
 }

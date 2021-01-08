@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+ xmlns:th="http://www.thymeleaf.org">
+<head>
+ <title>Lista svih radnih naloga</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+ <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+ <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+ <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+ <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.0.0/css/font-awesome.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/css/bootstrap-datepicker.min.css" rel="stylesheet"/>
+
+</head>
+<body>
+
+<!-- LIST OF ALL ORDERS -->
+<div th:replace="fragments/header :: header"/></div>
+
+      <div class="row">
+         <div class="col-md-3"></div>
+          <div class="col-md-6">
+              <div class="alert alert-danger" role="alert" th:if="${err}" th:utext="${err}"></div>
+         </div>
+       </div>
+       
+  <div class="container">
+  
+  <h5>Pregled svih radnih naloga</h5>
+
+  <div class="container table-responsive" align="center">
+ 
+ <div class="p-2" align="center">
+   <p><b th:if="${message}" th:text="${message}" th:class="${'alert ' + alertClass}"></b></p> 
+ </div>
+ 
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">ID Broj</th>
+                <th scope="col">Datum</th>
+                <th scope="col">Radna Pozicija</th>
+                <th scope="col">ID Liste</th>  
+                <th scope="col">Detalji</th>                                
+            </tr>
+        </thead>
+        <tbody>
+            <tr scope="row" th:each="order, orderStat : ${ordersList}">
+                <td th:text="${order.id}">ID</td>
+                <td th:text="${#dates.format(order.created, 'dd-MM-yyyy HH:mm')}">Date</td>
+                <td th:text="${order.workPosition}">Radna Pozicija</td>
+                <td th:text="${order.getPipeline().getId()}">ID Liste</td>                
+                <td th:object="${order}">
+                	<a class="btn btn-warning" th:href="@{'/home/orderprofile/' + *{id}}">Info</a>
+                </td>       
+            </tr>
+        </tbody>
+    </table>
+
+    		    <!-- orders pagination -->
+<nav aria-label="Pagination" th:if="${ordersList.totalPages gt 0}">
+    <ul class="pagination justify-content-center font-weight-medium">
+        <li class="page-item" th:classappend="${ordersList.number eq 0} ? 'disabled'">
+            <a class="page-link svg-icon"
+               th:href="@{/home/listallorders?page={id}(id=${ordersList.number lt 2 ? 1 : ordersList.number})}"
+               aria-label="Previous"
+               title="Previous Page" rel="tooltip">
+                <span aria-hidden="true" data-feather="chevrons-left" width="20" height="20"></span>
+            </a>
+        </li>
+        <li class="page-item" th:classappend="${i eq ordersList.number + 1} ? 'active'"
+            th:each="i : ${#numbers.sequence( ordersList.number + 1, ordersList.totalPages > 10 + ordersList.number ? ordersList.number + 10 : ordersList.totalPages, 1)}">
+            <a class="page-link" th:href="@{/home/listallorders?page={id}(id=${i})}" th:text="${i}"
+               th:title="${'Page '+ i}"
+               rel="tooltip"></a>
+        </li>
+        <li class="page-item disabled" th:if="${ordersList.number + 10 < ordersList.totalPages}">
+            <a class="page-link svg-icon" href="#">
+                <span data-feather="more-horizontal" width="20" height="20"></span>
+            </a>
+        </li>
+        <li class="page-item" th:classappend="${ordersList.number + 1 eq ordersList.totalPages} ? 'disabled'">
+            <a class="page-link svg-icon" th:href="@{/home/listallorders?page={id}(id=${ordersList.number + 2})}"
+               aria-label="Next"
+               title="Next Page" rel="tooltip">
+                <span aria-hidden="true" data-feather="chevrons-right" width="20" height="20"></span>
+            </a>
+        </li>
+    </ul>
+</nav>
+
+    <div class="p-2" align="center">
+    	 <a th:href="@{/home/allorders}" class="btn-info btn-lg btn-block" role="button" aria-pressed="true">Nova Pretraga Radnih Naloga</a>
+  		  <a th:href="@{/admin/createpipeline}" class="btn-success btn-lg btn-block" role="button" aria-pressed="true">Kreiraj Listu Proizvoda</a>
+  	</div>
+    
+  </div>  
+  		
+ <div th:replace="fragments/footer :: footer"/></div>
+
+</body>
+</html>

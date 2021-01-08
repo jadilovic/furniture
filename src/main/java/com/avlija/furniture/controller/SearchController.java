@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -17,6 +18,7 @@ import com.avlija.furniture.repository.ElementQuantityRepository;
 import com.avlija.furniture.repository.ElementRepository;
 import com.avlija.furniture.repository.OrderRepository;
 import com.avlija.furniture.repository.ProductRepository;
+import com.avlija.furniture.service.ElementNameSorter;
 import com.avlija.furniture.service.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,8 +66,7 @@ public class SearchController {
      int productId = sampleInputs.getId();
      try {
          Product product = productRepository.findById(productId).get();
-         Set <Element> elements = new HashSet<Element>();
-         elements = product.getElements();
+         Set <Element> elements = sortElementsByName(product.getElements());
        	  	Set<ElementQuantity> elementsQuantityList = getElementQuantityList(elements, product);
        	  	model.addObject("msg", "Informacije o proizvodu");
        	  	model.setViewName("home/product_profile");
@@ -121,8 +122,7 @@ public class SearchController {
      String productName = sampleInputs.getName();
      try {
          Product product = productRepository.findByName(productName);
-         Set <Element> elements = new HashSet<Element>();
-         elements = product.getElements();
+         Set <Element> elements = sortElementsByName(product.getElements());
        	  	Set<ElementQuantity> elementsQuantityList = getElementQuantityList(elements, product);
        	  	model.addObject("msg", "Informacije o proizvodu");
        	  	model.setViewName("home/product_profile");
@@ -147,12 +147,12 @@ public class SearchController {
     }
     
     @RequestMapping(value= {"admin/searchelementsifra"}, method=RequestMethod.POST)
-    public ModelAndView searchElemntBySifra(@Valid SampleInputs sampleInputs) {
+    public ModelAndView searchElementBySifra(@Valid SampleInputs sampleInputs) {
      ModelAndView model = new ModelAndView();
      Set <Element> newElements = new HashSet<Element>();
     	 Element element = elementRepository.findBySifra(sampleInputs.getSifra());
       	Product product = productRepository.findById(sampleInputs.getId()).get();
-      	Set<Element> elements = product.getElements();
+      	Set<Element> elements = sortElementsByName(product.getElements());
       	System.out.println("ELEMENTS: " + elements.isEmpty());
       	Boolean empty = elements.isEmpty();
     	 if(element == null) {
@@ -183,7 +183,7 @@ public class SearchController {
      String keyWord = sampleInputs.getKeyWord();
    	Product product = productRepository.findById(sampleInputs.getId()).get();
          List<Element> foundElements = elementRepository.findByNameContaining(keyWord);
-         Set<Element> elements = product.getElements();
+         Set<Element> elements = sortElementsByName(product.getElements());
          if(foundElements.isEmpty()) {
          	  model.addObject("err", "Nije pronađen element koji sadrži ključnu riječ: " + keyWord);
               model.addObject("elementsList", elements);
@@ -193,14 +193,14 @@ public class SearchController {
          		if(foundElements.isEmpty()) {
              		model.addObject("msg", "Lista elemenata koji sadrže ključnu riječ: '" + keyWord + "' se već nalaze u proizvodu.");
          			} else {
-             		model.addObject("msg", "Lista elemenata koji sadrže ključnu riječ: " + keyWord);
+         				model.addObject("msg", "Lista elemenata koji sadrže ključnu riječ: " + keyWord);
              			for(Element item: foundElements) {
              				selectionElements.add(item);
              				}
          				}
-    	 		for(Element item: elements) {
-    	 			selectionElements.add(item);
-    	 			}
+    	 				for(Element item: elements) {
+    	 					selectionElements.add(item);
+    	 					}
       			model.addObject("elementsList", selectionElements);         		
          		}
         model.addObject("product", product);
@@ -291,6 +291,14 @@ public class SearchController {
 			}
 		}
 		return false;
+	}
+    
+	private Set<Element> sortElementsByName(Set<Element> elements) {
+		Set<Element> sortedElements = new TreeSet<>(new ElementNameSorter());
+   	  	for(Element element: elements) {
+   	  		sortedElements.add(element);
+   	  	}
+		return sortedElements;
 	}
 
 }
