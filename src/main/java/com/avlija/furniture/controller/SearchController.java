@@ -240,6 +240,12 @@ public class SearchController {
           model.setViewName("home/list_elements");
      return model;
     }
+    
+    // IF BROWSER BACK BUTTON IS PRESSED REDIRECT TO DISPLAY OF ALL ELEMENTS AND NEW SEARCH
+	 @RequestMapping(value= {"home/searchelement"}, method=RequestMethod.GET)
+	 public String redirectToAllElements() {
+		 return "redirect:/home/allelements";
+	 }
 	 
     // SEARCH ELEMENTS BY SIFRA
 	 @RequestMapping(value= {"home/searchelements"}, method=RequestMethod.POST)
@@ -249,37 +255,6 @@ public class SearchController {
 		 return "redirect:/home/searchelements";
 	 }
   
-	 /*
-    @RequestMapping(value= {"home/searchelements"}, method=RequestMethod.POST)
-    public ModelAndView elementsSearchKeyWord(@Valid SampleInputs sampleInputs, HttpServletRequest request) {
-     ModelAndView model = new ModelAndView();
-     String keyWord = sampleInputs.getKeyWord();
-     
-     int page = 0; //default page number is 0
-     int size = 10; //default page size is 10
-
-     if (request.getParameter("page") != null && !request.getParameter("page").isEmpty()) {
-    	 page = Integer.parseInt(request.getParameter("page")) - 1;
-     	}
-
-     if (request.getParameter("size") != null && !request.getParameter("size").isEmpty()) {
-    	 size = Integer.parseInt(request.getParameter("size"));
-     	}
-
-     	Page <Element> elementsList = null;
-     	elementsList = elementRepository.findByNameContaining(keyWord, PageRequest.of(page, size, Sort.by("id").descending()));
-     
-         if(elementsList.isEmpty()) {
-         	  model.addObject("err", "Nije pronađen element koji sadrži ključnu riječ: " + keyWord);
-         	} else {
-         		model.addObject("msg", "Lista elemenata koji sadrže ključnu riječ: " + keyWord);
-         		}
-			model.addObject("elementsList", elementsList);         		
-			model.addObject("sampleInputs", new SampleInputs());         
-  			model.setViewName("home/list_elements");
-         	return model;
-    	}
-    */
     // DISPLAY SEARCH RESULTS OF ELEMENTS BY KEY WORD
     @RequestMapping(value= {"home/searchelements"}, method=RequestMethod.GET)
 	 public ModelAndView displayPosts(HttpServletRequest request) {

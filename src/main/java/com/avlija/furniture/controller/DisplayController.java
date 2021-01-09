@@ -1,5 +1,6 @@
 package com.avlija.furniture.controller;
 
+import java.io.File;
 import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -32,7 +33,10 @@ import com.avlija.furniture.service.ProductIdComp;
 import com.avlija.furniture.service.UserService;
 import com.avlija.furniture.form.LocalDateAttributeConverter;
 
-
+import org.docx4j.openpackaging.exceptions.Docx4JException;
+import org.docx4j.openpackaging.exceptions.InvalidFormatException;
+import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
+import org.docx4j.openpackaging.parts.WordprocessingML.MainDocumentPart;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -168,6 +172,24 @@ public class DisplayController {
      products = sortByProductId(order.getPipeline().getProducts());
         
         List<ProductQuantity> productsQuantityList = getProductQuantityList(products, order.getPipeline());
+     
+        WordprocessingMLPackage wordPackage = null;
+		try {
+			wordPackage = WordprocessingMLPackage.createPackage();
+		} catch (InvalidFormatException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        MainDocumentPart mainDocumentPart = wordPackage.getMainDocumentPart();
+        mainDocumentPart.addStyledParagraphOfText("Title", "Hello World!");
+        mainDocumentPart.addParagraphOfText("Welcome To Baeldung");
+        File exportFile = new File("welcome.docx");
+        try {
+			wordPackage.save(exportFile);
+		} catch (Docx4JException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         
    	  	model.addObject("msg", "Profil Radnog Naloga");
    	  	model.setViewName("admin/order_profile");

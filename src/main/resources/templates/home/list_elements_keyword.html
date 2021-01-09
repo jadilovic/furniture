@@ -113,5 +113,12 @@
  
  <div th:replace="fragments/footer :: footer"/></div>
  
+  <!-- JavaScript to enable use of browser back button which returns element search to beginning -->
+ <script type="text/javascript">
+ 	if ( window.history.replaceState ) {
+	 	 window.history.replaceState( null, null, window.location.href );
+		}
+ </script>
+ 
 </body>
 </html>
