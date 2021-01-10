@@ -171,61 +171,6 @@ public class DisplayController {
      return "home/list_all_orders";
     }
     
-    // Order profile
-    @RequestMapping(value= {"home/orderprofile/{id}"}, method=RequestMethod.GET)
-    	public ModelAndView orderProfile(@PathVariable(name = "id") Long id) {
-     ModelAndView model = new ModelAndView();
-     Set <Product> products = new TreeSet<>();
-     Order order = orderRepository.findById(id).get();
-     products = sortByProductId(order.getPipeline().getProducts());
-        
-        List<ProductQuantity> productsQuantityList = getProductQuantityList(products, order.getPipeline());
-     
-        WordprocessingMLPackage wordPackage = null;
-		try {
-			wordPackage = WordprocessingMLPackage.createPackage();
-		} catch (InvalidFormatException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-        MainDocumentPart mainDocumentPart = wordPackage.getMainDocumentPart();
-        mainDocumentPart.addStyledParagraphOfText("Title", "Hello World!");
-        mainDocumentPart.addParagraphOfText("Welcome To Baeldung!");
-        
-        ObjectFactory factory = Context.getWmlObjectFactory();
-        P p = factory.createP();
-        R r = factory.createR();
-        Text t = factory.createText();
-        t.setValue("Green Welcome To Baeldung");
-        r.getContent().add(t);
-        p.getContent().add(r);
-        RPr rpr = factory.createRPr();       
-        BooleanDefaultTrue b = new BooleanDefaultTrue();
-        rpr.setB(b);
-        rpr.setI(b);
-        rpr.setCaps(b);
-        Color green = factory.createColor();
-        green.setVal("green");
-        rpr.setColor(green);
-        r.setRPr(rpr);
-        mainDocumentPart.getContent().add(p);
-        
-        File exportFile = new File("welcome.docx");
-        try {
-			wordPackage.save(exportFile);
-		} catch (Docx4JException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-        
-   	  	model.addObject("msg", "Profil Radnog Naloga");
-   	  	model.setViewName("admin/order_profile");
-   	  	model.addObject("productsList", products);
-   	  	model.addObject("productsQuantityList", productsQuantityList);
-   	  	model.addObject("order", order);   
-     return model;
-    }
-    
     // DISPLAY ORDER BY PIPELINE
     @RequestMapping(value= {"home/orderpipeline/{id}"}, method=RequestMethod.GET)
 	public ModelAndView orderProfileByPipeline(@PathVariable(name = "id") Integer id) {
@@ -400,18 +345,4 @@ public class DisplayController {
 		return sortedProducts;
 	}
     
-    // FIND OUT IF THE PRODUCT QUANTITY EXISTS
-
-	private boolean productQuantityExists(PipelineProduct pipelineProduct) {
-    	try {
-    		ProductQuantity productQuantity = productQuantityRepository.findById(pipelineProduct).get();
-    		if(productQuantity == null) {
-    			return false;
-    		} else {
-    			return true;
-    		}
-    	} catch (Exception e) {
-    		return false;
-    	}
-	}
 }
