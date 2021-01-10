@@ -279,7 +279,7 @@ public class OrderController {
 			// response.setHeader("Content-Disposition", String.format("inline; filename=\"" + file.getName() + "\""));
 
 			//Here we have mentioned it to show as attachment
-			response.setHeader("Content-Disposition", String.format("attachment; filename=\"" + "RN br.: " + printOrder.getId() + " Kreiran: " + printOrder.getCreated().toLocaleString() + "\""));
+			response.setHeader("Content-Disposition", String.format("attachment; filename=\"RN-" + printOrder.getId() + "-OD-" + printOrder.getCreated().toGMTString() + "\".docx"));
 
 			response.setContentLength((int) file.length());
 
