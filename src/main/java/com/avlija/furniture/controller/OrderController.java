@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLConnection;
 import java.nio.file.Files;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -44,16 +46,23 @@ import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 import org.docx4j.openpackaging.parts.WordprocessingML.BinaryPartAbstractImage;
 import org.docx4j.openpackaging.parts.WordprocessingML.MainDocumentPart;
 import org.docx4j.wml.BooleanDefaultTrue;
+import org.docx4j.wml.Br;
 import org.docx4j.wml.Color;
 import org.docx4j.wml.Drawing;
+import org.docx4j.wml.Jc;
+import org.docx4j.wml.JcEnumeration;
 import org.docx4j.wml.ObjectFactory;
 import org.docx4j.wml.P;
+import org.docx4j.wml.PPr;
+import org.docx4j.wml.PPrBase.TextAlignment;
 import org.docx4j.wml.R;
 import org.docx4j.wml.RPr;
 import org.docx4j.wml.Tbl;
 import org.docx4j.wml.Tc;
 import org.docx4j.wml.Text;
 import org.docx4j.wml.Tr;
+import org.docx4j.wml.U;
+import org.docx4j.wml.UnderlineEnumeration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.FileCopyUtils;
@@ -127,7 +136,7 @@ public class OrderController {
     }
     
     @RequestMapping(value= {"admin/confirmorder"}, method=RequestMethod.POST)
-    public ModelAndView confirmOrder(@Valid SampleInputs sampleInputs) {
+    public ModelAndView confirmOrder(@Valid SampleInputs sampleInputs) throws Exception {
      ModelAndView model = new ModelAndView();
      Set <Product> products = new TreeSet<>();
      	// ONCE ORDER IS CONFIRMED ORDER IS MARKED IN THE DATABASE
@@ -163,6 +172,9 @@ public class OrderController {
             	}
         	}
         
+        printOrder = createdOrder;
+        createWordDocument(createdOrder);
+        
    	  	model.addObject("msg", "Potvrđen radni nalog");
    	  	model.setViewName("admin/order_profile");
    	  	model.addObject("order", createdOrder);
@@ -181,7 +193,20 @@ public class OrderController {
      products = sortByProductId(order.getPipeline().getProducts());
         
         List<ProductQuantity> productsQuantityList = getProductQuantityList(products, order.getPipeline());
-     
+        
+        printOrder = order;
+        createWordDocument(order);
+        
+   	  	model.addObject("msg", "Profil Radnog Naloga");
+   	  	model.setViewName("admin/order_profile");
+   	  	model.addObject("productsList", products);
+   	  	model.addObject("productsQuantityList", productsQuantityList);
+   	  	model.addObject("order", order);   
+     return model;
+    }
+    
+    // CREATING WORD DOCUMENT OF THE ORDER
+	private void createWordDocument(Order order) throws Exception {
         WordprocessingMLPackage wordPackage = null;
 		try {
 			wordPackage = WordprocessingMLPackage.createPackage();
@@ -190,36 +215,60 @@ public class OrderController {
 			e.printStackTrace();
 		}
         MainDocumentPart mainDocumentPart = wordPackage.getMainDocumentPart();
-        mainDocumentPart.addStyledParagraphOfText("Title", "Hello World!");
-        mainDocumentPart.addParagraphOfText("Welcome To Baeldung!");
         
-        ObjectFactory factory = Context.getWmlObjectFactory();
-        P p = factory.createP();
-        R r = factory.createR();
-        Text t = factory.createText();
-        t.setValue("Green Welcome To Baeldung");
-        r.getContent().add(t);
-        p.getContent().add(r);
+        File image = new File("hidrastill.png");
+        byte[] fileContent = Files.readAllBytes(image.toPath());
+        BinaryPartAbstractImage imagePart = BinaryPartAbstractImage.createImagePart(wordPackage, fileContent);
+        Inline inline = imagePart.createImageInline("HidraStill Image", "Alt Text", 1, 2, false);
+        P Imageparagraph = addImageToParagraph(inline);
+        mainDocumentPart.getContent().add(Imageparagraph);
         
+        ObjectFactory factory = Context.getWmlObjectFactory();   
         RPr rpr = factory.createRPr();       
         BooleanDefaultTrue b = new BooleanDefaultTrue();
-        rpr.setB(b);
-        rpr.setI(b);
-        rpr.setCaps(b);
         
-        Color green = factory.createColor();
-        green.setVal("green");
-        rpr.setColor(green);
+        P pDate = factory.createP();
+        P p = factory.createP();
+        R r = factory.createR();
+        U u = factory.createU();
+        u.setVal(UnderlineEnumeration.SINGLE);
+        
+        Text tDate = factory.createText();
+        tDate.setValue("Datum: " + printOrder.getCreated().toLocaleString());
+        r.getContent().add(tDate);
+        PPr paragraphProperties = factory.createPPr();
+        Jc justification = factory.createJc();
+        justification.setVal(JcEnumeration.RIGHT);
+        paragraphProperties.setJc(justification);
+        pDate.setPPr(paragraphProperties);
+        rpr.setB(b);
+        rpr.setU(u);
+        r.setRPr(rpr);
+        mainDocumentPart.getContent().add(pDate);
+        
+        Text t = factory.createText();
+        t.setValue("Brčko");
+        r.getContent().add(t);  
+        
+        Br br = factory.createBr(); // this Br element is used break the current and go for next line
+        r.getContent().add(br);
+        
+        Text t2 = factory.createText();
+        t2.setValue("Industrijska br. 4 76100 Brčko distrikt");
+        r.getContent().add(t2);
+        
+        r.getContent().add(br);
+        Text t3 = factory.createText();
+        t3.setValue("Bosna i Hercegovina");
+        r.getContent().add(t3);
+        
+        p.getContent().add(r);
+
+        rpr.setB(b);
+        rpr.setU(u);
         r.setRPr(rpr);
         
         mainDocumentPart.getContent().add(p);
-        
-        File image = new File("Desert.jpg");
-        byte[] fileContent = Files.readAllBytes(image.toPath());
-        BinaryPartAbstractImage imagePart = BinaryPartAbstractImage.createImagePart(wordPackage, fileContent);
-        Inline inline = imagePart.createImageInline("Baeldung Image (filename hint)", "Alt Text", 1, 2, false);
-        P Imageparagraph = addImageToParagraph(inline);
-        mainDocumentPart.getContent().add(Imageparagraph);
         
         int writableWidthTwips = wordPackage.getDocumentModel()
         		  .getSections().get(0).getPageDimensions().getWritableWidthTwips();
@@ -237,18 +286,11 @@ public class OrderController {
         
         mainDocumentPart.getContent().add(tbl);
         
-        File exportFile = new File("welcome.docx");
+        File exportFile = new File("document.docx");
 		wordPackage.save(exportFile);
-		printOrder = order;
-        
-   	  	model.addObject("msg", "Profil Radnog Naloga");
-   	  	model.setViewName("admin/order_profile");
-   	  	model.addObject("productsList", products);
-   	  	model.addObject("productsQuantityList", productsQuantityList);
-   	  	model.addObject("order", order);   
-     return model;
-    }
-    
+	}
+
+	// DOWNLOAD CREATED WORD DOCUMENT OF THE ORDER
 	@RequestMapping("home/{fileName:.+}")
 	public void downloadCreatedOrderInWord(HttpServletRequest request, HttpServletResponse response,
 			@PathVariable("fileName") String fileName) throws IOException {
@@ -264,22 +306,9 @@ public class OrderController {
 			}
 
 			response.setContentType(mimeType);
-
-			/**
-			 * In a regular HTTP response, the Content-Disposition response header is a
-			 * header indicating if the content is expected to be displayed inline in the
-			 * browser, that is, as a Web page or as part of a Web page, or as an
-			 * attachment, that is downloaded and saved locally.
-			 * 
-			 */
-
-			/**
-			 * Here we have mentioned it to show inline
-			 */
-			// response.setHeader("Content-Disposition", String.format("inline; filename=\"" + file.getName() + "\""));
-
+			LocalDate localDate = convertToLocalDateViaInstant(printOrder.getCreated());
 			//Here we have mentioned it to show as attachment
-			response.setHeader("Content-Disposition", String.format("attachment; filename=\"RN-" + printOrder.getId() + "-OD-" + printOrder.getCreated().toGMTString() + "\".docx"));
+			response.setHeader("Content-Disposition", String.format("attachment; filename=\"RN-" + printOrder.getId() + "-OD-" + localDate.now() + "\".docx"));
 
 			response.setContentLength((int) file.length());
 
@@ -343,4 +372,9 @@ public class OrderController {
         return p;
     }
     
+    public LocalDate convertToLocalDateViaInstant(Date dateToConvert) {
+        return dateToConvert.toInstant()
+          .atZone(ZoneId.systemDefault())
+          .toLocalDate();
+    }
 }
