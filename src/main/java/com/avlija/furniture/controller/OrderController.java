@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigInteger;
 import java.net.URLConnection;
 import java.nio.file.Files;
 import java.time.LocalDate;
@@ -39,6 +40,7 @@ import com.avlija.furniture.service.ProductIdComp;
 
 import org.docx4j.dml.wordprocessingDrawing.Inline;
 import org.docx4j.jaxb.Context;
+import org.docx4j.model.datastorage.XPathEnhancerParser.predicate_return;
 import org.docx4j.model.table.TblFactory;
 import org.docx4j.openpackaging.exceptions.Docx4JException;
 import org.docx4j.openpackaging.exceptions.InvalidFormatException;
@@ -49,6 +51,7 @@ import org.docx4j.wml.BooleanDefaultTrue;
 import org.docx4j.wml.Br;
 import org.docx4j.wml.Color;
 import org.docx4j.wml.Drawing;
+import org.docx4j.wml.HpsMeasure;
 import org.docx4j.wml.Jc;
 import org.docx4j.wml.JcEnumeration;
 import org.docx4j.wml.ObjectFactory;
@@ -226,33 +229,41 @@ public class OrderController {
         ObjectFactory factory = Context.getWmlObjectFactory();   
         RPr rpr = factory.createRPr();       
         BooleanDefaultTrue b = new BooleanDefaultTrue();
-        
-        P pDate = factory.createP();
-        P p = factory.createP();
-        R r = factory.createR();
         U u = factory.createU();
         u.setVal(UnderlineEnumeration.SINGLE);
         
-        Text tDate = factory.createText();
-        tDate.setValue("Datum: " + printOrder.getCreated().toLocaleString());
-        r.getContent().add(tDate);
+        // DATE SECTION
+        P pDate = factory.createP();
+        R rDate = factory.createR();
+
         PPr paragraphProperties = factory.createPPr();
         Jc justification = factory.createJc();
         justification.setVal(JcEnumeration.RIGHT);
         paragraphProperties.setJc(justification);
         pDate.setPPr(paragraphProperties);
+        
+        Text date = factory.createText();
+        date.setValue("Datum: " + printOrder.getCreated().toLocaleString());
+        rDate.getContent().add(date);
+        
+        pDate.getContent().add(rDate);
+
         rpr.setB(b);
         rpr.setU(u);
-        r.setRPr(rpr);
-        mainDocumentPart.getContent().add(pDate);
+        rDate.setRPr(rpr);
         
+        mainDocumentPart.getContent().add(pDate);
+
+        // ADDRESS SECTION
+        R r = factory.createR();
+        P pAddress = factory.createP();
+        Br br = factory.createBr(); // this Br element is used break the current and go for next line
+
         Text t = factory.createText();
-        t.setValue("Brčko");
+        t.setValue("BRČKO");
         r.getContent().add(t);  
         
-        Br br = factory.createBr(); // this Br element is used break the current and go for next line
         r.getContent().add(br);
-        
         Text t2 = factory.createText();
         t2.setValue("Industrijska br. 4 76100 Brčko distrikt");
         r.getContent().add(t2);
@@ -262,14 +273,42 @@ public class OrderController {
         t3.setValue("Bosna i Hercegovina");
         r.getContent().add(t3);
         
-        p.getContent().add(r);
+        r.getContent().add(br);
+        Text t4 = factory.createText();
+        t4.setValue("www.hidrastil.ba");
+        r.getContent().add(t4);
 
-        rpr.setB(b);
-        rpr.setU(u);
+        pAddress.getContent().add(r);
+
         r.setRPr(rpr);
         
-        mainDocumentPart.getContent().add(p);
+        mainDocumentPart.getContent().add(pAddress);
         
+        // ORDER NUMBER SECTION
+        R rOrderNum = factory.createR();
+        P pOrderNum = factory.createP();
+        Text tOrderNum = factory.createText();
+        tOrderNum.setValue("RADNI NALOG br. " + printOrder.getId() + " / " + printOrder.getCreated().getYear());
+        rOrderNum.getContent().add(tOrderNum);  
+        pOrderNum.getContent().add(rOrderNum);
+        
+        PPr paragraphPropertiesON = factory.createPPr();
+        Jc justificationON = factory.createJc();
+        justificationON.setVal(JcEnumeration.CENTER);
+        paragraphPropertiesON.setJc(justificationON);
+        pOrderNum.setPPr(paragraphPropertiesON);
+
+        RPr rprOrderNum = factory.createRPr();  
+        HpsMeasure size = new HpsMeasure();
+        size.setVal(BigInteger.valueOf(31));
+        rprOrderNum.setSz(size);
+        rprOrderNum.setB(b);
+        rprOrderNum.setU(u);
+        rOrderNum.setRPr(rprOrderNum);
+        
+        mainDocumentPart.getContent().add(pOrderNum);
+        
+        // TABLE SECTION
         int writableWidthTwips = wordPackage.getDocumentModel()
         		  .getSections().get(0).getPageDimensions().getWritableWidthTwips();
         int columnNumber = 3;
@@ -280,7 +319,7 @@ public class OrderController {
         	List<Object> cells = tr.getContent();
         	for(Object cell : cells) {
         		Tc td = (Tc) cell;
-        		td.getContent().add(p);
+        		td.getContent().add(pDate);
         		}
         	}
         
