@@ -11,9 +11,11 @@ import java.nio.file.Files;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -242,8 +244,14 @@ public class OrderController {
         paragraphProperties.setJc(justification);
         pDate.setPPr(paragraphProperties);
         
+        LocalDate localDate = convertToLocalDateViaInstant(printOrder.getCreated());
+        String weekDay = bosnianWeekDay(localDate.getDayOfWeek().name());
+        int dayMonth = localDate.getDayOfMonth();
+        String month = bosnianMonth(localDate.getMonth().getValue());
+        int year = localDate.getYear();
+        
         Text date = factory.createText();
-        date.setValue("Datum: " + printOrder.getCreated().toLocaleString());
+        date.setValue("Datum: " + weekDay + dayMonth + ". " + month + " " + year);
         rDate.getContent().add(date);
         
         pDate.getContent().add(rDate);
@@ -288,7 +296,7 @@ public class OrderController {
         R rOrderNum = factory.createR();
         P pOrderNum = factory.createP();
         Text tOrderNum = factory.createText();
-        tOrderNum.setValue("RADNI NALOG br. " + printOrder.getId() + " / " + printOrder.getCreated().getYear());
+        tOrderNum.setValue("RADNI NALOG br. " + printOrder.getId() + " / " + localDate.getYear());
         rOrderNum.getContent().add(tOrderNum);  
         pOrderNum.getContent().add(rOrderNum);
         
@@ -300,7 +308,7 @@ public class OrderController {
 
         RPr rprOrderNum = factory.createRPr();  
         HpsMeasure size = new HpsMeasure();
-        size.setVal(BigInteger.valueOf(31));
+        size.setVal(BigInteger.valueOf(25));
         rprOrderNum.setSz(size);
         rprOrderNum.setB(b);
         rprOrderNum.setU(u);
@@ -308,12 +316,32 @@ public class OrderController {
         
         mainDocumentPart.getContent().add(pOrderNum);
         
+        // WORK POSITION SECTION
+        R rWorkPos = factory.createR();
+        P pWorkPos = factory.createP();
+        Text tWorkPos = factory.createText();
+        tWorkPos.setValue("RADNA POZICIJA: " + printOrder.getWorkPosition());
+        rWorkPos.getContent().add(tWorkPos);  
+        pWorkPos.getContent().add(rWorkPos);
+
+        RPr rprWorkPos = factory.createRPr();  
+        rprWorkPos.setB(b);
+        rprWorkPos.setU(u);
+        rprWorkPos.setCaps(b);
+        rWorkPos.setRPr(rprWorkPos);
+        
+        mainDocumentPart.getContent().add(pWorkPos);
+        
         // TABLE SECTION
         int writableWidthTwips = wordPackage.getDocumentModel()
         		  .getSections().get(0).getPageDimensions().getWritableWidthTwips();
-        int columnNumber = 3;
-        Tbl tbl = TblFactory.createTable(3, 3, writableWidthTwips/columnNumber);     
-        List<Object> rows = tbl.getContent();
+        writableWidthTwips += 1500;
+        System.out.println("writable " + writableWidthTwips);
+        int columnNumber = 6;
+        int numOfRows = printOrder.getPipeline().getProducts().size() + 1;
+        Tbl tblTest = TblFactory.createTable(numOfRows, columnNumber, writableWidthTwips/columnNumber);
+        //Tbl tbl = TblFactory.createTable(3, 3, writableWidthTwips/columnNumber);     
+        List<Object> rows = tblTest.getContent();
         for (Object row : rows) {
         	Tr tr = (Tr) row;
         	List<Object> cells = tr.getContent();
@@ -323,11 +351,12 @@ public class OrderController {
         		}
         	}
         
-        mainDocumentPart.getContent().add(tbl);
+        mainDocumentPart.getContent().add(tblTest);
         
         File exportFile = new File("document.docx");
 		wordPackage.save(exportFile);
 	}
+
 
 	// DOWNLOAD CREATED WORD DOCUMENT OF THE ORDER
 	@RequestMapping("home/{fileName:.+}")
@@ -416,4 +445,36 @@ public class OrderController {
           .atZone(ZoneId.systemDefault())
           .toLocalDate();
     }
+    
+	private String bosnianWeekDay(String weekDay) {
+		switch(weekDay){
+		case "MONDAY": return "ponedeljak, ";
+		case "TUESDAY": return "utorak, ";
+		case "WEDNESDAY": return "srijeda, ";
+		case "THURSDAY": return "četvrtak, ";
+		case "FRIDAY": return "petak, ";
+		case "SATURDAY": return "subota, ";
+		case "SUNDAY": return "nedelja, ";
+		default: return "nepoznat, ";
+		}
+	}
+	
+	private String bosnianMonth(int monthYear) {
+		switch(monthYear){
+		case 1: return "januar";
+		case 2: return "februar";
+		case 3: return "mart";
+		case 4: return "april";
+		case 5: return "maj";
+		case 6: return "juni";
+		case 7: return "juli";
+		case 8: return "august";
+		case 9: return "septembar";
+		case 10: return "oktobar";
+		case 11: return "novembar";
+		case 12: return "decembar";
+		default: return "nepoznat, ";
+		}
+	}
+
 }
