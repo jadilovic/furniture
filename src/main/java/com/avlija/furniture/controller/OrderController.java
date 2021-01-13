@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+import com.avlija.furniture.form.OrderWordProduct;
 import com.avlija.furniture.form.SampleInputs;
 import com.avlija.furniture.model.Element;
 import com.avlija.furniture.model.ElementQuantity;
@@ -335,24 +336,118 @@ public class OrderController {
         // TABLE SECTION
         int writableWidthTwips = wordPackage.getDocumentModel()
         		  .getSections().get(0).getPageDimensions().getWritableWidthTwips();
-        writableWidthTwips += 1500;
-        System.out.println("writable " + writableWidthTwips);
         int columnNumber = 6;
-        int numOfRows = printOrder.getPipeline().getProducts().size() + 1;
-        Tbl tblTest = TblFactory.createTable(numOfRows, columnNumber, writableWidthTwips/columnNumber);
-        //Tbl tbl = TblFactory.createTable(3, 3, writableWidthTwips/columnNumber);     
-        List<Object> rows = tblTest.getContent();
+        
+        // DISPLAYING TABLE HEADING
+        List<P> pheadings = new ArrayList<>();
+        pheadings = createHeadings();
+        Tbl tblHeading = TblFactory.createTable(1, columnNumber, writableWidthTwips/columnNumber);
+        List<Object> rows = tblHeading.getContent();
         for (Object row : rows) {
         	Tr tr = (Tr) row;
         	List<Object> cells = tr.getContent();
+        	int count = 0;
         	for(Object cell : cells) {
         		Tc td = (Tc) cell;
-        		td.getContent().add(pDate);
+        		td.getContent().add(pheadings.get(count));
+        		count++;
         		}
+        	}   
+        mainDocumentPart.getContent().add(tblHeading);
+        
+        // DISPLAYING PRODUCTS IN THE TABLE
+        int numOfRows = printOrder.getPipeline().getProducts().size();
+        Tbl tbl = TblFactory.createTable(numOfRows, columnNumber, writableWidthTwips/columnNumber);     
+        rows = tbl.getContent();
+        int index = 0;
+        for (Object row : rows) {
+        	Tr tr = (Tr) row;
+        	List<Object> cells = tr.getContent();
+            List<P> pProduct = createProductValues(index);
+            int count = 0;
+        	for(Object cell : cells) {
+        		Tc td = (Tc) cell;
+        		td.getContent().add(pProduct.get(count));
+        		count++;
+        		}
+        	index++;
         	}
+        mainDocumentPart.getContent().add(tbl);
         
-        mainDocumentPart.getContent().add(tblTest);
+        // DISPLAY PACKAGING
+        R rPack = factory.createR();
+        P pPack = factory.createP();
         
+        rPack.getContent().add(br);
+        Text t5 = factory.createText();
+        t5.setValue("PAKOVANJE:");
+        rPack.getContent().add(t5);  
+
+        rPack.getContent().add(br);
+        Text t6 = factory.createText();
+        t6.setValue(printOrder.getOrderPackaging());
+        rPack.getContent().add(t6);
+        
+        rPack.getContent().add(br);
+        Text t7 = factory.createText();
+        t7.setValue("________________________________________"); 
+        rPack.getContent().add(t7);
+        
+        pPack.getContent().add(rPack);
+        rPack.setRPr(rpr);
+        mainDocumentPart.getContent().add(pPack);
+        
+        // DISPLAY ORDER COMMENT
+        P pComm = factory.createP();
+        R rComm = factory.createR();
+
+        PPr paragraphPropertiesC = factory.createPPr();
+        Jc justificationC = factory.createJc();
+        justificationC.setVal(JcEnumeration.RIGHT);
+        paragraphPropertiesC.setJc(justificationC);
+        pComm.setPPr(paragraphPropertiesC);
+        
+        Text t8 = factory.createText();
+        t8.setValue("KOMENTAR:");
+        rComm.getContent().add(t8);
+        
+        rComm.getContent().add(br);
+        Text t9 = factory.createText();
+        t9.setValue(printOrder.getOrderComment());
+        rComm.getContent().add(t9);
+        
+        rComm.getContent().add(br);
+        Text t10 = factory.createText();
+        t10.setValue("________________________________________");
+        rComm.getContent().add(t10);
+        
+        pComm.getContent().add(rComm);
+        rComm.setRPr(rpr);
+        mainDocumentPart.getContent().add(pComm);
+        
+        // DISPLAY ORDER PREPARATION
+        R rPrep = factory.createR();
+        P pPrep = factory.createP();
+        
+        Text tPrep = factory.createText();
+        tPrep.setValue("PRIPREMA:");
+        rPrep.getContent().add(tPrep);  
+        
+        rPrep.getContent().add(br);
+        Text tPrep1 = factory.createText();
+        tPrep1.setValue(printOrder.getOrderPrep());
+        rPrep.getContent().add(tPrep1);
+        
+        rPrep.getContent().add(br);
+        Text tPrep2 = factory.createText();
+        tPrep2.setValue("________________________________________"); 
+        rPrep.getContent().add(tPrep2);
+        
+        pPrep.getContent().add(rPrep);
+        rPrep.setRPr(rpr);
+        mainDocumentPart.getContent().add(pPrep);
+        
+        // SAVING FILE
         File exportFile = new File("document.docx");
 		wordPackage.save(exportFile);
 	}
@@ -477,4 +572,90 @@ public class OrderController {
 		}
 	}
 
+
+	private List<P> createHeadings() {
+		List<P> tableHeadings = new ArrayList<>();
+        ObjectFactory factory = Context.getWmlObjectFactory();   
+        RPr rprHeadings = factory.createRPr();  
+        BooleanDefaultTrue b = new BooleanDefaultTrue();
+        rprHeadings.setB(b);
+        rprHeadings.setCaps(b);
+        
+        String [] headings = {"Redni broj", "Naziv kabine", "Dimenzija kabine", "Količina", "Napomena / Dezen / Mat", "Kupac putni pravac"};
+        
+        for(String heading: headings) {
+            R rHeading = factory.createR();
+            P pHeading = factory.createP();
+            
+            PPr paragraphPropertiesH = factory.createPPr();
+            Jc justificationH = factory.createJc();
+            justificationH.setVal(JcEnumeration.CENTER);
+            paragraphPropertiesH.setJc(justificationH);
+            pHeading.setPPr(paragraphPropertiesH);
+            
+            Text tHeading = factory.createText();
+            tHeading.setValue(heading);
+            rHeading.getContent().add(tHeading);  
+            pHeading.getContent().add(rHeading);
+            rHeading.setRPr(rprHeadings);
+            tableHeadings.add(pHeading);
+        }
+		return tableHeadings;
+	}
+	
+
+	private List<P> createProductValues(int index) {
+		List<P> pProductsList = new ArrayList<>();
+	    
+		Set <Product> products = new TreeSet<>();
+	    products = sortByProductId(printOrder.getPipeline().getProducts());
+	    List<ProductQuantity> productsQuantityList = getProductQuantityList(products, printOrder.getPipeline());
+
+		OrderWordProduct wordProduct = new OrderWordProduct();
+		List<Product> productsL = new ArrayList<>(products);
+		Product product = productsL.get(index);
+			wordProduct.setRankNum("" + (index + 1) + ".");
+			wordProduct.setProductName(product.getName());
+			wordProduct.setProductDim(product.getProductSize());
+			wordProduct.setQuantity("" + productsQuantityList.get(index).getQuantity());
+			if(productsQuantityList.get(index).getComment() == null) {
+				wordProduct.setNote("");
+			} else {
+				wordProduct.setNote("" + productsQuantityList.get(index).getComment());
+			}
+			if(productsQuantityList.get(index).getBuyer() == null) {
+				wordProduct.setBuyer("");
+			} else {
+				wordProduct.setBuyer("" + productsQuantityList.get(index).getBuyer());
+			}
+		
+        ObjectFactory factory = Context.getWmlObjectFactory();   
+        RPr rprProduct = factory.createRPr();  
+        BooleanDefaultTrue b = new BooleanDefaultTrue();
+        rprProduct.setB(b);
+        rprProduct.setCaps(b);
+        
+        String [] productValues = {wordProduct.getRankNum(), wordProduct.getProductName(), 
+        						wordProduct.getProductDim(), wordProduct.getQuantity(), 
+        						wordProduct.getNote(), wordProduct.getBuyer()};
+        
+        for(String value: productValues) {
+            R rProduct = factory.createR();
+            P pProduct = factory.createP();
+            
+            PPr paragraphPropertiesPro = factory.createPPr();
+            Jc justificationPro = factory.createJc();
+            justificationPro.setVal(JcEnumeration.CENTER);
+            paragraphPropertiesPro.setJc(justificationPro);
+            pProduct.setPPr(paragraphPropertiesPro);
+            
+            Text tProduct = factory.createText();
+            tProduct.setValue(value);
+            rProduct.getContent().add(tProduct);  
+            pProduct.getContent().add(rProduct);
+            rProduct.setRPr(rprProduct);
+            pProductsList.add(pProduct);
+        }
+		return pProductsList;
+	}
 }
