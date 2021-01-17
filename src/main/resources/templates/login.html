@@ -5,10 +5,14 @@
 <head>
     <title>Furniture Mng App</title>
    <meta name="viewport" content="width=device-width, initial-scale=1">
- <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+ <link th:href="@{/css/bootstrap-css.css}" rel="stylesheet" id="bootstrap-css">
+ <!--
  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
  <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.0.0/css/font-awesome.min.css">
+   -->
+ <script src="js/bootstrap.min.js"></script>
+ <script src="js/jquery-1.11.1.min.js"></script>
+ <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
 <link rel="stylesheet" th:href="@{/css/styles.css}">
  </head>
 
@@ -18,7 +22,7 @@
 <div class="container">
 
  <div class="p-3" align="center">
-   <img class="resize" alt="no image" th:src="@{/images/hidra-logo-novo.png}">
+   <img class="resize" alt="no image" th:src="@{/images/hidrastill.png}">
  </div>
     
     <form th:action="@{/login}" method="POST">
