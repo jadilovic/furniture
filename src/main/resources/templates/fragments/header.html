@@ -7,8 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
      
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="/css/bootstrap.min.css">
-
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    
   </head>
   <body>
 	<div th:fragment="header">
@@ -35,14 +35,14 @@
     	</span>
   	  </div>
 	</nav>
-	
+		    	
 	    <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    
- <script ></script>
-    <script src="js/jquery-3.2.1.slim.min.js"></script>
-    <script src="js/popper.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
+    <script type="text/javascript" th:src="@{/js/jquery-3.2.1.slim.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/popper.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/bootstrap.min.js}"></script>
+	
 	</div>
+
  </body>
 </html>
