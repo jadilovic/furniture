@@ -1,8 +1,6 @@
 package com.avlija.furniture.controller;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -44,8 +42,7 @@ public class CreateController {
     @Autowired
     private ElementQuantityRepository elementQuantityRepository;
     
-    // CREATE UNIT OF MEASUREMENT
-    
+    // CREATE UNIT OF MEASUREMENT FOR THE ELEMENT
     @RequestMapping(value= {"admin/createmeasure"}, method=RequestMethod.GET)
     public ModelAndView createMeasure() {
      ModelAndView model = new ModelAndView();
@@ -56,6 +53,7 @@ public class CreateController {
      return model;
     }
     
+    //
     @RequestMapping(value= {"admin/createmeasure"}, method=RequestMethod.POST)
     public ModelAndView createUnitMeasure(@Valid UnitMeasure unitMeasure, BindingResult bindingResult) {
      ModelAndView model = new ModelAndView();
