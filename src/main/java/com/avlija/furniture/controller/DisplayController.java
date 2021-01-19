@@ -1,11 +1,9 @@
 package com.avlija.furniture.controller;
 
-import java.io.File;
 import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -33,18 +31,6 @@ import com.avlija.furniture.service.ProductIdComp;
 import com.avlija.furniture.service.UserService;
 import com.avlija.furniture.form.LocalDateAttributeConverter;
 
-import org.docx4j.jaxb.Context;
-import org.docx4j.openpackaging.exceptions.Docx4JException;
-import org.docx4j.openpackaging.exceptions.InvalidFormatException;
-import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
-import org.docx4j.openpackaging.parts.WordprocessingML.MainDocumentPart;
-import org.docx4j.wml.BooleanDefaultTrue;
-import org.docx4j.wml.Color;
-import org.docx4j.wml.ObjectFactory;
-import org.docx4j.wml.P;
-import org.docx4j.wml.R;
-import org.docx4j.wml.RPr;
-import org.docx4j.wml.Text;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -59,9 +45,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class DisplayController {
-
-    @Autowired
-    private UserService userService;
 
     @Autowired
     private OrderRepository orderRepository;
@@ -81,8 +64,8 @@ public class DisplayController {
     @Autowired
     private ProductQuantityRepository productQuantityRepository;
     
-    // DISPLAY ALL ELEMENTS
     
+    // DISPLAY ALL ELEMENTS
     @RequestMapping(value= {"home/allelements"}, method=RequestMethod.GET)
     public String allElements(HttpServletRequest request, Model model) {
               
@@ -108,17 +91,28 @@ public class DisplayController {
     
     
     // DISPLAY ALL PRODUCTS
-    
     @RequestMapping(value= {"home/allproducts"}, method=RequestMethod.GET)
-    public ModelAndView allProducts() {
-     ModelAndView model = new ModelAndView();
-     List<Product> productsList = productRepository.findAll(Sort.by("id").descending());
-     model.addObject("productsList", productsList);
-     model.setViewName("home/list_products");
-     
-     return model;
+    public String allProducts(HttpServletRequest request, Model model) {
+        
+        int page = 0; //default page number is 0
+        int size = 10; //default page size is 10
+        
+        if (request.getParameter("page") != null && !request.getParameter("page").isEmpty()) {
+            page = Integer.parseInt(request.getParameter("page")) - 1;
+        }
+
+        if (request.getParameter("size") != null && !request.getParameter("size").isEmpty()) {
+            size = Integer.parseInt(request.getParameter("size"));
+        }
+
+        Page <Product> productsList = null;
+        productsList = productRepository.findAll(PageRequest.of(page, size, Sort.by("id").descending()));
+
+    model.addAttribute("productsList", productsList);   
+    return "home/list_products";
     }
     
+    // 
     @RequestMapping(value= {"home/productprofile/{id}"}, method=RequestMethod.GET)
     public ModelAndView productProfile(@PathVariable(name = "id") Integer id) {
      ModelAndView model = new ModelAndView();

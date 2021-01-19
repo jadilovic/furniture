@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import com.avlija.furniture.form.SampleInputs;
@@ -42,6 +43,8 @@ public class CreateController {
     @Autowired
     private ElementQuantityRepository elementQuantityRepository;
     
+    private static Product selectedProduct;
+    
     // CREATE UNIT OF MEASUREMENT FOR THE ELEMENT
     @RequestMapping(value= {"admin/createmeasure"}, method=RequestMethod.GET)
     public ModelAndView createMeasure() {
@@ -53,7 +56,7 @@ public class CreateController {
      return model;
     }
     
-    //
+    // SUBMITTING THE DATA FOR CREATION OF THE UNIT MEASURE
     @RequestMapping(value= {"admin/createmeasure"}, method=RequestMethod.POST)
     public ModelAndView createUnitMeasure(@Valid UnitMeasure unitMeasure, BindingResult bindingResult) {
      ModelAndView model = new ModelAndView();
@@ -73,7 +76,6 @@ public class CreateController {
     }
     
     // CREATE AN ELEMENT
-    
     @RequestMapping(value= {"admin/createelement"}, method=RequestMethod.GET)
     public ModelAndView createElement() {
      ModelAndView model = new ModelAndView();
@@ -86,6 +88,7 @@ public class CreateController {
      return model;
     }
     
+    // SUBMITTING DATA FOR CREATION OF THE NEW ELEMENT AND DISPLAY OF SPECIFICATIONS IF DATA IS VALID
     @RequestMapping(value= {"admin/createelement"}, method=RequestMethod.POST)
     public ModelAndView createElement(@Valid Element element) {
      ModelAndView model = new ModelAndView();
@@ -109,7 +112,6 @@ public class CreateController {
     }
     
     // CREATE AN PRODUCT
-    
     @RequestMapping(value= {"admin/createproduct"}, method=RequestMethod.GET)
     public ModelAndView createProduct() {
      ModelAndView model = new ModelAndView();
@@ -120,13 +122,14 @@ public class CreateController {
      return model;
     }
     
+    // ENTERING PRODUCT NAME AND DIMENSIONS
     @RequestMapping(value= {"admin/createproduct"}, method=RequestMethod.POST)
     public ModelAndView createProduct(@Valid Product product, BindingResult bindingResult) {
      ModelAndView model = new ModelAndView();
-     Product productExists = productRepository.findByName(product.getName());
-     Product productExists2 = productRepository.findByProductSize(product.getProductSize());
-     if(productExists != null && productExists2 != null) {
-    		 bindingResult.rejectValue("name", "error.name", "Ovaj naziv proizvoda i mjera već postoji!");
+     Product nameExists = productRepository.findByName(product.getName());
+
+     if(nameExists != null) {
+    		 bindingResult.rejectValue("name", "error.name", "Ovaj naziv proizvoda već postoji!");
      }
      if(bindingResult.hasErrors()) {
       	  model.addObject("msg", "Uneseni naziv proizvoda i mjere već postoji.");
@@ -144,18 +147,16 @@ public class CreateController {
      return model;
     }
     
-    
-    // CHANGE SPECIFICATIONS IN THE EXISTING PRODUCT
-    
+    // CHANGE SPECIFICATIONS - LIST OF ELEMENTS IN THE EXISTING PRODUCT
     @RequestMapping(value= {"admin/changeproduct/{id}"}, method=RequestMethod.GET)
     public ModelAndView changeProduct(@PathVariable(name = "id") Integer id) {
      ModelAndView model = new ModelAndView();
-     Product product = productRepository.findById(id).get();
-     Set<Element> sortedElements = sortElementsByName(product.getElements());
-	 List<ElementQuantity> elementsQuantityList = getElementQuantityList(sortedElements, product);
+     selectedProduct = productRepository.findById(id).get();
+     Set<Element> sortedElements = sortElementsByName(selectedProduct.getElements());
+	 List<ElementQuantity> elementsQuantityList = getElementQuantityList(sortedElements, selectedProduct);
      SampleInputs sampleInputs = new SampleInputs();
      sampleInputs.setId(id);
-     model.addObject("product", product);
+     model.addObject("product", selectedProduct);
      model.addObject("sampleInputs", sampleInputs);
      model.addObject("elementsList", sortedElements);
      model.addObject("elementsQuantityList", elementsQuantityList);
@@ -164,17 +165,15 @@ public class CreateController {
      return model;
     }
     
-    
-    // ADD ELEMENT TO THE PRODUCT
-    
+    // STARTING PAGE TO ADD ELEMENTS TO THE PRODUCT
     @RequestMapping(value= {"admin/addelement/{id}"}, method=RequestMethod.GET)
     public ModelAndView addElement(@PathVariable(name = "id") Integer id) {
      ModelAndView model = new ModelAndView();
-     Product product = productRepository.findById(id).get();
-     Set <Element> elements = sortElementsByName(product.getElements());
+     selectedProduct = productRepository.findById(id).get();
+     Set <Element> elements = sortElementsByName(selectedProduct.getElements());
      SampleInputs sampleInputs = new SampleInputs();
      sampleInputs.setId(id);
-     model.addObject("product", product);
+     model.addObject("product", selectedProduct);
      model.addObject("sampleInputs", sampleInputs);
      model.addObject("elementsList", elements);
      model.setViewName("admin/add_elements");
@@ -182,6 +181,14 @@ public class CreateController {
      return model;
     }
     
+    // Redirecting user to the beginning of adding elements to the product
+    @RequestMapping(value= {"admin/addelement"}, method=RequestMethod.GET)
+    public String redirectBackToAddElementsToProduct(HttpServletRequest request) {
+    	int id = selectedProduct.getId();
+   	 return "redirect:/admin/addelement/" + id;
+    }
+    
+    // ADDING SELECTED ELEMENTS TO THE PRODUCT
     @RequestMapping(value= {"admin/addelement"}, method=RequestMethod.POST)
     public ModelAndView addElementToProduct(@Valid Product product) {
      ModelAndView model = new ModelAndView();
@@ -227,7 +234,15 @@ public class CreateController {
         model.addObject("msg", "Dodaj potrebnu količinu elementa u proizvodu: " + product.getName());
         return model;
     }
+	
+    // Redirecting user to the beginning of adding elements to the product
+    @RequestMapping(value= {"admin/elementquantity"}, method=RequestMethod.GET)
+    public String redirectBackToProductSpecifications(HttpServletRequest request) {
+    	int id = selectedProduct.getId();
+   	 return "redirect:/admin/changeproduct/" + id;
+    }
     
+    // ADDING OR CHANGING ELEMENT QUANTITY IN THE PRODUCT
     @RequestMapping(value= {"admin/elementquantity"}, method=RequestMethod.POST)
     public ModelAndView addedElementQuantity(@Valid SampleInputs sampleInputs) {
      ModelAndView model = new ModelAndView();
@@ -248,6 +263,7 @@ public class CreateController {
      return model;
     }
     
+    // QUANTITY OF EACH ELEMENT IN THE PRODUCT / LIST OF ELEMENTS WITH QUANTITY IN THE PRODUCT
     private List<ElementQuantity> getElementQuantityList(Set<Element> elementList, Product product) {
    	 List<ElementQuantity> elementQuantityList = new ArrayList<ElementQuantity>();
    	 for(Element element: elementList) {
@@ -260,11 +276,10 @@ public class CreateController {
    		 }
    		 elementQuantityList.add(elementQuantity);
    	 }
-
    	return elementQuantityList;
    }
 
-    
+    // CHECKING IF THERE IS ELEMENT QUANTITY IN THE SELECTED PRODUCT
     private boolean elementQuantityExists(ProductElement productElement) {
     	try {
     		ElementQuantity elementQuantity = elementQuantityRepository.findById(productElement).get();
@@ -278,6 +293,7 @@ public class CreateController {
     	}
 	}
     
+    // SORTING ELEMENTS BY NAME
 	private Set<Element> sortElementsByName(Set<Element> elements) {
 		Set<Element> sortedElements = new TreeSet<>(new ElementNameSorter());
    	  	for(Element element: elements) {

@@ -4,13 +4,11 @@
 <head>
  <title>Lista proizvoda</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
- <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
- <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.0.0/css/font-awesome.min.css">
+ 	<link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
 </head>
 <body>
 
+<!-- DISPLAY OF ALL PRODUCTS - DisplayControler line 93 -->
 <div th:replace="fragments/header :: header"/></div>
 
  <div class="p-2" align="center">
@@ -43,6 +41,39 @@
         </tbody>
     </table>
   </div>  
+  
+      		    <!-- products pagination -->
+<nav aria-label="Pagination" th:if="${productsList.totalPages gt 0}">
+    <ul class="pagination justify-content-center font-weight-medium">
+        <li class="page-item" th:classappend="${productsList.number eq 0} ? 'disabled'">
+            <a class="page-link svg-icon"
+               th:href="@{/home/allproducts?page={id}(id=${productsList.number lt 2 ? 1 : productsList.number})}"
+               aria-label="Previous"
+               title="Previous Page" rel="tooltip">
+                <span aria-hidden="true" data-feather="chevrons-left" width="20" height="20"></span>
+            </a>
+        </li>
+        <li class="page-item" th:classappend="${i eq productsList.number + 1} ? 'active'"
+            th:each="i : ${#numbers.sequence( productsList.number + 1, productsList.totalPages > 10 + productsList.number ? productsList.number + 10 : productsList.totalPages, 1)}">
+            <a class="page-link" th:href="@{/home/allproducts?page={id}(id=${i})}" th:text="${i}"
+               th:title="${'Page '+ i}"
+               rel="tooltip"></a>
+        </li>
+        <li class="page-item disabled" th:if="${productsList.number + 10 < productsList.totalPages}">
+            <a class="page-link svg-icon" href="#">
+                <span data-feather="more-horizontal" width="20" height="20"></span>
+            </a>
+        </li>
+        <li class="page-item" th:classappend="${productsList.number + 1 eq productsList.totalPages} ? 'disabled'">
+            <a class="page-link svg-icon" th:href="@{/home/allproducts?page={id}(id=${productsList.number + 2})}"
+               aria-label="Next"
+               title="Next Page" rel="tooltip">
+                <span aria-hidden="true" data-feather="chevrons-right" width="20" height="20"></span>
+            </a>
+        </li>
+    </ul>
+</nav>
+  
   		<div class="p-2" align="center">
     	 <a th:href="@{/home/productsearch}" class="btn-info btn-lg" role="button" aria-pressed="true">Nova Pretraga Proizvoda</a>
   		</div>
