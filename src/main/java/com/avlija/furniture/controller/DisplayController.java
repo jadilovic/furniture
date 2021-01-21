@@ -16,19 +16,14 @@ import com.avlija.furniture.model.Element;
 import com.avlija.furniture.model.ElementQuantity;
 import com.avlija.furniture.model.Order;
 import com.avlija.furniture.model.Pipeline;
-import com.avlija.furniture.model.PipelineProduct;
 import com.avlija.furniture.model.Product;
 import com.avlija.furniture.model.ProductElement;
-import com.avlija.furniture.model.ProductQuantity;
 import com.avlija.furniture.repository.ElementQuantityRepository;
 import com.avlija.furniture.repository.ElementRepository;
 import com.avlija.furniture.repository.OrderRepository;
 import com.avlija.furniture.repository.PipelineRepository;
-import com.avlija.furniture.repository.ProductQuantityRepository;
 import com.avlija.furniture.repository.ProductRepository;
 import com.avlija.furniture.service.ElementNameSorter;
-import com.avlija.furniture.service.ProductIdComp;
-import com.avlija.furniture.service.UserService;
 import com.avlija.furniture.form.LocalDateAttributeConverter;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,10 +56,7 @@ public class DisplayController {
     @Autowired
     private PipelineRepository pipelineRepository;
 
-    @Autowired
-    private ProductQuantityRepository productQuantityRepository;
-    
-    
+
     // DISPLAY ALL ELEMENTS
     @RequestMapping(value= {"home/allelements"}, method=RequestMethod.GET)
     public String allElements(HttpServletRequest request, Model model) {
@@ -112,7 +104,7 @@ public class DisplayController {
     return "home/list_products";
     }
     
-    // 
+    // DISPLAY PRODUCT PROFILE
     @RequestMapping(value= {"home/productprofile/{id}"}, method=RequestMethod.GET)
     public ModelAndView productProfile(@PathVariable(name = "id") Integer id) {
      ModelAndView model = new ModelAndView();
@@ -165,62 +157,7 @@ public class DisplayController {
      return "home/list_all_orders";
     }
     
-    // DISPLAY ORDER BY PIPELINE
-    @RequestMapping(value= {"home/orderpipeline/{id}"}, method=RequestMethod.GET)
-	public ModelAndView orderProfileByPipeline(@PathVariable(name = "id") Integer id) {
- ModelAndView model = new ModelAndView();
- Set <Product> products = new TreeSet<>();
- Pipeline pipeline = pipelineRepository.findById(id).get();
- try {
-	 Order order = orderRepository.findByPipeline(pipeline);
-	 products = sortByProductId(order.getPipeline().getProducts());
-	 List<ProductQuantity> productsQuantityList = getProductQuantityList(products, order.getPipeline());
-	 model.addObject("msg", "Profil Radnog Naloga");
-	 model.setViewName("admin/order_profile");
-	 model.addObject("productsList", products);
-	 model.addObject("productsQuantityList", productsQuantityList);
-	 model.addObject("order", order);   
- } catch(Exception e) {
-     model.addObject("err", "Radni nalog za odabranu listu proizovda još nije kreiran");     
-     List<Pipeline> pipelines = pipelineRepository.findAll(Sort.by("id").descending());
-     SampleInputs sampleInputs = new SampleInputs();
-     model.addObject("sampleInputs", sampleInputs);
-     model.addObject("pipelines", pipelines);
-     model.setViewName("home/list_of_pipelines");
- }
- return model;
-}
-    
-    @RequestMapping(value= {"home/ordersearchid"}, method=RequestMethod.POST)
-    public ModelAndView orderSearchId(@Valid SampleInputs sampleInputs) {
-     ModelAndView model = new ModelAndView();
-     Long orderId = sampleInputs.getId().longValue();
-     try {
-    	 Order order = orderRepository.findById(orderId).get();
-         Pipeline pipeline = order.getPipeline();
-         Set <Product> products = sortByProductId(pipeline.getProducts());
-         List<ProductQuantity> productsQuantityList = getProductQuantityList(products, order.getPipeline());
-
-       	  	model.addObject("msg", "Profil Radnog Naloga");
-       	  	model.setViewName("admin/order_profile");
-       	  	model.addObject("order", order);
-       	  	model.addObject("productsList", products);
-       	  	model.addObject("productsQuantityList", productsQuantityList);
-       	  //	model.addObject("totals", totals);
-     } catch(Exception e) {
-      	  model.addObject("err", "Nije pronađen radni nalog sa ID brojem: " + sampleInputs.getId());
-          List<Order> ordersList = orderRepository.findAll(Sort.by("created").descending());
-          model.addObject("message", "Lista radnih naloga");     
-          model.addObject("sampleInputs", new SampleInputs());
-          model.addObject("ordersList", ordersList);
-          model.setViewName("home/list_orders");
-     }
-     return model;
-    }
-    
- 
-    // SEARCH ORDER BY PIPELINE ID
-    
+    // DISPLAY AND SEARCH ORDERS BY PIPELINE ID
     @RequestMapping(value= {"home/ordersearchpipelineid"}, method=RequestMethod.POST)
     public ModelAndView orderSearchByPipelineId(@Valid SampleInputs sampleInputs) {
      ModelAndView model = new ModelAndView();
@@ -236,7 +173,8 @@ public class DisplayController {
          		}
      } catch (Exception e) {
      	  model.addObject("err", "Nije pronađena lista proizvoda sa ID brojem: " + sampleInputs.getId());
-          List<Order> ordersList = orderRepository.findAll(Sort.by("created").descending());
+          //List<Order> ordersList = orderRepository.findAll(Sort.by("created").descending());
+          List<Order> ordersList = orderRepository.findFirst10ByOrderCompletedOrderByIdDesc(1);
           model.addObject("message", "Lista radnih naloga");     
           model.addObject("sampleInputs", new SampleInputs());
           model.addObject("ordersList", ordersList);
@@ -244,10 +182,8 @@ public class DisplayController {
      model.setViewName("home/list_orders");
          	return model;
     	}
- 
     
-    // SEARCH ORDER BY DATE
-    
+    // DISPLAY AND SEARCH ORDERS BY DATE
     @RequestMapping(value = "home/searchorderdate", method = RequestMethod.POST)
     public ModelAndView searchByDate(@ModelAttribute("command") SampleInputs sampleInputs) throws ParseException {
         ModelAndView model = new ModelAndView("home/list_orders");
@@ -259,7 +195,8 @@ public class DisplayController {
 
    	 if(orders.size() == 0) {
     	  model.addObject("err", "Nije pronađen radni nalog sa datumom: " + inputSearchDate);
-          List<Order> ordersList = orderRepository.findAll(Sort.by("created").descending());
+          // List<Order> ordersList = orderRepository.findAll(Sort.by("created").descending());
+          List<Order> ordersList = orderRepository.findFirst10ByOrderCompletedOrderByIdDesc(1);
           model.addObject("message", "Lista radnih naloga");     
           model.addObject("ordersList", ordersList);
    	 	} else {
@@ -270,7 +207,7 @@ public class DisplayController {
         return model;    
     }
     
-    // ORDER DATE
+    // SEARCHING ORDERS BY ORDER DATE CREATED
     public List<Order> searchByDate(String inputSearchDate) {
    	 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 		 List<Order> ordersOnDate = new ArrayList<>();
@@ -287,7 +224,6 @@ public class DisplayController {
 
     
     // GET ELEMENT QUANTITY
-    
     private List<ElementQuantity> getElementQuantityList(Set<Element> elementList, Product product) {
    	 List<ElementQuantity> elementQuantitiyList = new ArrayList<ElementQuantity>();
    	 for(Element element: elementList) {
@@ -303,9 +239,17 @@ public class DisplayController {
    	return elementQuantitiyList;
    }
     
-
+    // SORTING PRODUCTS BY ELEMENT NAME
+	private Set<Element> sortElementsByName(Set<Element> elements) {
+		Set<Element> sortedElements = new TreeSet<>(new ElementNameSorter());
+   	  	for(Element element: elements) {
+   	  		sortedElements.add(element);
+   	  	}
+		return sortedElements;
+	}
+	   
     // CREATE PRODUCT QUANTITY LIST FOR THE PIPELINE
-    
+    /*
     private List<ProductQuantity> getProductQuantityList(Set <Product> products, Pipeline pipeline) {
       	 List <ProductQuantity> productQuantitiyList = new ArrayList<ProductQuantity>();
        	 for(Product product: products) {
@@ -320,16 +264,7 @@ public class DisplayController {
        	 }
        	return productQuantitiyList;
 	}
-    
-    // SORTING PRODUCTS BY ELEMENT NAME
-	private Set<Element> sortElementsByName(Set<Element> elements) {
-		Set<Element> sortedElements = new TreeSet<>(new ElementNameSorter());
-   	  	for(Element element: elements) {
-   	  		sortedElements.add(element);
-   	  	}
-		return sortedElements;
-	}
-	   
+
     // SORTING PRODUCTS IN THE PIPELINE BY PRODUCT ID
     private Set<Product> sortByProductId(Set<Product> products) {
 		Set<Product> sortedProducts = new TreeSet<>(new ProductIdComp());
@@ -338,5 +273,5 @@ public class DisplayController {
 	     	}
 		return sortedProducts;
 	}
-    
+        */
 }

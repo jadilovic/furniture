@@ -2,18 +2,13 @@
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml"
  xmlns:th="http://www.thymeleaf.org">
 <head>
- <title>Lista svih radnih naloga</title>
+ 	<title>Lista svih radnih naloga</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
- <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
- <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.0.0/css/font-awesome.min.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/css/bootstrap-datepicker.min.css" rel="stylesheet"/>
-
+  	<link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
 </head>
 <body>
 
-<!-- LIST OF ALL ORDERS -->
+<!-- LIST OF ALL ORDERS in DisplayController line 144-->
 <div th:replace="fragments/header :: header"/></div>
 
       <div class="row">

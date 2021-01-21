@@ -70,6 +70,7 @@ import org.docx4j.wml.Tr;
 import org.docx4j.wml.U;
 import org.docx4j.wml.UnderlineEnumeration;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -208,6 +209,62 @@ public class OrderController {
    	  	model.addObject("productsList", products);
    	  	model.addObject("productsQuantityList", productsQuantityList);
    	  	model.addObject("order", order);   
+     return model;
+    }
+    
+    // DISPLAY STATUS OF ORDER BY PIPELINE - used in list_all_pipelines and list_of_pipelines
+    @RequestMapping(value= {"home/orderpipeline/{id}"}, method=RequestMethod.GET)
+	public ModelAndView orderProfileByPipeline(@PathVariable(name = "id") Integer id) {
+ ModelAndView model = new ModelAndView();
+ Set <Product> products = new TreeSet<>();
+ Pipeline pipeline = pipelineRepository.findById(id).get();
+ try {
+	 Order order = orderRepository.findByPipeline(pipeline);
+	 printOrder = order;
+	 products = sortByProductId(order.getPipeline().getProducts());
+	 List<ProductQuantity> productsQuantityList = getProductQuantityList(products, order.getPipeline());
+	 model.addObject("msg", "Profil Radnog Naloga");
+	 model.setViewName("admin/order_profile");
+	 model.addObject("productsList", products);
+	 model.addObject("productsQuantityList", productsQuantityList);
+	 model.addObject("order", order);   
+ } catch(Exception e) {
+     model.addObject("err", "Radni nalog za odabranu listu proizovda još nije kreiran");     
+     //List<Pipeline> pipelines = pipelineRepository.findAll(Sort.by("id").descending());
+     List<Pipeline> pipelines = pipelineRepository.findFirst10ByActive(1, Sort.by("id").descending());
+     SampleInputs sampleInputs = new SampleInputs();
+     model.addObject("sampleInputs", sampleInputs);
+     model.addObject("pipelines", pipelines);
+     model.setViewName("home/list_of_pipelines");
+ }
+ return model;
+}
+    
+    // SEARCH AND DISPLAY ORDERS BY ORDER ID
+    @RequestMapping(value= {"home/ordersearchid"}, method=RequestMethod.POST)
+    public ModelAndView orderSearchId(@Valid SampleInputs sampleInputs) {
+     ModelAndView model = new ModelAndView();
+     Long orderId = sampleInputs.getId().longValue();
+     try {
+    	 Order order = orderRepository.findById(orderId).get();
+         Pipeline pipeline = order.getPipeline();
+         Set <Product> products = sortByProductId(pipeline.getProducts());
+         List<ProductQuantity> productsQuantityList = getProductQuantityList(products, order.getPipeline());
+         printOrder = order;
+       	  	model.addObject("msg", "Profil Radnog Naloga");
+       	  	model.setViewName("admin/order_profile");
+       	  	model.addObject("order", order);
+       	  	model.addObject("productsList", products);
+       	  	model.addObject("productsQuantityList", productsQuantityList);
+     } catch(Exception e) {
+      	  model.addObject("err", "Nije pronađen radni nalog sa ID brojem: " + sampleInputs.getId());
+          // List<Order> ordersList = orderRepository.findAll(Sort.by("created").descending());
+          List<Order> ordersList = orderRepository.findFirst10ByOrderCompletedOrderByIdDesc(1);
+          model.addObject("message", "Lista radnih naloga");     
+          model.addObject("sampleInputs", new SampleInputs());
+          model.addObject("ordersList", ordersList);
+          model.setViewName("home/list_orders");
+     }
      return model;
     }
     
