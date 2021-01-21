@@ -102,8 +102,9 @@ public class SearchController {
          	  model.addObject("err", "Nije pronađen proizvod koji sadrži ključnu riječ: " + keyWord);
            	  model.setViewName("home/search_product");
          	} else {
+         		
          		model.addObject("msg", "Lista proizvoda koji sadrže ključnu riječ: " + keyWord);
-         		model.setViewName("home/list_products");
+         		model.setViewName("home/list_products_keyword");
          		model.addObject("productsList", productsList);
          		}
          	return model;
@@ -212,7 +213,7 @@ public class SearchController {
          	return model;
     	}
     
-    
+    // SEARCH ELEMENTS BY SIFRA
     @RequestMapping(value= {"home/searchelement"}, method=RequestMethod.POST)
     public ModelAndView searchElementSifra(@Valid SampleInputs sampleInputs, HttpServletRequest request) {
      ModelAndView model = new ModelAndView();
@@ -241,15 +242,15 @@ public class SearchController {
      return model;
     }
     
-    // IF BROWSER BACK BUTTON IS PRESSED REDIRECT TO DISPLAY OF ALL ELEMENTS AND NEW SEARCH
+    // IF BROWSER BACK BUTTON IS PRESSED REDIRECT TO DISPLAY OF ALL ELEMENTS AND NEW SEARCH BY SIFRA
 	 @RequestMapping(value= {"home/searchelement"}, method=RequestMethod.GET)
 	 public String redirectToAllElements() {
 		 return "redirect:/home/allelements";
 	 }
 	 
-    // SEARCH ELEMENTS BY SIFRA
+    // SEARCH ELEMENTS BY KEYWORD
 	 @RequestMapping(value= {"home/searchelements"}, method=RequestMethod.POST)
-	 public String searchPostsBySifra(@Valid SampleInputs sampleInputs, HttpServletRequest request) {
+	 public String searchPostsByKeyWord(@Valid SampleInputs sampleInputs, HttpServletRequest request) {
 	     keyWord = sampleInputs.getKeyWord();
 	    elementsByKeyWord = elementRepository.findByNameContaining(keyWord);
 		 return "redirect:/home/searchelements";

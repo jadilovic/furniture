@@ -183,6 +183,12 @@ public class DisplayController {
          	return model;
     	}
     
+    // Redirecting user to the beginning of searching orders
+    @RequestMapping(value= {"home/ordersearchpipelineid"}, method=RequestMethod.GET)
+    public String redirectBackToOrderSearch(HttpServletRequest request) {
+   	 return "redirect:/home/allorders";
+    }
+    
     // DISPLAY AND SEARCH ORDERS BY DATE
     @RequestMapping(value = "home/searchorderdate", method = RequestMethod.POST)
     public ModelAndView searchByDate(@ModelAttribute("command") SampleInputs sampleInputs) throws ParseException {
@@ -206,6 +212,13 @@ public class DisplayController {
    	 	model.addObject("sampleInputs", new SampleInputs());
         return model;    
     }
+    
+    // Redirecting user to the beginning of searching orders
+    @RequestMapping(value= {"home/searchorderdate"}, method=RequestMethod.GET)
+    public String redirectBackToSearchingOrders(HttpServletRequest request) {
+   	 return "redirect:/home/allorders";
+    }
+    
     
     // SEARCHING ORDERS BY ORDER DATE CREATED
     public List<Order> searchByDate(String inputSearchDate) {

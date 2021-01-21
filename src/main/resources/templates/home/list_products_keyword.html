@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+ xmlns:th="http://www.thymeleaf.org">
+<head>
+ <title>Lista proizvoda</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+ 	<link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+</head>
+<body>
+
+<!-- DISPLAY OF PRODUCTS CONTAINING SPECIFIED KEYWORD - SearchController line 96 -->
+<div th:replace="fragments/header :: header"/></div>
+
+ <div class="p-2" align="center">
+   <h5>Lista proizvoda:</h5>
+   <p><b th:if="${message}" th:text="${message}" th:class="${'alert ' + alertClass}"></b></p>  
+    <p><b th:if="${message2}" th:text="${message2}" th:class="${'alert ' + alertClass}"></b></p>   
+ </div>
+
+
+  <div class="container table-responsive" align="center">
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">ID Broj</th>
+                <th scope="col">Naziv</th>
+                <th scope="col">Mjera</th>                
+                <th scope="col">Info</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr scope="row" th:each="product, productStat : ${productsList}">
+                <td th:text="${product.id}">ID</td>
+                <td th:text="${product.name}">Naziv</td> 
+                <td th:text="${product.productSize}">Mjera</td>                 
+                <td th:object="${product}">
+                	<a class="btn btn-warning" th:href="@{'/home/productprofile/' + *{id}}">Info</a>
+                </td>       
+            </tr>
+        </tbody>
+    </table>
+  </div>  
+  
+  		<div class="p-2" align="center">
+    	 <a th:href="@{/home/productsearch}" class="btn-info btn-lg" role="button" aria-pressed="true">Nova Pretraga Proizvoda</a>
+  		</div>
+ <div th:replace="fragments/footer :: footer"/></div>
+ 
+<!-- JavaScript to be activated if user clicks browser back button and takes it to the beginning of searching products-->
+ <script type="text/javascript">
+ 	if ( window.history.replaceState ) {
+	 	 window.history.replaceState( null, null, window.location.href );
+		}
+ </script>
+ 
+</body>
+</html>

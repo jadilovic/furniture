@@ -104,5 +104,12 @@
  
  <div th:replace="fragments/footer :: footer"/></div>
  
+ 		  <!-- JavaScript to be activated if user clicks browser back button and takes it to the beginning of search orders -->
+ <script type="text/javascript">
+ 	if ( window.history.replaceState ) {
+	 	 window.history.replaceState( null, null, window.location.href );
+		}
+ </script>
+ 
 </body>
 </html>

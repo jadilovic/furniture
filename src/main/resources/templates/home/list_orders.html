@@ -102,14 +102,21 @@
     
   </div>  
 
-
 	<script type="text/javascript" th:src="@{/js/jquery.min.js}"></script>
 	<script type="text/javascript" th:src="@{/js/bootstrap-datepicker.min.js}"></script>
     <script type="text/javascript" th:src="@{/js/bootstrap.min.js}"></script>
 
         <script>
-        $('#date').datepicker({ dateFormat: 'dd-mm-yy' })
-</script>
+        	$('#date').datepicker({ dateFormat: 'dd-mm-yy' })
+		</script>
+		
+		  <!-- JavaScript to be activated if user clicks browser back button and takes it to the beginning of search orders -->
+ <script type="text/javascript">
+ 	if ( window.history.replaceState ) {
+	 	 window.history.replaceState( null, null, window.location.href );
+		}
+ </script>
+ 
   		
  <div th:replace="fragments/footer :: footer"/></div>
 

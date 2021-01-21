@@ -268,6 +268,12 @@ public class OrderController {
      return model;
     }
     
+    // Redirecting user to the beginning of searching orders
+    @RequestMapping(value= {"home/ordersearchid"}, method=RequestMethod.GET)
+    public String redirectBackToOrderSearch(HttpServletRequest request) {
+   	 return "redirect:/home/allorders";
+    }
+    
     // CREATING WORD DOCUMENT OF THE ORDER
 	private void createWordDocument(Order order) throws Exception {
         WordprocessingMLPackage wordPackage = null;
