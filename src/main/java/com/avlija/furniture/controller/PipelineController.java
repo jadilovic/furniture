@@ -143,16 +143,16 @@ public class PipelineController {
     @RequestMapping(value= {"admin/add/{id}"}, method=RequestMethod.GET)
     public ModelAndView addProductsToPipelineGET(@PathVariable(name = "id") Integer id) {
      ModelAndView model = new ModelAndView();
-     Pipeline pipeline = pipelineRepository.findById(id).get();
-     Set<Product> products = sortByProductId(pipeline.getProducts());
+     savedPipeline = pipelineRepository.findById(id).get();
+     Set<Product> products = sortByProductId(savedPipeline.getProducts());
      
      SampleInputs sampleInputs = new SampleInputs();
-  	System.out.println("PRODUCTS IN OBJECT:" + pipeline.getProducts());
+  	System.out.println("PRODUCTS IN OBJECT:" + savedPipeline.getProducts());
      sampleInputs.setPipelineId(id);
      model.addObject("sampleInputs", sampleInputs);
-     model.addObject("pipeline", pipeline);
+     model.addObject("pipeline", savedPipeline);
      model.addObject("productsList", products);
-     model.addObject("emptyProducts", pipeline.getProducts().isEmpty());
+     model.addObject("emptyProducts", savedPipeline.getProducts().isEmpty());
      model.setViewName("admin/add_products");
      
      return model;
@@ -219,7 +219,6 @@ public class PipelineController {
     }
     
 	   // SEARCH PRODUCT BY ID TO BE ADDED TO THE PIPELINE
-
 	@RequestMapping(value= {"home/searchproductid"}, method=RequestMethod.POST)
     public ModelAndView searchProductById(@Valid SampleInputs sampleInputs) {
      ModelAndView model = new ModelAndView();
@@ -262,22 +261,14 @@ public class PipelineController {
          model.setViewName("admin/add_products");
      return model;
     }
+	
+    // IF BROWSER BACK BUTTON IS PRESSED REDIRECT TO ADDING NEW PRODUCTS TO THE PIPELINE
+	 @RequestMapping(value= {"home/searchproductid"}, method=RequestMethod.GET)
+	 public String redirectBackToAddProducts() {
+		 return "redirect:/admin/add/" + savedPipeline.getId();
+	 }
 
-	
-	// CHECKING IF THE PRODUCT IS IN THE PIPELINE
-	
-	private boolean productAlreadyInList(Product product, Set<Product> pipelineProducts) {
-		for(Product check: pipelineProducts) {
-			if(check.getId() == product.getId()) {
-				return true;
-			}
-		}
-		return false;
-	}
-    
-	
-	// SEARCH PRODUCT BY KEYWORD
-	
+	// SEARCH PRODUCT BY KEYWORD TO BE ADDED TO THE PIPELINE
 	@RequestMapping(value= {"home/productsearchkeyword2"}, method=RequestMethod.POST)
     public ModelAndView productSearchKeyWord(@Valid SampleInputs sampleInputs) {
      ModelAndView model = new ModelAndView();
@@ -320,9 +311,13 @@ public class PipelineController {
          	return model;
     	}
     
+    // IF BROWSER BACK BUTTON IS PRESSED REDIRECT TO ADDING NEW PRODUCTS TO THE PIPELINE
+	 @RequestMapping(value= {"home/productsearchkeyword2"}, method=RequestMethod.GET)
+	 public String redirectToAddProductsToPipeline() {
+		 return "redirect:/admin/add/" + savedPipeline.getId();
+	 }
 	
 	// ADD PRODUCT QUANTITY IN THE PIPELINE
-	
 	@RequestMapping(value="admin/productquantity/{pipelineId}/{productId}", method=RequestMethod.GET)
     public ModelAndView addProductQuantityInThePipeline(@PathVariable String pipelineId, @PathVariable String productId) {
     	ModelAndView model = new ModelAndView();
@@ -418,6 +413,16 @@ public class PipelineController {
       	 model.setViewName("home/list_of_pipelines");
         return model;
     	}
+    
+	// CHECKING IF THE PRODUCT IS IN THE PIPELINE
+	private boolean productAlreadyInList(Product product, Set<Product> pipelineProducts) {
+		for(Product check: pipelineProducts) {
+			if(check.getId() == product.getId()) {
+				return true;
+			}
+		}
+		return false;
+	}
     
     // SORTING PRODUCTS IN THE PIPELINE BY PRODUCT ID
     private Set<Product> sortByProductId(Set<Product> products) {
