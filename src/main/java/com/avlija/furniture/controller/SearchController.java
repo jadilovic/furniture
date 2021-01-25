@@ -51,6 +51,7 @@ public class SearchController {
     
     private static List<Element> elementsByKeyWord;
     private static String keyWord;
+    private static Product selectedProduct;
     
     // SEARCH PRODUCTS
     @RequestMapping(value= {"home/productsearch"}, method=RequestMethod.GET)
@@ -150,13 +151,14 @@ public class SearchController {
    	  return model;
     }
     
+    // SEARCH FOR ELEMENTS TO BE ADDED TO THE PRODUCT BY SIFRA
     @RequestMapping(value= {"admin/searchelementsifra"}, method=RequestMethod.POST)
     public ModelAndView searchElementBySifra(@Valid SampleInputs sampleInputs) {
      ModelAndView model = new ModelAndView();
      Set <Element> newElements = new HashSet<Element>();
     	 Element element = elementRepository.findBySifra(sampleInputs.getSifra());
-      	Product product = productRepository.findById(sampleInputs.getId()).get();
-      	Set<Element> elements = sortElementsByName(product.getElements());
+      	selectedProduct = productRepository.findById(sampleInputs.getId()).get();
+      	Set<Element> elements = sortElementsByName(selectedProduct.getElements());
       	System.out.println("ELEMENTS: " + elements.isEmpty());
       	Boolean empty = elements.isEmpty();
     	 if(element == null) {
@@ -175,19 +177,27 @@ public class SearchController {
     	 		model.addObject("elementsList", newElements);
     	 		model.addObject("msg", "Pronađen element sa šifrom: " + sampleInputs.getSifra());		
     	 	}
-          model.addObject("product", product);
+          model.addObject("product", selectedProduct);
           model.addObject("sampleInputs", sampleInputs);
           model.setViewName("admin/add_elements");
      return model;
     }
+    
+    // IF BROWSER BACK BUTTON IS PRESSED REDIRECT TO DISPLAY PRODUCT PROFILE
+	 @RequestMapping(value= {"admin/searchelementsifra"}, method=RequestMethod.GET)
+	 public String redirectToProductProfile() {
+		 int productId = selectedProduct.getId();
+		 return "redirect:/admin/changeproduct/" + productId;
+	 }
 
+    // SEARCH FOR ELEMENTS TO BE ADDED TO THE PRODUCT BY KEYWORD
 	@RequestMapping(value= {"home/elementsearchkeyword"}, method=RequestMethod.POST)
     public ModelAndView elementSearchKeyWord(@Valid SampleInputs sampleInputs) {
      ModelAndView model = new ModelAndView();
      String keyWord = sampleInputs.getKeyWord();
-   	Product product = productRepository.findById(sampleInputs.getId()).get();
+   	selectedProduct = productRepository.findById(sampleInputs.getId()).get();
          List<Element> foundElements = elementRepository.findByNameContaining(keyWord);
-         Set<Element> elements = sortElementsByName(product.getElements());
+         Set<Element> elements = sortElementsByName(selectedProduct.getElements());
          if(foundElements.isEmpty()) {
          	  model.addObject("err", "Nije pronađen element koji sadrži ključnu riječ: " + keyWord);
               model.addObject("elementsList", elements);
@@ -207,12 +217,19 @@ public class SearchController {
     	 					}
       			model.addObject("elementsList", selectionElements);         		
          		}
-        model.addObject("product", product);
+        model.addObject("product", selectedProduct);
         model.addObject("sampleInputs", sampleInputs);         
   			model.setViewName("admin/add_elements");
          	return model;
     	}
     
+    // IF BROWSER BACK BUTTON IS PRESSED REDIRECT TO DISPLAY PRODUCT PROFILE
+	 @RequestMapping(value= {"home/elementsearchkeyword"}, method=RequestMethod.GET)
+	 public String redirectProductProfile() {
+		 int productId = selectedProduct.getId();
+		 return "redirect:/admin/changeproduct/" + productId;
+	 }
+
     // SEARCH ELEMENTS BY SIFRA
     @RequestMapping(value= {"home/searchelement"}, method=RequestMethod.POST)
     public ModelAndView searchElementSifra(@Valid SampleInputs sampleInputs, HttpServletRequest request) {
