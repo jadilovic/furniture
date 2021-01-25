@@ -220,7 +220,7 @@ public class DisplayController {
     }
     
     
-    // SEARCHING ORDERS BY ORDER DATE CREATED
+    // METHOD FOR SEARCHING ORDERS BY ORDER DATE CREATED
     public List<Order> searchByDate(String inputSearchDate) {
    	 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 		 List<Order> ordersOnDate = new ArrayList<>();

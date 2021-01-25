@@ -21,6 +21,7 @@ public class LoginController {
     @Autowired
     private UserService userService;
 
+    // LOGIN PAGE
     @RequestMapping(value={"/", "/login"}, method = RequestMethod.GET)
     public ModelAndView login(){
         ModelAndView modelAndView = new ModelAndView();
@@ -28,7 +29,7 @@ public class LoginController {
         return modelAndView;
     }
 
-
+    // REGISTRATION OF NEW USER PAGE
     @RequestMapping(value="/registration", method = RequestMethod.GET)
     public ModelAndView registration(){
         ModelAndView modelAndView = new ModelAndView();
@@ -39,6 +40,7 @@ public class LoginController {
         return modelAndView;
     }
 
+    // ENTERING DATA FOR THE NEW USER
     @RequestMapping(value = "/registration", method = RequestMethod.POST)
     public ModelAndView createNewUser(@Valid User user, BindingResult bindingResult) {
         ModelAndView modelAndView = new ModelAndView();
@@ -58,11 +60,11 @@ public class LoginController {
             newUser.setRole("CLIENT");            
             modelAndView.addObject("user", newUser);
             modelAndView.setViewName("registration");
-
         }
         return modelAndView;
     }
 
+    // STARTING PAGE WHEN USER LOGS IN
     @RequestMapping(value="/home/home", method = RequestMethod.GET)
     public ModelAndView home(){
         ModelAndView modelAndView = new ModelAndView();
@@ -73,6 +75,7 @@ public class LoginController {
         return modelAndView;
     }
 
+    // PAGE SHOWING WHEN USER HAS NO PERMISSION TO ACCESS THE PAGE
     @RequestMapping(value= {"/access_denied"}, method=RequestMethod.GET)
     public ModelAndView accessDenied() {
      ModelAndView model = new ModelAndView();

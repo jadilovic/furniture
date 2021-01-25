@@ -29,6 +29,7 @@ public class HomeController {
     @Autowired
     private ElementRepository elementRepository;
     
+    // ADMIN PAGE WITH ALL ADMIN OPTIONS
     @RequestMapping(value={"/admin/adminPage"}, method = RequestMethod.GET)
     public ModelAndView adminPage(){
         ModelAndView modelAndView = new ModelAndView();
@@ -38,6 +39,7 @@ public class HomeController {
         return modelAndView;
     }
     
+    // CLIENT PIPELINE PAGE FOR PREPARATION OF WORK ORDERS
     @RequestMapping(value={"/home/clientPage"}, method = RequestMethod.GET)
     public ModelAndView clientPage(){
         ModelAndView modelAndView = new ModelAndView();
@@ -47,6 +49,7 @@ public class HomeController {
         return modelAndView;
     }
     
+    // DISPLAYING ELEMENT PROFILE SPECIFICATIONS
     @RequestMapping(value= {"home/elementprofile/{id}"}, method=RequestMethod.GET)
     public ModelAndView addElement(@PathVariable(name = "id") Integer id) {
      ModelAndView model = new ModelAndView();
@@ -54,10 +57,10 @@ public class HomeController {
      model.addObject("msg", "Profil Odabranog Elementa");
      model.addObject("element", element);
      model.setViewName("home/element_profile");
-     
      return model;
     }
     
+    // DISPLAYING USER PROFILE
     @RequestMapping(value={"/home/profile"}, method = RequestMethod.GET)
     public ModelAndView userProfilePage(){
         ModelAndView modelAndView = new ModelAndView();
@@ -70,18 +73,17 @@ public class HomeController {
         return modelAndView;
     }
     
+    // DISPLAYING ALL USERS
     @RequestMapping(value= {"/admin/allusers"}, method=RequestMethod.GET)
     public ModelAndView showAllUsers() {
      ModelAndView model = new ModelAndView();
      List<User> listUsers = userService.findAllUsers();
      model.addObject("listUsers", listUsers);
-     User user = new User();
-     model.addObject("user", user);
-     model.setViewName("admin/list_all_users");
-     
+     model.setViewName("admin/list_all_users"); 
      return model;
     }
     
+    // START EDITING USER PROFILE
     @RequestMapping(value= {"admin/editprofile/{id}"}, method=RequestMethod.GET)
     public ModelAndView editProfile(@PathVariable(name = "id") Integer id) {
      ModelAndView model = new ModelAndView();
@@ -94,10 +96,10 @@ public class HomeController {
      return model;
     }
     
+    // ENTERING NEW SPECIFICATIONS FOR THE USER
     @RequestMapping(value= {"admin/editprofile"}, method=RequestMethod.POST)
     public ModelAndView editProduct(@Valid User user) {
      ModelAndView model = new ModelAndView();
-     
      User changedUser = userService.findUserById(user.getId());
      System.out.println(changedUser.getId() + ", NNNNNN password: " + changedUser.getPassword());
      changedUser.setUserName(user.getUserName());
@@ -117,6 +119,7 @@ public class HomeController {
      return model;
     }
 
+    // FINDING CURRENT USER
     private User getCurrentUser() {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		User user = userService.findUserByUserName(auth.getName());

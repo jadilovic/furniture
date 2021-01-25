@@ -4,11 +4,8 @@
 <head>
  <title>List of Users</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
- <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
- <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.0.0/css/font-awesome.min.css">
-</head>
+ 	<link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+ </head>
 <body>
 
 <div th:replace="fragments/header :: header"/></div>
@@ -39,8 +36,10 @@
                 <td th:text="${user.email}">Email</td>
                 <td th:text="${user.name}">Ime</td>
                 <td th:text="${#dates.format(user.created, 'dd-MM-yyyy HH:mm')}">Kreiran</td>
-                <td th:text="${user.userName}">Korisničko Ime</td>
-                <td th:text="${user.active}">Aktivan</td>                
+                <td th:text="${user.userName}">Korisničko Ime</td>                
+                <td>
+                	<a href="#" class="text-white btn " th:classappend="${user.active} == false ? btn-danger : btn-warning" th:text="${user.active} == false ? 'Isključen' : 'Aktivan'"></a>
+                </td>                
                 <td>
                 	<a class="btn btn-success" th:href="@{'/admin/editprofile/' + ${user.id}}">Profil</a>
                 </td>

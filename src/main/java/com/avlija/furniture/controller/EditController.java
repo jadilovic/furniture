@@ -1,17 +1,12 @@
 package com.avlija.furniture.controller;
+// EDITING OF ELEMENTS ONLY
 
-import java.util.ArrayList;
 import java.util.List;
 import javax.validation.Valid;
 
 import com.avlija.furniture.model.Element;
-import com.avlija.furniture.model.ElementQuantity;
-import com.avlija.furniture.model.Product;
-import com.avlija.furniture.model.ProductElement;
 import com.avlija.furniture.model.UnitMeasure;
-import com.avlija.furniture.repository.ElementQuantityRepository;
 import com.avlija.furniture.repository.ElementRepository;
-import com.avlija.furniture.repository.ProductRepository;
 import com.avlija.furniture.repository.UnitMeasureRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,11 +17,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+// EDITING OF ELEMENT
 @Controller
 public class EditController {
-
-    @Autowired
-    private ProductRepository productRepository;
 
     @Autowired
     private UnitMeasureRepository unitMeasureRepository;
@@ -34,23 +27,21 @@ public class EditController {
     @Autowired
     private ElementRepository elementRepository;
     
-    @Autowired
-    private ElementQuantityRepository elementQuantityRepository;
-    
-    // EDIT ELEMENT
-    
+    private static Element savedElement;
+
+    // START EDITING SELECTED ELEMENT
     @RequestMapping(value= {"admin/editelement/{id}"}, method=RequestMethod.GET)
     public ModelAndView editElement(@PathVariable(name = "id") Integer id) {
      ModelAndView model = new ModelAndView();
-     Element element = elementRepository.findById(id).get();
+     savedElement = elementRepository.findById(id).get();
      List<UnitMeasure> unitList = unitMeasureRepository.findAll();
-     model.addObject("element", element);
+     model.addObject("element", savedElement);
      model.addObject("unitList", unitList);
      model.setViewName("admin/edit_element");
-     
      return model;
     }
     
+    // ENTERING VALUES FOR EDITING THE ELEMENT
     @RequestMapping(value= {"admin/editelement"}, method=RequestMethod.POST)
     public ModelAndView editElement(@Valid Element element, BindingResult bindingResult) {
      ModelAndView model = new ModelAndView();
@@ -73,15 +64,23 @@ public class EditController {
      return model;
     }
     
+    // IF BROWSER BACK BUTTON IS PRESSED REDIRECT TO ELEMENT PROFILE
+	 @RequestMapping(value= {"admin/editelement"}, method=RequestMethod.GET)
+	 public String redirectBackElementProfile() {
+		 return "redirect:/home/elementprofile/" + savedElement.getId();
+	 }
+    
+	 // STARTING TO ENTER NEW ELEMENT QUANTITY
     @RequestMapping(value= {"/home/editelementquantity/{id}"}, method=RequestMethod.GET)
     public ModelAndView editQuantity(@PathVariable(name = "id") Integer id) {
      ModelAndView model = new ModelAndView();
-     Element element = elementRepository.findById(id).get();
-     model.addObject("element", element);
+     savedElement = elementRepository.findById(id).get();
+     model.addObject("element", savedElement);
      model.setViewName("home/edit_element_quantity");
      return model;
     }
     
+    // ENTERING NEW ELEMENT QUANTITY
     @RequestMapping(value= {"/home/editelementquantity"}, method=RequestMethod.POST)
     public ModelAndView editQuantity(@Valid Element element) {
      ModelAndView model = new ModelAndView();
@@ -93,5 +92,12 @@ public class EditController {
    	  	model.addObject("element", oldElement);
      return model;
     }
+    
+    // IF BROWSER BACK BUTTON IS PRESSED REDIRECT TO ELEMENT PROFILE
+	 @RequestMapping(value= {"home/editelementquantity"}, method=RequestMethod.GET)
+	 public String redirectBackToElementProfile() {
+		 return "redirect:/home/elementprofile/" + savedElement.getId();
+	 }
+
     
 }

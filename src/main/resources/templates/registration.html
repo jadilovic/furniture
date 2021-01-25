@@ -3,14 +3,12 @@
       xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Registration Form</title>
-   <meta name="viewport" content="width=device-width, initial-scale=1">
- <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
- <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.0.0/css/font-awesome.min.css">
+   	<meta name="viewport" content="width=device-width, initial-scale=1">
+  	<link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
 </head>
 <body>
 
+<!-- Registering new user in the database LoginController lines 32 and 43 -->
    <div th:replace="fragments/header :: header"/></div>
    
 <div class="container">
@@ -95,6 +93,13 @@
 </div>
 
  <div th:replace="fragments/footer :: footer"/></div>
+ 
+    <!-- JavaScript to enable use of browser back button which returns registration to beginning -->
+ <script type="text/javascript">
+ 	if ( window.history.replaceState ) {
+	 	 window.history.replaceState( null, null, window.location.href );
+		}
+ </script>
 
 </body>
 </html>

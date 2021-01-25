@@ -343,7 +343,6 @@ public class PipelineController {
     
 
 	// ADD PRODUCT QUANTITY IN THE PIPELINE POST
-
     @RequestMapping(value= {"admin/productquantity"}, method=RequestMethod.POST)
     public ModelAndView addProductQuantity(@Valid SampleInputs sampleInputs) {
      ModelAndView model = new ModelAndView();
@@ -367,7 +366,6 @@ public class PipelineController {
     }
     
     //SEARCH PIPELINE BY ID
-    
     @RequestMapping(value= {"home/pipelinesearchid"}, method=RequestMethod.POST)
     public ModelAndView pipelineSearchId(@Valid SampleInputs sampleInputs) {
      ModelAndView model = new ModelAndView();
@@ -392,9 +390,13 @@ public class PipelineController {
      return model;
     }
     
+    // IF BROWSER BACK BUTTON IS PRESSED REDIRECT TO SEARCH ALL PIPELINES
+	 @RequestMapping(value= {"home/pipelinesearchid"}, method=RequestMethod.GET)
+	 public String redirectToSearchAllPipelines() {
+		 return "redirect:/home/allpipelines";
+	 }
     
     // SEARCH PIPELINES BY KEYWORD
-    
     @RequestMapping(value= {"home/pipelinesearchkeyword"}, method=RequestMethod.POST)
     public ModelAndView pipelineSearchKeyWord(@Valid SampleInputs sampleInputs) {
      ModelAndView model = new ModelAndView();
@@ -413,6 +415,12 @@ public class PipelineController {
       	 model.setViewName("home/list_of_pipelines");
         return model;
     	}
+    
+    // IF BROWSER BACK BUTTON IS PRESSED REDIRECT TO SEARCH ALL PIPELINES
+	 @RequestMapping(value= {"home/pipelinesearchkeyword"}, method=RequestMethod.GET)
+	 public String redirectToAllPipelines() {
+		 return "redirect:/home/allpipelines";
+	 }
     
 	// CHECKING IF THE PRODUCT IS IN THE PIPELINE
 	private boolean productAlreadyInList(Product product, Set<Product> pipelineProducts) {
