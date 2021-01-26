@@ -75,15 +75,20 @@ public class PasswordController {
 			passwordResetEmail.setText("Za izmjenu lozinke kliknite na donji link:\n" + appUrl
 					+ ":8080/reset?token=" + user.getResetToken());
 			
-			emailService.sendEmail(passwordResetEmail);
-
-			// Add success message to view
-			modelAndView.addObject("message", "Link za izmjenu lozinke je poslan na " + sampleInputs.getEmail()
-										+ ".\n Otvorite vaš e-mail i kliknite na link.");
-			modelAndView.setViewName("/login");
+			try {
+				emailService.sendEmail(passwordResetEmail);
+				// Add success message to view
+				modelAndView.addObject("message", "Link za izmjenu lozinke je poslan na " + sampleInputs.getEmail()
+											+ ".\n Otvorite vaš e-mail i kliknite na link.");
+				modelAndView.setViewName("/login");
+			} catch(Exception e) {
+				// In case exception
+				modelAndView.addObject("message", "Nije moguće poslati mail zbog nepostojanja konekcije"
+						+ " ili nekog drugog problema na mreži ili sigurnosne blokade gmaila.");
+				modelAndView.setViewName("user/forgotPassword");
+			}
 		}
 		return modelAndView;
-
 	}
 
 	// Display form to reset password
@@ -137,7 +142,7 @@ public class PasswordController {
 			// Save user with new password
 			userService.resetUpdate(resetUser);
 
-			modelAndView.addObject("message", "Uspješno ste izmjenili vašu lozinku. Sad se možete prijaviti na YAP web aplikaciju.");
+			modelAndView.addObject("message", "Uspješno ste izmjenili vašu lozinku. Sad se možete prijaviti na Hidra Still web aplikaciju.");
 
 			modelAndView.setViewName("login");
 			return modelAndView;

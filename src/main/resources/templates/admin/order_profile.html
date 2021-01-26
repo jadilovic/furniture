@@ -9,6 +9,7 @@
 <body>
 
 <!-- DISPLAY PROFILE OF THE ORDER in DisplayController line 195 -->
+<!-- DISPLAY PROFILE OF CONFIRMED ORDER in OrderController lines 131, 187, 208, 236 and 510-->
 <div th:replace="fragments/header :: header"/></div>
 
  <div class="container">
@@ -104,7 +105,7 @@
  
  <div th:replace="fragments/footer :: footer"/></div>
  
- 		  <!-- JavaScript to be activated if user clicks browser back button and takes it to the beginning of search orders -->
+<!-- JavaScript to be activated if user clicks browser back button and takes it to the beginning of search orders -->
  <script type="text/javascript">
  	if ( window.history.replaceState ) {
 	 	 window.history.replaceState( null, null, window.location.href );

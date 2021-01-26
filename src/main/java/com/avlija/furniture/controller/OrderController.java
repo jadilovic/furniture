@@ -11,11 +11,8 @@ import java.nio.file.Files;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -38,21 +35,17 @@ import com.avlija.furniture.repository.ElementRepository;
 import com.avlija.furniture.repository.OrderRepository;
 import com.avlija.furniture.repository.PipelineRepository;
 import com.avlija.furniture.repository.ProductQuantityRepository;
-import com.avlija.furniture.repository.ProductRepository;
 import com.avlija.furniture.service.ProductIdComp;
 
 import org.docx4j.dml.wordprocessingDrawing.Inline;
 import org.docx4j.jaxb.Context;
-import org.docx4j.model.datastorage.XPathEnhancerParser.predicate_return;
 import org.docx4j.model.table.TblFactory;
-import org.docx4j.openpackaging.exceptions.Docx4JException;
 import org.docx4j.openpackaging.exceptions.InvalidFormatException;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 import org.docx4j.openpackaging.parts.WordprocessingML.BinaryPartAbstractImage;
 import org.docx4j.openpackaging.parts.WordprocessingML.MainDocumentPart;
 import org.docx4j.wml.BooleanDefaultTrue;
 import org.docx4j.wml.Br;
-import org.docx4j.wml.Color;
 import org.docx4j.wml.Drawing;
 import org.docx4j.wml.HpsMeasure;
 import org.docx4j.wml.Jc;
@@ -60,7 +53,6 @@ import org.docx4j.wml.JcEnumeration;
 import org.docx4j.wml.ObjectFactory;
 import org.docx4j.wml.P;
 import org.docx4j.wml.PPr;
-import org.docx4j.wml.PPrBase.TextAlignment;
 import org.docx4j.wml.R;
 import org.docx4j.wml.RPr;
 import org.docx4j.wml.Tbl;
@@ -82,9 +74,6 @@ import org.springframework.web.servlet.ModelAndView;
 public class OrderController {
 
     @Autowired
-    private ProductRepository productRepository;
-
-    @Autowired
     private OrderRepository orderRepository;
 
     @Autowired
@@ -100,8 +89,9 @@ public class OrderController {
     private ProductQuantityRepository productQuantityRepository;
     
     private static Order printOrder;
-    // CREATE ORDER
+    private static LocalDate localDate;
     
+    // START CREATING AN ORDER
     @RequestMapping(value= {"admin/createorder/{id}"}, method=RequestMethod.GET)
     public ModelAndView createOrder(@PathVariable(name = "id") Integer id) {
      ModelAndView model = new ModelAndView();
@@ -118,8 +108,9 @@ public class OrderController {
      return model;
     }
     
+    // ENTERING ADDITIONAL DATA FOR CREATING WORK ORDER
     @RequestMapping(value= {"admin/createorder"}, method=RequestMethod.POST)
-    public ModelAndView addedElementQuantity(@Valid SampleInputs sampleInputs) {
+    public ModelAndView createOrder(@Valid SampleInputs sampleInputs) {
      ModelAndView model = new ModelAndView();
      Set <Product> productsList = new TreeSet<>();
      	Pipeline templatePipeline = pipelineRepository.findById(sampleInputs.getPipelineId()).get();
@@ -128,20 +119,23 @@ public class OrderController {
         // CREATING ORDER JUST FOR DISPLAY BEFORE CONFIRMATION
         Order order = new Order(new Date(), sampleInputs.getWorkPosition(), templatePipeline, 
         						sampleInputs.getOrderComment(), sampleInputs.getOrderPackaging(), 
-        						sampleInputs.getOrderPrep(), 0);
-       // orderRepository.save(order);
-       // sampleInputs.setOrderId(order.getId());
-        
+        						sampleInputs.getOrderPrep(), 0); 
    	  model.addObject("msg", "Kreirani radni nalog spreman za potvrdu");
    	  model.setViewName("admin/confirm_order");
-     model.addObject("order", order);
-     model.addObject("productsList", productsList);
-     model.addObject("productsQuantityList", productsQuantityList);
-     model.addObject("sampleInputs", sampleInputs);
-     //model.addObject("totals", totals);
-     return model;
+   	  model.addObject("order", order);
+   	  model.addObject("productsList", productsList);
+   	  model.addObject("productsQuantityList", productsQuantityList);
+   	  model.addObject("sampleInputs", sampleInputs);
+   	  return model;
     }
-    
+      
+    // If back button is pressed redirecting user to the beginning of searching orders
+    @RequestMapping(value= {"admin/createorder"}, method=RequestMethod.GET)
+    public String redirectToOrderSearch(HttpServletRequest request) {
+   	 return "redirect:/home/allorders";
+    }
+       
+    // CONFIRMING AND CREATING WORK ORDER
     @RequestMapping(value= {"admin/confirmorder"}, method=RequestMethod.POST)
     public ModelAndView confirmOrder(@Valid SampleInputs sampleInputs) throws Exception {
      ModelAndView model = new ModelAndView();
@@ -190,8 +184,8 @@ public class OrderController {
    	  	model.addObject("totals", totals);
      return model;
     }
-
-    // Order profile
+    
+    // Displaying work order profile
     @RequestMapping(value= {"home/orderprofile/{id}"}, method=RequestMethod.GET)
     	public ModelAndView orderProfile(@PathVariable(name = "id") Long id) throws Exception {
      ModelAndView model = new ModelAndView();
@@ -215,30 +209,30 @@ public class OrderController {
     // DISPLAY STATUS OF ORDER BY PIPELINE - used in list_all_pipelines and list_of_pipelines
     @RequestMapping(value= {"home/orderpipeline/{id}"}, method=RequestMethod.GET)
 	public ModelAndView orderProfileByPipeline(@PathVariable(name = "id") Integer id) {
- ModelAndView model = new ModelAndView();
- Set <Product> products = new TreeSet<>();
- Pipeline pipeline = pipelineRepository.findById(id).get();
- try {
-	 Order order = orderRepository.findByPipeline(pipeline);
-	 printOrder = order;
-	 products = sortByProductId(order.getPipeline().getProducts());
-	 List<ProductQuantity> productsQuantityList = getProductQuantityList(products, order.getPipeline());
-	 model.addObject("msg", "Profil Radnog Naloga");
-	 model.setViewName("admin/order_profile");
-	 model.addObject("productsList", products);
-	 model.addObject("productsQuantityList", productsQuantityList);
-	 model.addObject("order", order);   
- } catch(Exception e) {
-     model.addObject("err", "Radni nalog za odabranu listu proizovda još nije kreiran");     
-     //List<Pipeline> pipelines = pipelineRepository.findAll(Sort.by("id").descending());
-     List<Pipeline> pipelines = pipelineRepository.findFirst10ByActive(1, Sort.by("id").descending());
-     SampleInputs sampleInputs = new SampleInputs();
-     model.addObject("sampleInputs", sampleInputs);
-     model.addObject("pipelines", pipelines);
-     model.setViewName("home/list_of_pipelines");
- }
- return model;
-}
+    	ModelAndView model = new ModelAndView();
+    	Set <Product> products = new TreeSet<>();
+    	Pipeline pipeline = pipelineRepository.findById(id).get();
+    	try {
+    		Order order = orderRepository.findByPipeline(pipeline);
+    		printOrder = order;
+    		products = sortByProductId(order.getPipeline().getProducts());
+    		List<ProductQuantity> productsQuantityList = getProductQuantityList(products, order.getPipeline());
+    		model.addObject("msg", "Profil Radnog Naloga");
+    		model.setViewName("admin/order_profile");
+    		model.addObject("productsList", products);
+    		model.addObject("productsQuantityList", productsQuantityList);
+    		model.addObject("order", order);   
+    	} catch(Exception e) {
+    		model.addObject("err", "Radni nalog za odabranu listu proizovda još nije kreiran");     
+    		//List<Pipeline> pipelines = pipelineRepository.findAll(Sort.by("id").descending());
+    		List<Pipeline> pipelines = pipelineRepository.findFirst10ByActive(1, Sort.by("id").descending());
+    		SampleInputs sampleInputs = new SampleInputs();
+    		model.addObject("sampleInputs", sampleInputs);
+    		model.addObject("pipelines", pipelines);
+    		model.setViewName("home/list_of_pipelines");
+    	}
+    	return model;
+    }
     
     // SEARCH AND DISPLAY ORDERS BY ORDER ID
     @RequestMapping(value= {"home/ordersearchid"}, method=RequestMethod.POST)
@@ -280,7 +274,6 @@ public class OrderController {
 		try {
 			wordPackage = WordprocessingMLPackage.createPackage();
 		} catch (InvalidFormatException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
         MainDocumentPart mainDocumentPart = wordPackage.getMainDocumentPart();
@@ -515,7 +508,6 @@ public class OrderController {
 		wordPackage.save(exportFile);
 	}
 
-
 	// DOWNLOAD CREATED WORD DOCUMENT OF THE ORDER
 	@RequestMapping("home/{fileName:.+}")
 	public void downloadCreatedOrderInWord(HttpServletRequest request, HttpServletResponse response,
@@ -532,9 +524,9 @@ public class OrderController {
 			}
 
 			response.setContentType(mimeType);
-			LocalDate localDate = convertToLocalDateViaInstant(printOrder.getCreated());
+			localDate = convertToLocalDateViaInstant(printOrder.getCreated());
 			//Here we have mentioned it to show as attachment
-			response.setHeader("Content-Disposition", String.format("attachment; filename=\"RN-" + printOrder.getId() + "-OD-" + localDate.now() + "\".docx"));
+			response.setHeader("Content-Disposition", String.format("attachment; filename=\"RN-" + printOrder.getId() + "-OD-" + localDate + "\".docx"));
 
 			response.setContentLength((int) file.length());
 
@@ -545,6 +537,7 @@ public class OrderController {
 		}
 	}
     
+	// GET NUMBER OF ELEMENTS IN PRODUCTS CONTAINED IN THE PIPELINE
     private List<ElementQuantity> getElementQuantityList(Set<Element> elementList, Product product) {
    	 List<ElementQuantity> elementQuantitiyList = new ArrayList<ElementQuantity>();
    	 for(Element element: elementList) {
@@ -560,9 +553,7 @@ public class OrderController {
    	return elementQuantitiyList;
    }
 
-
-    // CREATE PRODUCT QUANTITY LIST FOR THE PIPELINE
-    
+    // CREATE PRODUCT QUANTITY LIST FOR THE PIPELINE - QUANTITY OF EACH PRODUCT IN THE PIPELINE
     private List<ProductQuantity> getProductQuantityList(Set <Product> products, Pipeline pipeline) {
       	 List <ProductQuantity> productQuantitiyList = new ArrayList<ProductQuantity>();
        	 for(Product product: products) {
@@ -587,6 +578,7 @@ public class OrderController {
 		return sortedProducts;
 	}
     
+    // ADDING IMAGE TO PARAGRAPH IN CREATING WORD DOCUMENT
     private static P addImageToParagraph(Inline inline) {
         ObjectFactory factory = new ObjectFactory();
         P p = factory.createP();
@@ -598,12 +590,14 @@ public class OrderController {
         return p;
     }
     
+    // CONVERTING TO LOCAL DATE
     public LocalDate convertToLocalDateViaInstant(Date dateToConvert) {
         return dateToConvert.toInstant()
           .atZone(ZoneId.systemDefault())
           .toLocalDate();
     }
     
+    // DISPLAYING DAY OF THE WEEK IN BOSNIAN
 	private String bosnianWeekDay(String weekDay) {
 		switch(weekDay){
 		case "MONDAY": return "ponedeljak, ";
@@ -617,6 +611,7 @@ public class OrderController {
 		}
 	}
 	
+	// DISPLAYING MONTH IN BOSNIAN
 	private String bosnianMonth(int monthYear) {
 		switch(monthYear){
 		case 1: return "januar";
@@ -635,7 +630,7 @@ public class OrderController {
 		}
 	}
 
-
+	// METHOD FOR DISPLAYING HEADING IN THE WORD DOCUMENT
 	private List<P> createHeadings() {
 		List<P> tableHeadings = new ArrayList<>();
         ObjectFactory factory = Context.getWmlObjectFactory();   
@@ -666,7 +661,7 @@ public class OrderController {
 		return tableHeadings;
 	}
 	
-
+	// METHOD FOR CREATING PRODUCT VALUES
 	private List<P> createProductValues(int index) {
 		List<P> pProductsList = new ArrayList<>();
 	    

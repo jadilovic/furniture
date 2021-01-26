@@ -1,7 +1,6 @@
 package com.avlija.furniture.controller;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -10,8 +9,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import com.avlija.furniture.form.SampleInputs;
-import com.avlija.furniture.model.Element;
-import com.avlija.furniture.model.ElementQuantity;
 import com.avlija.furniture.model.Pipeline;
 import com.avlija.furniture.model.PipelineProduct;
 import com.avlija.furniture.model.Product;
@@ -51,28 +48,24 @@ public class PipelineController {
     
     private static Pipeline savedPipeline;
     
-    // CREATE PIPELINE OF PRODUCTS GET
-    
+    // CREATE PRODUCTS PIPELINE - GET
     @RequestMapping(value= {"admin/createpipeline"}, method=RequestMethod.GET)
     public ModelAndView createPipeline() {
      ModelAndView model = new ModelAndView();
      Pipeline pipeline = new Pipeline();
      model.addObject("pipeline", pipeline);
      model.setViewName("admin/create_pipeline");
-     
      return model;
     }
     
-    
-    // CREATE PIPELINE POST
-    
+    // CREATE PIPELINE BY ADDING PRODUCTS - POST
     @RequestMapping(value= {"admin/createpipeline"}, method=RequestMethod.POST)
     public ModelAndView createPipeline(@Valid Pipeline pipeline, BindingResult bindingResult) {
      ModelAndView model = new ModelAndView();
      Pipeline pipelineExists = pipelineRepository.findByName(pipeline.getName());
      if(pipelineExists != null) {
     		 bindingResult.rejectValue("name", "error.name", "Ovaj naziv liste proizvoda već postoji!");
-     }
+     		}
      if(bindingResult.hasErrors()) {
       	  model.addObject("msg", "Uneseni naziv liste proizvoda već postoji.");
           Pipeline newPipeline = new Pipeline();
@@ -82,7 +75,6 @@ public class PipelineController {
        // Active Pipeline means that it has not been added to the Order - products are still being added
     	 pipeline.setActive(1);
    	  	pipelineRepository.save(pipeline);
-      
    	  Pipeline createdPipeline = pipelineRepository.findByName(pipeline.getName());
       Set<Product> products = new TreeSet<>();
       SampleInputs sampleInputs = new SampleInputs();
@@ -95,9 +87,7 @@ public class PipelineController {
      return model;
     }
     
-    
     // DISPLAY ALL PIPELINES
-    
     @RequestMapping(value= {"home/allpipelines"}, method=RequestMethod.GET)
     public String allPipelines(HttpServletRequest request, Model model) {
     	
@@ -123,7 +113,6 @@ public class PipelineController {
     
     
     // PIPELINE PROFILE
-    
     @RequestMapping(value= {"home/pipelineprofile/{id}"}, method=RequestMethod.GET)
     public ModelAndView listProfile(@PathVariable(name = "id") Integer id) {
      ModelAndView model = new ModelAndView();
@@ -134,12 +123,10 @@ public class PipelineController {
      model.addObject("pipeline", pipeline);
      model.addObject("productsList", productsList);
      model.setViewName("home/pipeline_profile");
-     
      return model;
     }
     
     // ADD PRODUCTS TO THE PIPELINE
-    
     @RequestMapping(value= {"admin/add/{id}"}, method=RequestMethod.GET)
     public ModelAndView addProductsToPipelineGET(@PathVariable(name = "id") Integer id) {
      ModelAndView model = new ModelAndView();
@@ -154,10 +141,8 @@ public class PipelineController {
      model.addObject("productsList", products);
      model.addObject("emptyProducts", savedPipeline.getProducts().isEmpty());
      model.setViewName("admin/add_products");
-     
      return model;
     }
-    
     
     // CHANGE PIPELINE
 	@RequestMapping(value= {"admin/changepipeline/{id}"}, method=RequestMethod.GET)
@@ -175,7 +160,6 @@ public class PipelineController {
     }
     
     // ADDING PRODUCTS TO THE PIPELINE
-    
     @RequestMapping(value= {"admin/addproducts"}, method=RequestMethod.POST)
     public ModelAndView addProductsToPipelinePOST(@Valid Pipeline pipeline) {
      ModelAndView model = new ModelAndView();
@@ -218,7 +202,7 @@ public class PipelineController {
    	  return model;
     }
     
-	   // SEARCH PRODUCT BY ID TO BE ADDED TO THE PIPELINE
+	// SEARCH PRODUCT BY ID TO BE ADDED TO THE PIPELINE
 	@RequestMapping(value= {"home/searchproductid"}, method=RequestMethod.POST)
     public ModelAndView searchProductById(@Valid SampleInputs sampleInputs) {
      ModelAndView model = new ModelAndView();
@@ -346,8 +330,8 @@ public class PipelineController {
     @RequestMapping(value= {"admin/productquantity"}, method=RequestMethod.POST)
     public ModelAndView addProductQuantity(@Valid SampleInputs sampleInputs) {
      ModelAndView model = new ModelAndView();
-     	Pipeline createdPipeline = pipelineRepository.findById(sampleInputs.getPipelineId()).get();
-        Set<Product> products = sortByProductId(createdPipeline.getProducts());
+     	savedPipeline = pipelineRepository.findById(sampleInputs.getPipelineId()).get();
+        productsList = sortByProductId(savedPipeline.getProducts());
         Product product = productRepository.findById(sampleInputs.getPrdId()).get();
         PipelineProduct pipelineProduct = new PipelineProduct(sampleInputs.getPipelineId(), sampleInputs.getPrdId());
         ProductQuantity productQuantity = productQuantityRepository.findById(pipelineProduct).get();
@@ -356,14 +340,28 @@ public class PipelineController {
         productQuantity.setBuyer(sampleInputs.getPrdBuyer());
         productQuantityRepository.save(productQuantity);
    	  	
-        List<ProductQuantity> productQuantityList = getProductQuantityList(products, createdPipeline);
+        productsQuantityList = getProductQuantityList(productsList, savedPipeline);
    	  model.addObject("msg", "Izvršena dopuna - izmjena količine proizvoda: " + product.getName());
    	  model.setViewName("admin/create_pipeline2");
-     model.addObject("pipeline", createdPipeline);
-     model.addObject("productsList", products);
-     model.addObject("productsQuantityList", productQuantityList);
+     model.addObject("pipeline", savedPipeline);
+     model.addObject("productsList", productsList);
+     model.addObject("productsQuantityList", productsQuantityList);
      return model;
     }
+    
+    
+    // If browser back button is clicked display current list of products in the pipeline
+    @RequestMapping(value= {"admin/productquantity"}, method=RequestMethod.GET)
+    public ModelAndView redirectToPipelineList() {
+   	  ModelAndView model = new ModelAndView();
+   	  model.addObject("msg", "Povratak na trenutnu listu proizvoda");
+   	  model.setViewName("admin/create_pipeline2");
+     model.addObject("pipeline", savedPipeline);
+     model.addObject("productsList", productsList);
+     model.addObject("productsQuantityList", productsQuantityList);
+   	  return model;
+    }
+    
     
     //SEARCH PIPELINE BY ID
     @RequestMapping(value= {"home/pipelinesearchid"}, method=RequestMethod.POST)
@@ -459,7 +457,6 @@ public class PipelineController {
     
     
     // FIND OUT IF THE PRODUCT QUANTITY EXISTS
-
 	private boolean productQuantityExists(PipelineProduct pipelineProduct) {
     	try {
     		ProductQuantity productQuantity = productQuantityRepository.findById(pipelineProduct).get();

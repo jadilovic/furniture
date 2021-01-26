@@ -16,29 +16,20 @@ import com.avlija.furniture.model.Product;
 import com.avlija.furniture.model.ProductElement;
 import com.avlija.furniture.repository.ElementQuantityRepository;
 import com.avlija.furniture.repository.ElementRepository;
-import com.avlija.furniture.repository.OrderRepository;
 import com.avlija.furniture.repository.ProductRepository;
 import com.avlija.furniture.service.ElementNameSorter;
-import com.avlija.furniture.service.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class SearchController {
-
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private OrderRepository orderRepository;
 
     @Autowired
     private ElementRepository elementRepository;
@@ -60,10 +51,10 @@ public class SearchController {
      SampleInputs sampleInputs = new SampleInputs();
      model.addObject("sampleInputs", sampleInputs);
      model.setViewName("home/search_product");
-     
      return model;
     }
     
+    // SEARCHING FOR PRODUCTS BY PRODUCT ID
     @RequestMapping(value= {"home/productsearchid"}, method=RequestMethod.POST)
     public ModelAndView productSearchId(@Valid SampleInputs sampleInputs) {
      ModelAndView model = new ModelAndView();
@@ -94,6 +85,7 @@ public class SearchController {
    	  return model;
     }
     
+    // SEARCHING FOR PRODUCTS BY KEYWORD
     @RequestMapping(value= {"home/productsearchkeyword"}, method=RequestMethod.POST)
     public ModelAndView productSearchKeyWord(@Valid SampleInputs sampleInputs) {
      ModelAndView model = new ModelAndView();
@@ -103,7 +95,6 @@ public class SearchController {
          	  model.addObject("err", "Nije pronađen proizvod koji sadrži ključnu riječ: " + keyWord);
            	  model.setViewName("home/search_product");
          	} else {
-         		
          		model.addObject("msg", "Lista proizvoda koji sadrže ključnu riječ: " + keyWord);
          		model.setViewName("home/list_products_keyword");
          		model.addObject("productsList", productsList);
@@ -121,6 +112,7 @@ public class SearchController {
    	  return model;
     }
     
+    // SEARCHING PRODUCTS BY NAME
     @RequestMapping(value= {"home/searchproductname"}, method=RequestMethod.POST)
     public ModelAndView productSearchName(@Valid SampleInputs sampleInputs) {
      ModelAndView model = new ModelAndView();
@@ -230,7 +222,7 @@ public class SearchController {
 		 return "redirect:/admin/changeproduct/" + productId;
 	 }
 
-    // SEARCH ELEMENTS BY SIFRA
+    // SEARCH ELEMENTS BY SIFRA WITH PAGINATION
     @RequestMapping(value= {"home/searchelement"}, method=RequestMethod.POST)
     public ModelAndView searchElementSifra(@Valid SampleInputs sampleInputs, HttpServletRequest request) {
      ModelAndView model = new ModelAndView();
@@ -304,6 +296,7 @@ public class SearchController {
 	  	return model;
     }
     
+    // GET QUANTITY OF ELEMENTS IN THE PRODUCT
     private Set<ElementQuantity> getElementQuantityList(Set<Element> elementList, Product product) {
    	 Set<ElementQuantity> elementQuantitiyList = new HashSet<ElementQuantity>();
    	 for(Element element: elementList) {
@@ -319,6 +312,7 @@ public class SearchController {
    	return elementQuantitiyList;
    }
     
+    // CHECK IF ELEMENT IS ALREADY IN THE PRODUCT
     private boolean elementAlreadyInProduct(Element element, Set<Element> elements) {
 		for(Element check: elements) {
 			if(check.getId() == element.getId()) {
@@ -328,6 +322,7 @@ public class SearchController {
 		return false;
 	}
     
+    // SORTING ELEMENTS BY NAME
 	private Set<Element> sortElementsByName(Set<Element> elements) {
 		Set<Element> sortedElements = new TreeSet<>(new ElementNameSorter());
    	  	for(Element element: elements) {

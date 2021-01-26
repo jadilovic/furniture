@@ -1,5 +1,7 @@
 package com.avlija.furniture.form;
 
+// CLASS NEEDED WHEN CREATING ORDER WORD DOCUMENT
+
 public class OrderWordProduct {
 
 	private String rankNum;
