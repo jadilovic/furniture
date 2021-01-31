@@ -11,7 +11,9 @@ import org.springframework.stereotype.Service;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-
+/**
+ * SAVING, UPDATING AND FINDING USERS
+ */
 @Service
 public class UserService {
 

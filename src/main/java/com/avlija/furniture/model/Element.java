@@ -6,13 +6,13 @@ import java.util.TreeSet;
 
 import javax.persistence.*;
 
+	/**
+	 * ELEMENT CLASS WITH INFORMATION ABOUT ELEMENTS
+	 */
 @Entity
 @Table(name = "elements")
 public class Element implements Serializable {
-   
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = 1L;
 
 	@Id

@@ -7,6 +7,10 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+/**
+ * LOGINS CLASS FOR LOGGED IN USERS
+ */
+
 @Entity
 @Table(name = "persistent_logins")
 public class Logins {

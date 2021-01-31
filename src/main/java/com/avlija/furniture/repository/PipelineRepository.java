@@ -1,5 +1,8 @@
 package com.avlija.furniture.repository;
-
+/**
+ * PIPELINE REPOSITORY CONNECTED TO THE MYSQL DATABASE TABLE 
+ * TABLE PIPELINES CONTAINS INFORMATION ABOUT EACH PIPELINE (TEMPLATE WITH LIST OF PRODUCTS FOR ORDERS)
+ */
 import com.avlija.furniture.model.Pipeline;
 
 import java.util.List;

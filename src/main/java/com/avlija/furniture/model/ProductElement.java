@@ -6,6 +6,10 @@ import java.io.Serializable;
 import javax.persistence.Embeddable;
 import javax.validation.constraints.NotNull;
 
+/**
+ * PRODUCT-ELEMENT CLASS WHICH SERVES AS A PRIMARY KEY FOR INDIVIDUAL PRODUCTS AND THEIR ELEMENTS
+ */
+
 @Embeddable
 public class ProductElement implements Serializable{
 

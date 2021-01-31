@@ -9,10 +9,11 @@ import javax.persistence.*;
 @Entity
 @Table(name = "pipelines")
 public class Pipeline implements Serializable{
-   
-	/**
-	 * 
-	 */
+
+/**
+ * PIPELINE CLASS WITH PIPELINE INFORMATION (TEMPLATE LIST WITH PRODUCTS WHICH WILL BE ADDED TO THE ORDER)
+ */
+
 	private static final long serialVersionUID = 1L;
 
 	@Id

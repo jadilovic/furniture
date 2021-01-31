@@ -1,5 +1,9 @@
 package com.avlija.furniture.repository;
 
+/**
+ * ORDER REPOSITORY CONNECTED TO THE MYSQL DATABASE TABLE 
+ * TABLE ORDERS CONTAINS INFORMATION ABOUT EACH ORDER IN THE DATABASE
+ */
 import com.avlija.furniture.model.Order;
 import com.avlija.furniture.model.Pipeline;
 

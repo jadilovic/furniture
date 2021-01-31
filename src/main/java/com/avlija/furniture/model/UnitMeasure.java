@@ -5,6 +5,9 @@ import java.util.Set;
 
 import javax.persistence.*;
 
+/**
+ * UNIT MEASURE CLASS CONTAINS INFORMATION ABOUT DIFFERENT UNIT MEASURES
+ */
 
 @Entity
 @Table(name = "unit_measures")

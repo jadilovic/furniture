@@ -6,6 +6,10 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+/**
+ * PRODUCT-QUANTITY CLASS WHICH CONTAINS INFORMATION ABOUT QUANTITY OF CERTAIN PRODUCT IN THE PIPELINE
+ */
+
 @Entity
 @Table(name = "product_quantity")
 public class ProductQuantity {

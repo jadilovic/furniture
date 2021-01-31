@@ -13,6 +13,10 @@ import javax.validation.constraints.NotEmpty;
 import java.util.Date;
 import java.util.Set;
 
+/**
+ * USER CLASS WHICH CONTAINS INFORMATION ABOUT DIFFERENT USERS
+ */
+
 @Data
 @Builder
 @AllArgsConstructor

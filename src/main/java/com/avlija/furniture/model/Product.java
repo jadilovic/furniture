@@ -10,9 +10,10 @@ import javax.persistence.*;
 @Table(name = "products")
 public class Product implements Serializable{
    
-	/**
-	 * 
-	 */
+/**
+ * PRODUCT CLASS WITH INFORMATION ABOUT THE PRODUCT
+ */
+
 	private static final long serialVersionUID = 1L;
 
 	@Id

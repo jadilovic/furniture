@@ -9,9 +9,10 @@ import java.util.Date;
 @Table(name="orders")
 public class Order implements Serializable{
 
-    /**
-	 * 
-	 */
+/**
+ * ORDER CLASS WITH ORDER INFORMATION
+ */
+
 	private static final long serialVersionUID = 1L;
 	
 	@Id

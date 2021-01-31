@@ -7,6 +7,10 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
+/**
+ * ROLE CLASS CONTAINS INFORMATION ABOUT DIFFERENT USER ROLES
+ */
+
 @Data
 @Builder
 @AllArgsConstructor

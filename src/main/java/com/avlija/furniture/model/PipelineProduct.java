@@ -6,6 +6,11 @@ import java.io.Serializable;
 import javax.persistence.Embeddable;
 import javax.validation.constraints.NotNull;
 
+
+/**
+ * PIPELINE-PRODUCT CLASS WHICH SERVES AS A PRIMARY KEY FOR A PIPELINE AND PRODUCT AND ITS ELEMENTS
+ */
+
 @Embeddable
 public class PipelineProduct implements Serializable{
 

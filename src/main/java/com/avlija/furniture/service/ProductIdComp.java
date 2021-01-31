@@ -3,7 +3,9 @@ package com.avlija.furniture.service;
 import java.util.Comparator;
 
 import com.avlija.furniture.model.Product;
-
+/**
+ * COMPARING PRODUCTS BY PRODUCT ID
+ */
 public class ProductIdComp implements Comparator<Product>{
  
     @Override

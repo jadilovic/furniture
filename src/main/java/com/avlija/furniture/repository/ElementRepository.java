@@ -2,6 +2,11 @@ package com.avlija.furniture.repository;
 
 import com.avlija.furniture.model.Element;
 
+/**
+ * ELEMENT REPOSITORY CONNECTED TO THE MYSQL DATABASE TABLE 
+ * TABLE ELEMENTS CONTAINS INFORMATION ABOUT EACH ELEMENT IN THE DATABASE
+ */
+
 import java.util.List;
 
 import org.springframework.data.domain.Page;

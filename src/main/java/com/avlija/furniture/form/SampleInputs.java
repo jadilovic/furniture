@@ -8,6 +8,7 @@ import com.avlija.furniture.model.Product;
 import java.util.Date;
 import java.util.List;
 
+// SAMPLE INPUTS CLASS TO TRANSFER DATA BETWEEN PAGES
 public class SampleInputs {
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")

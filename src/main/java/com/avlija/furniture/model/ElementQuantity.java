@@ -5,6 +5,10 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+/**
+ * ELEMENT QUANTITY CLASS WHICH CONTAINS QUANTITY OF AN ELEMENT IN A SPECIFIC PRODUCT
+ */
+
 @Entity
 @Table(name = "element_quantity")
 public class ElementQuantity {

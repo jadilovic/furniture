@@ -6,7 +6,9 @@ import org.springframework.stereotype.Component;
 
 import com.avlija.furniture.repository.ProductRepository;
 
-
+/**
+ * PRODUCT CONVERTER CLASS WHICH CONVERTS STRING ID INTO INTEGER ID AND FINDS PRODUCT BY ID
+ */
 
 @Component
 public class ProductConverter implements Converter<String, Product>{

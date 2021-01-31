@@ -2,7 +2,9 @@ package com.avlija.furniture.service;
 import java.util.Comparator;
 
 import com.avlija.furniture.model.Product;
- 
+/**
+ * SORTING PRODUCT OBJECTS BY PRODUCT NAME
+ */
 public class ProductNameSorter implements Comparator<Product> 
 {
     @Override

@@ -8,7 +8,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-
+/**
+ * PRODUCT REPOSITORY CONNECTED TO THE MYSQL DATABASE TABLE 
+ * TABLE PRODUCTS CONTAINS INFORMATION ABOUT EACH PRODUCT IN THE DATABASE
+ */
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Integer> {
     
