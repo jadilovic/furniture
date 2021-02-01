@@ -57,7 +57,9 @@
         <tbody>
             <tr scope="row" th:each="element, productStat : ${elementsList}">
                 <td th:text="${element.sifra}">Sifra</td>
-                <td th:text="${element.quantity}">Stanje</td>
+                <td>
+                	<a class="text-white btn " th:classappend="${element.quantity} < 10 ? btn-danger : btn-success" th:text="${element.quantity}"></a>
+                </td>
                 <td th:text="${element.name}">Naziv</td>
                 <td th:text="${element.elementSize}">Veličina</td>    
                 <td th:text="${element.getUnitMeasure().getUnitMeasureName()}">Jedinica Mjere</td>   

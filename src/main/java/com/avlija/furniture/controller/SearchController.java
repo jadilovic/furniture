@@ -292,7 +292,7 @@ public class SearchController {
         SampleInputs sampleInputs = new SampleInputs();
    		model.addObject("sampleInputs", sampleInputs);
 	  	model.addObject("elementsList", elementsList);
-	  	model.setViewName("/home/list_elements_keyword");
+	  	model.setViewName("home/list_elements_keyword");
 	  	return model;
     }
     

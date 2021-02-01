@@ -80,7 +80,7 @@ public class PasswordController {
 				// Add success message to view
 				modelAndView.addObject("message", "Link za izmjenu lozinke je poslan na " + sampleInputs.getEmail()
 											+ ".\n Otvorite vaš e-mail i kliknite na link.");
-				modelAndView.setViewName("/login");
+				modelAndView.setViewName("user/login");
 			} catch(Exception e) {
 				// In case exception
 				modelAndView.addObject("message", "Nije moguće poslati mail zbog nepostojanja konekcije"
